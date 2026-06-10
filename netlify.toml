@@ -1,6 +1,9 @@
 [build]
-  publish = "."
+  publish = ".next"
+command = "npm run build"
 
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 [[headers]]
   for = "/*"
   [headers.values]
