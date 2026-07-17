@@ -1,7 +1,11 @@
 import type { Config } from "@netlify/functions";
 import { json, readStoredLocation, toPublicLocation } from "../lib/location.mjs";
 
-export default async function handler() {
+export default async function handler(request: Request) {
+  if (request.method !== "GET") {
+    return json({ message: "Method not allowed." }, 405, { Allow: "GET" });
+  }
+
   try {
     const { location, expired } = await readStoredLocation();
     if (!location || expired) return json({ live: false, location: null });

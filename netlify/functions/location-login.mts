@@ -8,6 +8,10 @@ import {
 } from "../lib/location.mjs";
 
 export default async function handler(request: Request) {
+  if (request.method !== "POST") {
+    return json({ message: "Method not allowed." }, 405, { Allow: "POST" });
+  }
+
   if (!isPasswordConfigured()) {
     return json({ message: "The shared password has not been configured." }, 503);
   }

@@ -46,6 +46,24 @@
     Cache-Control = "public, max-age=3600"
 
 [[redirects]]
+  from = "/api/location"
+  to = "/.netlify/functions/location-get"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/location/login"
+  to = "/.netlify/functions/location-login"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/location/manage"
+  to = "/.netlify/functions/location-manage"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "http://update.bigpapastaters.com/*"
   to = "https://bigpapastaters.com/update/:splat"
   status = 301
