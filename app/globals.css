@@ -65,6 +65,10 @@ img {
   max-width: 100%;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 h1,
 h2,
 h3,
@@ -1001,6 +1005,49 @@ p {
   background-size: 92px 82px, 113px 103px;
 }
 
+.find-map-placeholder {
+  position: absolute;
+  inset: 0;
+}
+
+.live-map-frame {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #d8c7aa;
+}
+
+.live-map-badge {
+  position: absolute;
+  z-index: 4;
+  top: 22px;
+  left: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(23, 20, 18, 0.9);
+  color: var(--white);
+  box-shadow: 0 12px 30px rgba(23, 20, 18, 0.22);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+
+.live-map-badge span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #71c979;
+  box-shadow: 0 0 0 5px rgba(113, 201, 121, 0.17);
+}
+
 .find-map::before,
 .find-map::after {
   position: absolute;
@@ -1146,6 +1193,8 @@ p {
 }
 
 .location-card div {
+  min-width: 0;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
 }
@@ -1161,6 +1210,54 @@ p {
 
 .location-card strong {
   font-size: 0.88rem;
+}
+
+.location-updated {
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.7rem;
+}
+
+.location-status-dot {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.location-card.is-live {
+  border-color: rgba(113, 201, 121, 0.38);
+  background: rgba(113, 201, 121, 0.08);
+}
+
+.location-card.is-live .location-status-dot {
+  background: #71c979;
+  box-shadow: 0 0 0 6px rgba(113, 201, 121, 0.12);
+}
+
+.live-details {
+  width: min(100%, 510px);
+  margin: -12px 0 26px;
+  padding: 0 2px;
+}
+
+.live-details p {
+  margin: 7px 0 0;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.live-details p:first-child {
+  color: var(--cream-deep);
+  font-weight: 800;
+}
+
+.live-location-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .story-section {
@@ -1759,6 +1856,15 @@ summary:focus-visible {
 
   .find-content {
     padding: 74px 22px 82px;
+  }
+
+  .live-location-actions {
+    width: 100%;
+    display: grid;
+  }
+
+  .live-location-actions .button {
+    width: 100%;
   }
 
   .story-section {

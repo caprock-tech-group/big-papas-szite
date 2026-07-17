@@ -272,34 +272,58 @@ export default function Home() {
           </figure>
         </section>
 
-        <section className="find-section" id="find-us" aria-labelledby="find-title">
-          <div className="find-map" aria-hidden="true">
-            <div className="route route--one" />
-            <div className="route route--two" />
-            <span className="map-label map-label--claude">Claude</span>
-            <span className="map-label map-label--amarillo">Amarillo</span>
-            <span className="map-pin map-pin--claude"><MapPinIcon /></span>
-            <span className="map-pin map-pin--amarillo"><MapPinIcon /></span>
-            <div className="truck-badge"><TruckIcon /><span>Big Papa<br />Tracker</span></div>
+        <section className="find-section" id="find-us" aria-labelledby="find-title" data-live-location>
+          <div className="find-map" data-live-map>
+            <div className="find-map-placeholder" data-live-placeholder aria-hidden="true">
+              <div className="route route--one" />
+              <div className="route route--two" />
+              <span className="map-label map-label--claude">Claude</span>
+              <span className="map-label map-label--amarillo">Amarillo</span>
+              <span className="map-pin map-pin--claude"><MapPinIcon /></span>
+              <span className="map-pin map-pin--amarillo"><MapPinIcon /></span>
+              <div className="truck-badge"><TruckIcon /><span>Big Papa<br />Tracker</span></div>
+            </div>
+            <iframe
+              className="live-map-frame"
+              data-live-map-frame
+              title="Big Papa's current location map"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              hidden
+            />
+            <div className="live-map-badge" data-live-map-badge hidden>
+              <span aria-hidden="true" /> Live now
+            </div>
           </div>
 
           <div className="find-content">
-            <p className="eyebrow eyebrow--light"><span /> Big Papa Tracker</p>
-            <h2 id="find-title">Catch us when we roll into town.</h2>
-            <p>
-              We&apos;re mobile. Our latest stops, service times, and sellout updates are posted on
-              Facebook so you always know where to find us.
+            <p className="eyebrow eyebrow--light"><span /> Live truck locator</p>
+            <h2 id="find-title" data-live-title>Catch us when we roll into town.</h2>
+            <p data-live-summary>
+              When we&apos;re parked and serving, our live pin appears here. Check Facebook for
+              upcoming stops, service times, and sellout updates.
             </p>
-            <div className="location-card">
+            <div className="location-card" data-live-card aria-live="polite">
               <MapPinIcon />
               <div>
-                <small>Serving</small>
-                <strong>{siteConfig.serviceArea}</strong>
+                <small data-live-kicker>Current status</small>
+                <strong data-live-place>Waiting for today&apos;s stop</strong>
+                <span className="location-updated" data-live-updated>Serving {siteConfig.serviceArea}</span>
               </div>
+              <span className="location-status-dot" data-live-status-dot aria-hidden="true" />
             </div>
-            <a className="button button--primary" href={siteConfig.facebookUrl} {...externalLinkProps}>
-              <FacebookIcon /> See our latest location
-            </a>
+            <div className="live-details" data-live-details hidden>
+              <p data-live-hours hidden />
+              <p data-live-note hidden />
+            </div>
+            <div className="live-location-actions">
+              <a className="button button--primary" data-live-directions href="#" {...externalLinkProps} hidden>
+                <MapPinIcon /> Get directions
+              </a>
+              <a className="button button--ghost" href={siteConfig.facebookUrl} {...externalLinkProps}>
+                <FacebookIcon /> Schedule updates
+              </a>
+            </div>
           </div>
         </section>
 

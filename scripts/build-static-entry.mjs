@@ -3,7 +3,7 @@ import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 const siteUrl = (
   process.env.URL ||
   process.env.DEPLOY_PRIME_URL ||
-  "https://big-papas-texas-potatoes.caprocktechnology.chatgpt.site"
+  "https://bigpapastaters.com"
 ).replace(/\/+$/, "");
 const serverModule = await import("../dist/server/index.js");
 const response = await serverModule.default(new Request("http://localhost/"));
@@ -32,9 +32,10 @@ html = html
   .replace(/<link\b[^>]*rel="modulepreload"[^>]*\/?\s*>/gi, "")
   .replace(/<!--\$[^>]*-->|<!--\/\$-->/g, "");
 
-if (structuredDataScripts.length > 0) {
-  html = html.replace("</body>", `${structuredDataScripts.join("")}</body>`);
-}
+html = html.replace(
+  "</body>",
+  `${structuredDataScripts.join("")}<script src="/live-location.js" defer></script></body>`,
+);
 
 const binaryAssets = {};
 for (const [pathname, filename, contentType] of [
@@ -58,6 +59,36 @@ const textAssets = {
   "/manifest.webmanifest": {
     body: await readFile("public/manifest.webmanifest", "utf8"),
     contentType: "application/manifest+json; charset=utf-8",
+  },
+  "/live-location.js": {
+    body: await readFile("public/live-location.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/update": {
+    body: await readFile("public/update/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/update/": {
+    body: await readFile("public/update/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/update/index.html": {
+    body: await readFile("public/update/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/update/admin.css": {
+    body: await readFile("public/update/admin.css", "utf8"),
+    contentType: "text/css; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/update/admin.js": {
+    body: await readFile("public/update/admin.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
   },
   "/robots.txt": {
     body: `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml\n`,
@@ -105,6 +136,7 @@ const notFoundHtml = `<!doctype html>
 
 await rm(netlifyOutputDirectory, { recursive: true, force: true });
 await mkdir(`${netlifyOutputDirectory}/images`, { recursive: true });
+await mkdir(`${netlifyOutputDirectory}/update`, { recursive: true });
 
 await Promise.all([
   writeFile(`${netlifyOutputDirectory}/index.html`, html),
@@ -113,6 +145,10 @@ await Promise.all([
   writeFile(`${netlifyOutputDirectory}/sitemap.xml`, textAssets["/sitemap.xml"].body),
   cp("public/favicon.svg", `${netlifyOutputDirectory}/favicon.svg`),
   cp("public/manifest.webmanifest", `${netlifyOutputDirectory}/manifest.webmanifest`),
+  cp("public/live-location.js", `${netlifyOutputDirectory}/live-location.js`),
+  cp("public/update/index.html", `${netlifyOutputDirectory}/update/index.html`),
+  cp("public/update/admin.css", `${netlifyOutputDirectory}/update/admin.css`),
+  cp("public/update/admin.js", `${netlifyOutputDirectory}/update/admin.js`),
   cp("public/images/big-hoss-hero.webp", `${netlifyOutputDirectory}/images/big-hoss-hero.webp`),
   cp("public/images/loaded-potato-lineup.webp", `${netlifyOutputDirectory}/images/loaded-potato-lineup.webp`),
   cp("public/images/big-papas-logo.webp", `${netlifyOutputDirectory}/images/big-papas-logo.webp`),
@@ -122,8 +158,8 @@ const runtime = `const TEXT_ASSETS = ${JSON.stringify(textAssets)};
 const BINARY_ASSETS = ${JSON.stringify(binaryAssets)};
 
 const SECURITY_HEADERS = {
-  "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests",
-  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+  "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self'; frame-src https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(self)",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
   "X-Content-Type-Options": "nosniff",
@@ -148,11 +184,14 @@ function handler(request) {
   const pathname = new URL(request.url).pathname;
   const textAsset = TEXT_ASSETS[pathname];
   const binaryAsset = BINARY_ASSETS[pathname];
+  const responseHeaders = pathname.startsWith("/update")
+    ? { ...SECURITY_HEADERS, "X-Robots-Tag": "noindex, nofollow, noarchive" }
+    : SECURITY_HEADERS;
 
   if (!textAsset && !binaryAsset) {
     return new Response(request.method === "HEAD" ? null : "Not Found", {
       status: 404,
-      headers: { ...SECURITY_HEADERS, "Cache-Control": "no-cache", "Content-Type": "text/plain; charset=utf-8" }
+      headers: { ...responseHeaders, "Cache-Control": "no-cache", "Content-Type": "text/plain; charset=utf-8" }
     });
   }
 
@@ -166,7 +205,7 @@ function handler(request) {
   return new Response(body, {
     status: 200,
     headers: {
-      ...SECURITY_HEADERS,
+      ...responseHeaders,
       "Cache-Control": asset.cacheControl || "public, max-age=3600",
       "Content-Type": asset.contentType
     }

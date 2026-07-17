@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="theme-color" content="#171412">
+    <title>Update the truck | Big Papa's</title>
+    <link rel="icon" href="/favicon.svg">
+    <link rel="stylesheet" href="/update/admin.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to updater</a>
+
+    <header class="admin-header">
+      <a class="brand" href="/" aria-label="Big Papa's website">
+        <img src="/images/big-papas-logo.webp" alt="" width="900" height="900">
+        <span><strong>Big Papa's</strong><small>Truck location updater</small></span>
+      </a>
+      <span class="private-badge">Private</span>
+    </header>
+
+    <main id="main">
+      <section class="intro">
+        <p class="eyebrow">Park. Pin. Publish.</p>
+        <h1>Tell folks where the taters are.</h1>
+        <p>Use this after the trailer is safely parked. Your live pin will automatically expire, so an old stop never stays on the public site.</p>
+      </section>
+
+      <section class="panel login-panel" data-login-panel aria-labelledby="login-title">
+        <div class="panel-heading">
+          <span class="step-number">01</span>
+          <div>
+            <p>Shared access</p>
+            <h2 id="login-title">Sign in</h2>
+          </div>
+        </div>
+        <form data-login-form>
+          <label for="password">Shared password</label>
+          <div class="password-row">
+            <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="256">
+            <button type="submit">Sign in</button>
+          </div>
+          <p class="form-message" data-login-message role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="dashboard" data-dashboard hidden aria-labelledby="dashboard-title">
+        <div class="status-strip" data-current-status>
+          <span class="status-dot" aria-hidden="true"></span>
+          <div>
+            <small>Public tracker</small>
+            <strong data-current-status-title>No live location</strong>
+            <span data-current-status-detail>The website is showing the standard service-area message.</span>
+          </div>
+        </div>
+
+        <section class="panel location-panel">
+          <div class="panel-heading">
+            <span class="step-number">01</span>
+            <div>
+              <p>Find the trailer</p>
+              <h2 id="dashboard-title">Set your pin</h2>
+            </div>
+          </div>
+
+          <button class="locate-button" type="button" data-locate-button>
+            <span class="target-icon" aria-hidden="true"></span>
+            <span><strong>Use my current location</strong><small>Your phone will ask for permission</small></span>
+          </button>
+
+          <div class="coordinate-preview" data-coordinate-preview hidden>
+            <span class="preview-dot" aria-hidden="true"></span>
+            <div><strong>Pin ready</strong><small data-coordinate-detail></small></div>
+            <a data-preview-map href="#" target="_blank" rel="noreferrer noopener">Preview</a>
+          </div>
+          <p class="form-message" data-location-message role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="panel details-panel">
+          <div class="panel-heading">
+            <span class="step-number">02</span>
+            <div>
+              <p>Customer details</p>
+              <h2>Describe the stop</h2>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <label class="field field--wide" for="location-name">
+              <span>Location name <small>Optional</small></span>
+              <input id="location-name" data-location-name maxlength="80" placeholder="Example: Claude City Park">
+            </label>
+            <label class="field" for="hours">
+              <span>Serving hours <small>Optional</small></span>
+              <input id="hours" data-hours maxlength="80" placeholder="Today until 8 PM">
+            </label>
+            <label class="field" for="expiration">
+              <span>Remove pin after</span>
+              <select id="expiration" data-expiration>
+                <option value="4">4 hours</option>
+                <option value="8" selected>8 hours</option>
+                <option value="12">12 hours</option>
+              </select>
+            </label>
+            <label class="field field--wide" for="note">
+              <span>Customer message <small>Optional</small></span>
+              <textarea id="note" data-note maxlength="180" rows="3" placeholder="Parked by the south entrance — look for the red trailer."></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="publish-panel">
+          <div>
+            <p class="eyebrow">Final check</p>
+            <h2>Are you parked and ready to serve?</h2>
+            <p>Publishing replaces the previous pin and starts the expiration timer.</p>
+          </div>
+          <button class="publish-button" type="button" data-publish-button disabled>Publish live location</button>
+          <p class="publish-message" data-publish-message role="status" aria-live="polite"></p>
+        </section>
+
+        <div class="secondary-actions">
+          <button type="button" data-clear-button>We're closed — remove the pin</button>
+          <button type="button" data-logout-button>Sign out</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Only publish after parking safely. Big Papa's never tracks your phone in the background.</p>
+      <a href="/" target="_blank" rel="noreferrer noopener">View public website</a>
+    </footer>
+
+    <script src="/update/admin.js" defer></script>
+  </body>
+</html>

@@ -11,7 +11,7 @@ export const siteConfig = {
   siteUrl: (
     process.env.URL ||
     process.env.DEPLOY_PRIME_URL ||
-    "https://big-papas-texas-potatoes.caprocktechnology.chatgpt.site"
+    "https://bigpapastaters.com"
   ).replace(/\/+$/, ""),
   onlineOrderUrl: "https://online.skytab.com/s/bigpapastexasloadedpotatoes",
 };
