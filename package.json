@@ -1,0 +1,29 @@
+{
+  "name": "big-papas-texas-loaded-potatoes",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vinext dev",
+    "build": "vinext build && node scripts/copy-hosting-config.mjs && node scripts/build-static-entry.mjs",
+    "build:netlify": "npm run build",
+    "start": "vinext start",
+    "check": "vinext check && tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.2.10",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-server-dom-webpack": "19.2.7",
+    "vinext": "1.0.0-beta.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.0",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "@vitejs/plugin-rsc": "0.5.27",
+    "typescript": "5.9.3",
+    "vite": "8.1.5"
+  }
+}

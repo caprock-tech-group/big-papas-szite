@@ -1,25 +1,39 @@
-# Big Papa's Texas Loaded Potatoes Website
+# Big Papa's Texas Loaded Potatoes
 
-Static Netlify-ready website.
+Production website for Big Papa's Texas Loaded Potatoes, built with the vinext/Next.js App Router toolchain and ready for either ChatGPT Sites or Netlify.
 
-## Deploy
+## Local development
 
-1. Upload this folder to GitHub.
-2. In Netlify, choose **New site from Git**.
-3. Build command: leave blank.
-4. Publish directory: `.`
+```bash
+npm install
+npm run dev
+```
 
-## Replace these placeholders
+Run the production checks with:
 
-Search in `index.html` for:
+```bash
+npm run check
+npm run build
+```
 
-- `https://YOUR-SHIFT4-ORDERING-LINK-HERE`
-- `https://YOUR-SHIFT4-LOYALTY-LINK-HERE`
-- `bigpapastx@gmail.com`
-- `806-400-6842`
+## Deploy on Netlify
 
-Replace them with the real values.
+This repository includes `netlify.toml`, so Netlify can detect the production settings automatically:
 
-## Forms
+- Build command: `npm run build:netlify`
+- Publish directory: `netlify-dist`
+- Required environment variables: none
 
-The catering form uses Netlify Forms and will work after deployment on Netlify.
+Import the repository from GitHub and select **Deploy**. Netlify will rebuild and publish the site after every push to the production branch.
+
+When a custom domain is assigned, trigger one fresh production deploy. The build will then use that domain for the canonical URL, structured data, `robots.txt`, and `sitemap.xml`.
+
+## Content updates
+
+Business links, service area, and menu items are centralized in `app/site-config.ts`.
+
+- Online ordering is configured through the live SkyTab portal in `onlineOrderUrl`.
+- The optimized official logo and food photography live in `public/images`.
+- Current stop information intentionally links to the live `@bigpapastaters` Facebook page so the site never displays a stale schedule.
+
+The site does not collect visitor data, set marketing cookies, or accept payments directly.

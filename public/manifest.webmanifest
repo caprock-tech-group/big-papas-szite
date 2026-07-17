@@ -1,0 +1,22 @@
+{
+  "name": "Big Papa's Texas Loaded Potatoes",
+  "short_name": "Big Papa's",
+  "description": "Home of The Big Hoss. Big Portions. Bold Flavor. Texas Style.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#161412",
+  "theme_color": "#161412",
+  "icons": [
+    {
+      "src": "/images/big-papas-logo.webp",
+      "sizes": "900x900",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

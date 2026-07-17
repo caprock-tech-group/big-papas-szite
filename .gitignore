@@ -1,0 +1,22 @@
+# Dependencies and build outputs
+node_modules/
+.next/
+dist/
+netlify-dist/
+.netlify/
+coverage/
+*.tsbuildinfo
+
+# Local environment values
+.env
+.env.*
+!.env.example
+
+# Generated source artwork; optimized WebP files are committed instead
+generated_images/
+public/images/*.png
+upload/
+
+# Editor and OS noise
+.DS_Store
+*.log
