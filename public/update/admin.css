@@ -305,6 +305,12 @@ textarea:focus {
   font-weight: 750;
 }
 
+.form-message.is-warning,
+.publish-message.is-warning {
+  color: #a86112;
+  font-weight: 750;
+}
+
 .dashboard {
   display: grid;
   gap: 18px;
@@ -530,6 +536,89 @@ textarea:focus {
   opacity: 0.42;
 }
 
+.facebook-sync {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.facebook-sync-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.facebook-sync > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.facebook-sync small {
+  margin-bottom: 2px;
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 0.56rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.facebook-sync strong {
+  color: #fff;
+  font-size: 0.86rem;
+}
+
+.facebook-sync div span {
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.72rem;
+}
+
+.facebook-sync button {
+  min-height: 42px;
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: transparent;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.facebook-sync button:hover,
+.facebook-sync button:focus-visible {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.facebook-sync.is-ready .facebook-sync-dot,
+.facebook-sync.is-open .facebook-sync-dot,
+.facebook-sync.is-closed .facebook-sync-dot {
+  background: var(--green);
+  box-shadow: 0 0 0 6px rgba(101, 183, 108, 0.12);
+}
+
+.facebook-sync.is-pending .facebook-sync-dot {
+  background: var(--gold);
+  box-shadow: 0 0 0 6px rgba(214, 156, 50, 0.13);
+}
+
+.facebook-sync.is-failed .facebook-sync-dot {
+  background: #ff7165;
+  box-shadow: 0 0 0 6px rgba(255, 113, 101, 0.12);
+}
+
+.facebook-sync.is-not-configured .facebook-sync-dot {
+  background: rgba(255, 255, 255, 0.28);
+}
+
 .publish-message {
   grid-column: 1 / -1;
   margin: -8px 0 0;
@@ -542,6 +631,10 @@ textarea:focus {
 
 .publish-message.is-success {
   color: #9fe1a5;
+}
+
+.publish-message.is-warning {
+  color: #ffd28d;
 }
 
 .secondary-actions {
@@ -653,6 +746,16 @@ a:focus-visible {
 
   .publish-message {
     grid-column: auto;
+  }
+
+  .facebook-sync {
+    grid-column: auto;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .facebook-sync button {
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .secondary-actions,

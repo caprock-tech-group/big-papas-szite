@@ -23,6 +23,8 @@ This repository includes `netlify.toml`, so Netlify can detect the production se
 - Build command: `npm run build:netlify`
 - Publish directory: `netlify-dist`
 - Required environment variable: `LOCATION_ADMIN_PASSWORD` (a private shared password of at least 12 characters)
+- Facebook automation variables: `FACEBOOK_PAGE_ID` and `FACEBOOK_PAGE_ACCESS_TOKEN`
+- Optional Facebook variable: `FACEBOOK_GRAPH_API_VERSION` (defaults to `v25.0`)
 
 Import the repository from GitHub and select **Deploy**. Netlify will rebuild and publish the site after every push to the production branch.
 
@@ -40,6 +42,19 @@ The public homepage checks `/api/location` once a minute and displays the curren
 - immediate removal of the public pin.
 
 The location is stored in Netlify Blobs and persists across deploys. The updater does not track the phone in the background.
+
+## Facebook auto-posting
+
+Publishing a live pin also creates a post on the connected Big Papa's Facebook Page. Updating an active pin edits that post instead of creating a duplicate. Choosing **We're closed** marks the post closed, and a scheduled Netlify function checks every 15 minutes for expired pins so their posts are closed automatically.
+
+The public map is intentionally independent: a Facebook error never prevents the location from going live. The private updater shows the connection status and offers a safe retry. If a new-post request times out with an uncertain result, the updater first asks an operator to confirm that Facebook did not publish it, preventing an accidental duplicate.
+
+Create a Meta app with access to the Facebook Page, obtain a Page access token that can publish Page posts, and add these values in Netlify as secret environment variables with the Functions scope:
+
+- `FACEBOOK_PAGE_ID`
+- `FACEBOOK_PAGE_ACCESS_TOKEN`
+
+Never commit the Page access token or paste it into issues, pull requests, or chat. Trigger a new production deploy after adding or rotating either value.
 
 For the convenient updater address, add `update.bigpapastaters.com` as a Netlify domain alias and create a Squarespace DNS CNAME named `update` that points to `bigpapaswebsite.netlify.app`. Requests to that subdomain are redirected to the secure updater on the main domain.
 

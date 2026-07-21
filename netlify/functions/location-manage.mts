@@ -1,5 +1,12 @@
 import type { Config } from "@netlify/functions";
 import {
+  facebookCloseFinished,
+  getFacebookAdminStatus,
+  retryFacebookAutomation,
+  syncFacebookClosed,
+  syncFacebookOpen,
+} from "../lib/facebook.mjs";
+import {
   clearLocation,
   clearSessionCookie,
   hasValidSession,
@@ -25,8 +32,11 @@ export default async function handler(request: Request) {
 
   if (request.method === "GET") {
     try {
-      const { location, expired } = await readStoredLocation();
-      return json({ authenticated: true, location, expired });
+      const [{ location, expired }, facebook] = await Promise.all([
+        readStoredLocation(),
+        getFacebookAdminStatus(),
+      ]);
+      return json({ authenticated: true, location, expired, facebook });
     } catch (error) {
       console.error("Could not read the admin location", error);
       return json({ message: "Location service unavailable." }, 503);
@@ -57,8 +67,13 @@ export default async function handler(request: Request) {
 
   if (body.action === "clear") {
     try {
-      await clearLocation();
-      return json({ cleared: true, location: null });
+      const { location } = await readStoredLocation();
+      if (location) {
+        await publishLocation({ ...location, expiresAt: new Date().toISOString() });
+      }
+      const facebook = await syncFacebookClosed(location?.updatedAt);
+      if (facebookCloseFinished(facebook)) await clearLocation();
+      return json({ cleared: true, location: null, facebook });
     } catch (error) {
       console.error("Could not clear the live location", error);
       return json({ message: "Could not remove the live location." }, 503);
@@ -67,9 +82,13 @@ export default async function handler(request: Request) {
 
   if (body.action === "publish") {
     try {
+      const previous = await readStoredLocation();
       const location = validatePublishInput(body);
       await publishLocation(location);
-      return json({ published: true, location });
+      const facebook = await syncFacebookOpen(location, {
+        reuseExistingPost: Boolean(previous.location && !previous.expired),
+      });
+      return json({ published: true, location, facebook });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not publish the live location.";
       const status = message.includes("invalid") ? 400 : 503;
@@ -78,7 +97,23 @@ export default async function handler(request: Request) {
     }
   }
 
-  return json({ message: "Choose publish, clear, or logout." }, 400);
+  if (body.action === "retryFacebook") {
+    try {
+      const { location, expired } = await readStoredLocation();
+      const facebook = await retryFacebookAutomation(
+        location,
+        expired,
+        body.confirmedNoPost === true,
+      );
+      if (expired && facebookCloseFinished(facebook)) await clearLocation();
+      return json({ retried: true, location: expired ? null : location, expired, facebook });
+    } catch (error) {
+      console.error("Could not retry the Facebook update", error);
+      return json({ message: "Could not retry the Facebook update." }, 503);
+    }
+  }
+
+  return json({ message: "Choose publish, clear, retry Facebook, or logout." }, 400);
 }
 
 export const config = {
