@@ -222,7 +222,7 @@ export default function Home() {
           <aside className="order-callout" aria-labelledby="order-callout-title">
             <div>
               <p>Skip the wait</p>
-              <h3 id="order-callout-title">Order ahead with SkyTab.</h3>
+              <h3 id="order-callout-title">Order Online.</h3>
               <span>Build your order online, then pick it up hot from the Big Papa&apos;s trailer.</span>
             </div>
             <a className="button button--cream" href={siteConfig.onlineOrderUrl} {...externalLinkProps}>
