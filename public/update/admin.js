@@ -20,6 +20,10 @@
     note: "[data-note]",
     publishButton: "[data-publish-button]",
     publishMessage: "[data-publish-message]",
+    facebookSync: "[data-facebook-sync]",
+    facebookStatus: "[data-facebook-status]",
+    facebookDetail: "[data-facebook-detail]",
+    facebookRetry: "[data-facebook-retry]",
     clearButton: "[data-clear-button]",
     logoutButton: "[data-logout-button]",
   };
@@ -37,6 +41,7 @@
     element.textContent = message;
     element.classList.toggle("is-error", type === "error");
     element.classList.toggle("is-success", type === "success");
+    element.classList.toggle("is-warning", type === "warning");
   }
 
   function setBusy(button, busy, busyLabel) {
@@ -114,12 +119,71 @@
       : "The website is showing the standard service-area message.";
   }
 
+  function renderFacebookStatus(facebook) {
+    const status = facebook?.state || "not_configured";
+    const classes = ["not_configured", "ready", "pending", "open", "closed", "failed"];
+    for (const name of classes) {
+      elements.facebookSync?.classList.toggle(`is-${name.replace("_", "-")}`, status === name);
+    }
+    elements.facebookSync?.setAttribute("aria-busy", String(status === "pending"));
+
+    const titles = {
+      not_configured: "Setup needed",
+      ready: "Connected and ready",
+      pending: "Updating Facebook…",
+      open: "Facebook post is live",
+      closed: "Previous post marked closed",
+      failed: "Facebook needs attention",
+    };
+    if (elements.facebookStatus) {
+      elements.facebookStatus.textContent = titles[status] || "Facebook status unavailable";
+    }
+    if (elements.facebookDetail) {
+      elements.facebookDetail.textContent = facebook?.message
+        || "Your public map works independently if Facebook has a problem.";
+    }
+    if (elements.facebookRetry) {
+      elements.facebookRetry.hidden = !(status === "failed" && facebook?.canRetry);
+      elements.facebookRetry.textContent = facebook?.requiresConfirmation
+        ? "Check Page & retry"
+        : "Retry Facebook";
+      elements.facebookRetry.dataset.requiresConfirmation = String(Boolean(facebook?.requiresConfirmation));
+    }
+  }
+
+  function publishOutcome(facebook) {
+    if (facebook?.state === "open") {
+      return { message: "Live location published and Facebook updated.", type: "success" };
+    }
+    if (facebook?.state === "pending") {
+      return { message: "Live location published. Facebook is still processing the update.", type: "warning" };
+    }
+    if (facebook?.state === "failed") {
+      return { message: "Live location published, but Facebook needs attention below.", type: "warning" };
+    }
+    if (facebook?.state === "not_configured") {
+      return { message: "Live location published. Facebook auto-posting still needs setup.", type: "warning" };
+    }
+    return { message: "Live location published. The public website has been updated.", type: "success" };
+  }
+
+  function closeOutcome(facebook) {
+    if (facebook?.state === "closed") {
+      return { message: "Live pin removed and the Facebook post was marked closed.", type: "success" };
+    }
+    if (facebook?.state === "failed" || facebook?.state === "pending") {
+      return { message: "Live pin removed. Facebook still needs attention below.", type: "warning" };
+    }
+    return { message: "Live pin removed. Customers now see the standard message.", type: "success" };
+  }
+
   async function loadDashboard() {
     try {
       const { response, result } = await request("/api/location/manage");
       if (response.ok) {
         showDashboard();
         renderCurrent(result.location, result.expired);
+        renderFacebookStatus(result.facebook);
         return;
       }
       if (response.status === 401) {
@@ -241,7 +305,9 @@
       }
       if (!response.ok) throw new Error(result.message || "Could not publish the location.");
       renderCurrent(result.location, false);
-      setMessage(elements.publishMessage, "Live location published. The public website has been updated.", "success");
+      renderFacebookStatus(result.facebook);
+      const outcome = publishOutcome(result.facebook);
+      setMessage(elements.publishMessage, outcome.message, outcome.type);
     } catch (error) {
       setMessage(elements.publishMessage, error.message || "Could not publish the location.", "error");
     } finally {
@@ -266,14 +332,53 @@
       }
       if (!response.ok) throw new Error(result.message || "Could not remove the location.");
       renderCurrent(null, false);
+      renderFacebookStatus(result.facebook);
       state.coordinates = null;
       elements.coordinatePreview.hidden = true;
       elements.publishButton.disabled = true;
-      setMessage(elements.publishMessage, "Live pin removed. Customers now see the standard message.", "success");
+      const outcome = closeOutcome(result.facebook);
+      setMessage(elements.publishMessage, outcome.message, outcome.type);
     } catch (error) {
       setMessage(elements.publishMessage, error.message || "Could not remove the location.", "error");
     } finally {
       setBusy(elements.clearButton, false, "Removing…");
+    }
+  });
+
+  elements.facebookRetry?.addEventListener("click", async () => {
+    const requiresConfirmation = elements.facebookRetry.dataset.requiresConfirmation === "true";
+    if (requiresConfirmation) {
+      const confirmed = window.confirm(
+        "First check your Facebook Page and make sure the live-location post was NOT created. Retry only if no post is there. Continue?",
+      );
+      if (!confirmed) return;
+    }
+    setBusy(elements.facebookRetry, true, "Retrying…");
+    setMessage(elements.publishMessage);
+    try {
+      const { response, result } = await request("/api/location/manage", {
+        method: "POST",
+        body: JSON.stringify({ action: "retryFacebook", confirmedNoPost: requiresConfirmation }),
+      });
+      if (response.status === 401) {
+        showLogin("Your session expired. Sign in and try again.", "error");
+        return;
+      }
+      if (!response.ok) throw new Error(result.message || "Could not retry Facebook.");
+      renderFacebookStatus(result.facebook);
+      if (result.facebook?.state === "open") {
+        setMessage(elements.publishMessage, "Facebook is updated and the post is live.", "success");
+      } else if (result.facebook?.state === "closed") {
+        setMessage(elements.publishMessage, "The Facebook post is now marked closed.", "success");
+      } else if (result.facebook?.state === "pending") {
+        setMessage(elements.publishMessage, "Facebook is still processing the update.", "warning");
+      } else {
+        setMessage(elements.publishMessage, "Facebook still needs attention. Your public map is unaffected.", "warning");
+      }
+    } catch (error) {
+      setMessage(elements.publishMessage, error.message || "Could not retry Facebook.", "error");
+    } finally {
+      setBusy(elements.facebookRetry, false, "Retrying…");
     }
   });
 

@@ -5,6 +5,9 @@
 [functions]
   directory = "netlify/functions"
 
+[functions."location-expiry"]
+  schedule = "*/15 * * * *"
+
 [build.environment]
   NODE_VERSION = "22"
   NETLIFY_NEXT_PLUGIN_SKIP = "true"

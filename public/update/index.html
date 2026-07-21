@@ -114,9 +114,18 @@
           <div>
             <p class="eyebrow">Final check</p>
             <h2>Are you parked and ready to serve?</h2>
-            <p>Publishing replaces the previous pin and starts the expiration timer.</p>
+            <p>Publishing replaces the previous pin, starts the expiration timer, and updates your Facebook Page.</p>
           </div>
           <button class="publish-button" type="button" data-publish-button disabled>Publish live location</button>
+          <div class="facebook-sync" data-facebook-sync>
+            <span class="facebook-sync-dot" aria-hidden="true"></span>
+            <div>
+              <small>Facebook auto-post</small>
+              <strong data-facebook-status>Checking connection…</strong>
+              <span data-facebook-detail>Your public map works independently if Facebook has a problem.</span>
+            </div>
+            <button type="button" data-facebook-retry hidden>Retry Facebook</button>
+          </div>
           <p class="publish-message" data-publish-message role="status" aria-live="polite"></p>
         </section>
 
