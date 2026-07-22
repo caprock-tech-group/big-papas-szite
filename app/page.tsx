@@ -105,11 +105,34 @@ export default function Home() {
     <>
       <a className="skip-link" href="#main-content">Skip to content</a>
 
-      <div className="announcement" role="note">
+      <div className="announcement" data-default-announcement role="note">
         <span><StarIcon /></span>
         <p>Based in Claude • Rolling across the Texas Panhandle</p>
         <span><StarIcon /></span>
       </div>
+
+      <aside className="live-now-banner" data-live-now-banner role="status" hidden>
+        <div className="live-now-banner__inner">
+          <div className="live-now-banner__copy">
+            <p className="live-now-banner__kicker">
+              <span className="live-now-banner__pulse" aria-hidden="true" /> Live now
+            </p>
+            <strong>Big Papa&apos;s is open!</strong>
+            <p className="live-now-banner__details">
+              <span data-live-banner-place>We&apos;re parked and serving</span>
+              <small data-live-banner-hours hidden />
+            </p>
+          </div>
+          <div className="live-now-banner__actions">
+            <a data-live-banner-directions href="#" {...externalLinkProps}>
+              <MapPinIcon /> Get directions
+            </a>
+            <a href={siteConfig.onlineOrderUrl} {...externalLinkProps}>
+              <BagIcon /> Order online
+            </a>
+          </div>
+        </div>
+      </aside>
 
       <header className="site-header">
         <a className="brand-link" href="#top">
@@ -389,7 +412,10 @@ export default function Home() {
       </footer>
 
       <nav className="mobile-action-bar" aria-label="Quick actions">
-        <a href="#menu">View menu</a>
+        <a data-mobile-live-action href="#menu">
+          <span className="mobile-live-dot" data-mobile-live-dot aria-hidden="true" hidden />
+          <span data-mobile-live-label>View menu</span>
+        </a>
         <a href={siteConfig.onlineOrderUrl} {...externalLinkProps}>Order online <ArrowIcon /></a>
       </nav>
 
