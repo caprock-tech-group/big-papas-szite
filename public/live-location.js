@@ -5,6 +5,15 @@
   if (!root) return;
 
   const elements = {
+    defaultAnnouncement: document.querySelector("[data-default-announcement]"),
+    liveBanner: document.querySelector("[data-live-now-banner]"),
+    liveBannerPlace: document.querySelector("[data-live-banner-place]"),
+    liveBannerHours: document.querySelector("[data-live-banner-hours]"),
+    liveBannerDirections: document.querySelector("[data-live-banner-directions]"),
+    mobileActionBar: document.querySelector(".mobile-action-bar"),
+    mobileLiveAction: document.querySelector("[data-mobile-live-action]"),
+    mobileLiveDot: document.querySelector("[data-mobile-live-dot]"),
+    mobileLiveLabel: document.querySelector("[data-mobile-live-label]"),
     map: root.querySelector("[data-live-map]"),
     placeholder: root.querySelector("[data-live-placeholder]"),
     frame: root.querySelector("[data-live-map-frame]"),
@@ -78,7 +87,51 @@
     return `Updated ${formatter.format(date)}`;
   }
 
+  function formatServingUntil(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Chicago",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+    return `Serving until ${formatter.format(date)}`;
+  }
+
+  function renderSiteOffline() {
+    if (elements.defaultAnnouncement) elements.defaultAnnouncement.hidden = false;
+    if (elements.liveBanner) elements.liveBanner.hidden = true;
+    elements.mobileActionBar?.classList.remove("is-live");
+    if (elements.mobileLiveAction) {
+      elements.mobileLiveAction.href = "#menu";
+      elements.mobileLiveAction.removeAttribute("target");
+      elements.mobileLiveAction.removeAttribute("rel");
+    }
+    if (elements.mobileLiveDot) elements.mobileLiveDot.hidden = true;
+    setText(elements.mobileLiveLabel, "View menu");
+  }
+
+  function renderSiteLive(location, directionsUrl) {
+    const place = location.locationName?.trim() || "We're parked and serving";
+    const servingHours = location.hours?.trim() || formatServingUntil(location.expiresAt);
+    if (elements.defaultAnnouncement) elements.defaultAnnouncement.hidden = true;
+    if (elements.liveBanner) elements.liveBanner.hidden = false;
+    setText(elements.liveBannerPlace, place);
+    setOptionalText(elements.liveBannerHours, servingHours);
+    if (elements.liveBannerDirections) elements.liveBannerDirections.href = directionsUrl;
+
+    elements.mobileActionBar?.classList.add("is-live");
+    if (elements.mobileLiveAction) {
+      elements.mobileLiveAction.href = directionsUrl;
+      elements.mobileLiveAction.target = "_blank";
+      elements.mobileLiveAction.rel = "noreferrer noopener";
+    }
+    if (elements.mobileLiveDot) elements.mobileLiveDot.hidden = false;
+    setText(elements.mobileLiveLabel, "Live now — directions");
+  }
+
   function renderOffline() {
+    renderSiteOffline();
     setText(elements.title, defaultCopy.title);
     setText(elements.summary, defaultCopy.summary);
     setText(elements.kicker, "Current status");
@@ -104,6 +157,8 @@
     }
 
     const place = location.locationName?.trim() || "Big Papa's is parked and serving";
+    const directionsUrl = createDirectionsUrl(latitude, longitude);
+    renderSiteLive(location, directionsUrl);
     setText(elements.title, "We're parked. Come get loaded.");
     setText(elements.summary, "The live pin below is our current service location. Tap directions and we'll see you there.");
     setText(elements.kicker, "Live location");
@@ -124,7 +179,7 @@
     if (elements.placeholder) elements.placeholder.hidden = true;
     if (elements.mapBadge) elements.mapBadge.hidden = false;
     if (elements.directions) {
-      elements.directions.href = createDirectionsUrl(latitude, longitude);
+      elements.directions.href = directionsUrl;
       elements.directions.hidden = false;
     }
   }
