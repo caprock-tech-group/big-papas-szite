@@ -314,6 +314,23 @@ export default function Home() {
               referrerPolicy="no-referrer"
               hidden
             />
+            <div
+              className="live-truck-marker"
+              data-live-truck-marker
+              role="img"
+              aria-label="Big Papa's is here"
+              hidden
+            >
+              <span className="live-truck-marker__label">Big Papa&apos;s is here</span>
+              <img
+                src="/images/big-papas-truck-marker.webp"
+                alt=""
+                width="800"
+                height="449"
+              />
+              <span className="live-truck-marker__pointer" aria-hidden="true" />
+              <span className="live-truck-marker__anchor" aria-hidden="true" />
+            </div>
             <div className="live-map-badge" data-live-map-badge hidden>
               <span aria-hidden="true" /> Live now
             </div>
