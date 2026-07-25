@@ -18,6 +18,7 @@
     placeholder: root.querySelector("[data-live-placeholder]"),
     frame: root.querySelector("[data-live-map-frame]"),
     mapBadge: root.querySelector("[data-live-map-badge]"),
+    truckMarker: root.querySelector("[data-live-truck-marker]"),
     title: root.querySelector("[data-live-title]"),
     summary: root.querySelector("[data-live-summary]"),
     card: root.querySelector("[data-live-card]"),
@@ -63,7 +64,6 @@
       ].join(","),
     );
     url.searchParams.set("layer", "mapnik");
-    url.searchParams.set("marker", `${latitude},${longitude}`);
     return url.toString();
   }
 
@@ -144,6 +144,7 @@
       elements.frame.removeAttribute("src");
     }
     if (elements.mapBadge) elements.mapBadge.hidden = true;
+    if (elements.truckMarker) elements.truckMarker.hidden = true;
     if (elements.details) elements.details.hidden = true;
     if (elements.directions) elements.directions.hidden = true;
   }
@@ -178,6 +179,7 @@
     }
     if (elements.placeholder) elements.placeholder.hidden = true;
     if (elements.mapBadge) elements.mapBadge.hidden = false;
+    if (elements.truckMarker) elements.truckMarker.hidden = false;
     if (elements.directions) {
       elements.directions.href = directionsUrl;
       elements.directions.hidden = false;
