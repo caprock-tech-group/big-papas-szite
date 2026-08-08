@@ -388,19 +388,6 @@
     });
   });
 
-  document.querySelector("[data-copy-kiosk]")?.addEventListener("click", async (event) => {
-    const orientation = document.querySelector("[data-orientation]")?.value || "auto";
-    const url = `${window.location.origin}/menu-board/?orientation=${orientation}&kiosk=1`;
-    try {
-      await navigator.clipboard.writeText(url);
-      const original = event.currentTarget.textContent;
-      event.currentTarget.textContent = "Copied";
-      window.setTimeout(() => { event.currentTarget.textContent = original; }, 1600);
-    } catch {
-      window.prompt("Copy this kiosk URL:", url);
-    }
-  });
-
   async function loadDashboard() {
     try {
       const { response, result } = await request("/api/menu/manage");

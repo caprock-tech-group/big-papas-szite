@@ -18,7 +18,6 @@
   const orientationOverride = ["auto", "landscape", "portrait"].includes(params.get("orientation"))
     ? params.get("orientation")
     : null;
-  const isKiosk = params.get("kiosk") === "1";
   const isPreview = params.get("preview") === "1";
   const cacheKey = "big-papas-menu-board-cache-v1";
   const isInstalled = window.matchMedia("(display-mode: fullscreen)").matches
@@ -174,7 +173,7 @@
 
   function updateLaunchState() {
     const fullscreen = Boolean(document.fullscreenElement);
-    launchScreen.hidden = isKiosk || isInstalled || fullscreen || isPreview;
+    launchScreen.hidden = isInstalled || fullscreen || isPreview;
     screenControl?.setAttribute("aria-label", fullscreen ? "Leave fullscreen" : "Enter fullscreen");
     screenControl?.setAttribute("title", fullscreen ? "Leave fullscreen" : "Enter fullscreen");
   }
@@ -236,8 +235,8 @@
   void refreshMenu();
   window.setInterval(refreshMenu, 10_000);
 
-  // Browsers normally reject this until a real click; kiosk and installed-app modes do not need it.
-  if (!isKiosk && !isInstalled && !isPreview && document.documentElement.requestFullscreen) {
+  // Browsers normally reject this until a real click; an installed app does not need it.
+  if (!isInstalled && !isPreview && document.documentElement.requestFullscreen) {
     document.documentElement.requestFullscreen({ navigationUI: "hide" }).then(updateLaunchState).catch(updateLaunchState);
   }
 })();
