@@ -56,8 +56,8 @@ const defaultState: MenuBoardState = {
   updatedAt: "2026-08-08T00:00:00.000Z",
   board: {
     orientation: "auto",
-    headline: "Pick your potato.",
-    subheadline: "Texas-sized. Fully loaded. Made to satisfy.",
+    headline: "Texas Loaded Potatoes",
+    subheadline: "Bold flavor. Texas style. Big portions.",
     announcement: "",
     showDescriptions: true,
   },
@@ -271,6 +271,8 @@ function normalizeMenuState(value: unknown): MenuBoardState {
   const updatedAt = typeof record.updatedAt === "string" && Number.isFinite(Date.parse(record.updatedAt))
     ? record.updatedAt
     : defaultState.updatedAt;
+  const headline = cleanText(board.headline, 72, defaultState.board.headline);
+  const subheadline = cleanText(board.subheadline, 120, defaultState.board.subheadline);
 
   return {
     version: 1,
@@ -278,8 +280,10 @@ function normalizeMenuState(value: unknown): MenuBoardState {
     updatedAt,
     board: {
       orientation,
-      headline: cleanText(board.headline, 72, defaultState.board.headline),
-      subheadline: cleanText(board.subheadline, 120, defaultState.board.subheadline),
+      headline: headline === "Pick your potato." ? defaultState.board.headline : headline,
+      subheadline: subheadline === "Texas-sized. Fully loaded. Made to satisfy."
+        ? defaultState.board.subheadline
+        : subheadline,
       announcement: cleanText(board.announcement, 120),
       showDescriptions: booleanValue(board.showDescriptions, true),
     },

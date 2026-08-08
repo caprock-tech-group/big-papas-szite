@@ -77,6 +77,7 @@
         row.append(name, price);
         return row;
       });
+    container.style.setProperty("--item-count", String(Math.max(rows.length, 1)));
     container.replaceChildren(...rows);
   }
 
@@ -85,8 +86,8 @@
     currentMenu = menu;
     applyOrientation(menu.board?.orientation);
     board.dataset.showDescriptions = String(menu.board?.showDescriptions !== false);
-    text(document.querySelector("[data-headline]"), menu.board?.headline || "Pick your potato.");
-    text(document.querySelector("[data-subheadline]"), menu.board?.subheadline || "Texas-sized. Fully loaded. Made to satisfy.");
+    text(document.querySelector("[data-headline]"), menu.board?.headline || "Texas Loaded Potatoes");
+    text(document.querySelector("[data-subheadline]"), menu.board?.subheadline || "Bold flavor. Texas style. Big portions.");
 
     const announcementText = typeof menu.board?.announcement === "string" ? menu.board.announcement.trim() : "";
     if (announcement) {
@@ -97,6 +98,7 @@
     const visibleProducts = Array.isArray(menu.products)
       ? menu.products.filter((item) => item && item.visible !== false)
       : [];
+    products.style.setProperty("--product-count", String(Math.max(visibleProducts.length, 1)));
     products.replaceChildren(...visibleProducts.map(createProduct));
     renderSmallList(addOns, Array.isArray(menu.addOns) ? menu.addOns : []);
     renderSmallList(drinks, Array.isArray(menu.drinks) ? menu.drinks : []);
