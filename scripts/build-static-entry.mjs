@@ -34,7 +34,7 @@ html = html
 
 html = html.replace(
   "</body>",
-  `${structuredDataScripts.join("")}<script src="/live-location.js" defer></script></body>`,
+  `${structuredDataScripts.join("")}<script src="/live-location.js" defer></script><script src="/calendar-events.js" defer></script></body>`,
 );
 
 const binaryAssets = {};
@@ -62,6 +62,11 @@ const textAssets = {
   },
   "/live-location.js": {
     body: await readFile("public/live-location.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/calendar-events.js": {
+    body: await readFile("public/calendar-events.js", "utf8"),
     contentType: "text/javascript; charset=utf-8",
     cacheControl: "no-cache",
   },
@@ -146,6 +151,7 @@ await Promise.all([
   cp("public/favicon.svg", `${netlifyOutputDirectory}/favicon.svg`),
   cp("public/manifest.webmanifest", `${netlifyOutputDirectory}/manifest.webmanifest`),
   cp("public/live-location.js", `${netlifyOutputDirectory}/live-location.js`),
+  cp("public/calendar-events.js", `${netlifyOutputDirectory}/calendar-events.js`),
   cp("public/update/index.html", `${netlifyOutputDirectory}/update/index.html`),
   cp("public/update/admin.css", `${netlifyOutputDirectory}/update/admin.css`),
   cp("public/update/admin.js", `${netlifyOutputDirectory}/update/admin.js`),

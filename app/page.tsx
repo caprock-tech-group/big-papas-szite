@@ -57,6 +57,75 @@ function StarIcon() {
   );
 }
 
+function CalendarIcon() {
+  return (
+    <svg className="icon icon--calendar" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z" />
+      <path d="M3 9h18M8 2v4M16 2v4" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg className="icon icon--clock" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3.5 2" />
+    </svg>
+  );
+}
+
+const initialEvents = [
+  {
+    month: "Aug",
+    day: "29",
+    start: "2026-08-29T07:00:00-05:00",
+    end: "2026-08-29T11:00:00-05:00",
+    title: "Alzheimer’s Walk Event",
+    date: "Saturday, August 29",
+    time: "7:00–11:00 AM",
+    location: "Sam Houston Park • 4101 Line Ave, Amarillo",
+    detailsUrl: "https://www.google.com/maps/search/?api=1&query=Sam%20Houston%20Park%2C%204101%20Line%20Ave%2C%20Amarillo%2C%20TX%2079106",
+    detailsLabel: "Get directions",
+    image: "/images/big-hoss-hero.webp",
+    imageAlt: "Big Papa's brisket-loaded baked potato",
+    imagePosition: "center",
+    branded: false,
+  },
+  {
+    month: "Sep",
+    day: "05",
+    start: "2026-09-05T13:00:00-05:00",
+    end: "2026-09-05T20:00:00-05:00",
+    title: "Arts in the Sunset Center Barefest Music Festival",
+    date: "Saturday, September 5",
+    time: "1:00–8:00 PM",
+    location: "Arts in the Sunset • 3701 Plains Blvd, Amarillo",
+    detailsUrl: "https://www.google.com/maps/search/?api=1&query=Arts%20in%20the%20Sunset%2C%203701%20Plains%20Blvd%2C%20Amarillo%2C%20TX%2079102",
+    detailsLabel: "Get directions",
+    image: "/images/loaded-potato-lineup.webp",
+    imageAlt: "A lineup of Big Papa's loaded baked potatoes",
+    imagePosition: "43% center",
+    branded: false,
+  },
+  {
+    month: "Oct",
+    day: "13",
+    start: "2026-10-13T16:00:00-05:00",
+    end: "2026-10-13T20:00:00-05:00",
+    title: "Tradewind Trunk or Treat",
+    date: "Tuesday, October 13",
+    time: "4:00–8:00 PM",
+    location: "4105 Tradewind St • Amarillo, Texas",
+    detailsUrl: "https://www.google.com/maps/search/?api=1&query=4105%20Tradewind%20St%2C%20Amarillo%2C%20TX%2079118",
+    detailsLabel: "Get directions",
+    image: "/images/big-papas-logo.webp",
+    imageAlt: "Big Papa's Texas Loaded Potatoes logo",
+    imagePosition: "center",
+    branded: true,
+  },
+] as const;
+
 function BrandLockup({ footer = false }: { footer?: boolean }) {
   return (
     <span className={footer ? "brand brand--footer" : "brand"} aria-label={siteConfig.name}>
@@ -141,6 +210,7 @@ export default function Home() {
 
         <nav className="desktop-nav" aria-label="Primary navigation">
           <a href="#menu">Menu</a>
+          <a href="#schedule">Schedule</a>
           <a href="#find-us">Find us</a>
           <a href="#our-story">Our story</a>
           <a href={siteConfig.facebookUrl} {...externalLinkProps}>Facebook</a>
@@ -153,6 +223,7 @@ export default function Home() {
           <summary aria-label="Open navigation"><span /><span /><span /></summary>
           <nav aria-label="Mobile navigation">
             <a href="#menu">Menu</a>
+            <a href="#schedule">Schedule</a>
             <a href="#find-us">Find us</a>
             <a href="#our-story">Our story</a>
             <a href={siteConfig.facebookUrl} {...externalLinkProps}>Facebook</a>
@@ -295,6 +366,69 @@ export default function Home() {
           </figure>
         </section>
 
+        <section className="schedule-section" id="schedule" aria-labelledby="schedule-title" data-calendar-events>
+          <div className="schedule-shell">
+            <div className="section-heading schedule-heading">
+              <div>
+                <p className="eyebrow"><span /> Follow the flavor</p>
+                <h2 id="schedule-title">Upcoming stops.</h2>
+              </div>
+              <div className="schedule-intro">
+                <p>See where the Big Papa&apos;s trailer is headed next, then tap an event for the latest details.</p>
+                <p className="schedule-sync-note">
+                  <span className="schedule-sync-dot" aria-hidden="true" />
+                  <strong data-calendar-status>Google Calendar schedule</strong>
+                  <span>Updates automatically.</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="event-card-grid" data-calendar-grid aria-live="polite">
+              {initialEvents.map((event) => (
+                <article className="schedule-card" data-calendar-card data-calendar-end={event.end} key={`${event.month}-${event.day}-${event.title}`}>
+                  <div className={`schedule-card__cover${event.branded ? " schedule-card__cover--brand" : ""}`}>
+                    <img
+                      src={event.image}
+                      alt={event.imageAlt}
+                      width="1774"
+                      height="887"
+                      loading="lazy"
+                      style={{ objectPosition: event.imagePosition }}
+                    />
+                    <span className="schedule-card__wash" aria-hidden="true" />
+                    <time className="schedule-card__date" dateTime={event.start}>
+                      <span>{event.month}</span>
+                      <strong>{event.day}</strong>
+                    </time>
+                    <span className="schedule-card__source">Calendar event</span>
+                  </div>
+
+                  <div className="schedule-card__body">
+                    <h3>{event.title}</h3>
+                    <div className="schedule-card__meta">
+                      <p><CalendarIcon /><span><strong>{event.date}</strong><small><ClockIcon /> {event.time}</small></span></p>
+                      <p><MapPinIcon /><span>{event.location}</span></p>
+                    </div>
+                    <a className="schedule-card__link" href={event.detailsUrl} {...externalLinkProps}>
+                      {event.detailsLabel} <ArrowIcon />
+                    </a>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="schedule-empty" data-calendar-empty hidden>
+              <CalendarIcon />
+              <div><strong>No upcoming stops are listed yet.</strong><span>Follow us on Facebook so you don&apos;t miss the next one.</span></div>
+            </div>
+
+            <div className="schedule-footnote">
+              <p><CalendarIcon /><span><strong>Always know where we&apos;re headed.</strong> Additions, time changes, and cancellations flow here automatically from Big Papa&apos;s calendar.</span></p>
+              <a href={siteConfig.facebookUrl} {...externalLinkProps}>Follow on Facebook <FacebookIcon /></a>
+            </div>
+          </div>
+        </section>
+
         <section className="find-section" id="find-us" aria-labelledby="find-title" data-live-location>
           <div className="find-map" data-live-map>
             <div className="find-map-placeholder" data-live-placeholder aria-hidden="true">
@@ -399,6 +533,7 @@ export default function Home() {
           <p>{siteConfig.tagline}</p>
           <nav aria-label="Footer navigation">
             <a href="#menu">Menu</a>
+            <a href="#schedule">Schedule</a>
             <a href="#find-us">Find us</a>
             <a href="#our-story">Our story</a>
             <a href={siteConfig.facebookUrl} {...externalLinkProps}>Facebook</a>
