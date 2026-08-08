@@ -15,20 +15,16 @@
     <div class="board" data-board data-orientation="landscape" data-show-descriptions="true">
       <div class="announcement" data-announcement hidden></div>
 
-      <header class="board-header">
-        <div class="brand">
+      <header class="board-masthead">
+        <div class="masthead-logo">
           <img src="/images/big-papas-logo.webp" alt="" width="900" height="900">
-          <div class="brand-copy">
-            <p>Big Papa's</p>
-            <span>Texas Loaded Potatoes</span>
-          </div>
         </div>
-        <div class="headline">
-          <p>Big portions <span>•</span> Bold flavor <span>•</span> Texas style</p>
-          <h1 data-headline>Pick your potato.</h1>
-          <span data-subheadline>Texas-sized. Fully loaded. Made to satisfy.</span>
+        <div class="masthead-copy">
+          <span class="masthead-kicker" data-subheadline>Bold flavor. Texas style. Big portions.</span>
+          <h1><span>Big</span><span>Papa's</span></h1>
+          <p data-headline>Texas Loaded Potatoes</p>
         </div>
-        <div class="board-status" data-board-status>
+        <div class="board-status visually-hidden" data-board-status aria-live="polite">
           <i aria-hidden="true"></i>
           <span>Menu live</span>
         </div>
@@ -37,8 +33,9 @@
       <main class="board-main">
         <section class="products" aria-labelledby="products-title">
           <div class="section-title">
-            <p>Signature potatoes</p>
-            <h2 id="products-title">The heavy hitters</h2>
+            <span aria-hidden="true">★</span>
+            <h2 id="products-title">Signature Potatoes</h2>
+            <span aria-hidden="true">★</span>
           </div>
           <div class="product-grid" data-products>
             <article class="product product--red">
@@ -69,15 +66,10 @@
         </section>
 
         <aside class="side-menu">
-          <div class="food-photo" aria-hidden="true">
-            <img src="/images/big-hoss-hero.webp" alt="" width="1774" height="887">
-            <div><span>Home of</span><strong>The Big Hoss</strong></div>
-          </div>
-
           <div class="side-columns">
             <section class="mini-menu" aria-labelledby="addons-title">
-              <div class="mini-heading"><span></span><h2 id="addons-title">Add-ons</h2><span></span></div>
-              <div class="mini-list" data-add-ons>
+              <div class="mini-heading"><span aria-hidden="true">★</span><h2 id="addons-title">Add-ons</h2><span aria-hidden="true">★</span></div>
+              <div class="mini-list" data-add-ons style="--item-count: 8">
                 <p><span>Extra meat</span><strong>$3.00</strong></p>
                 <p><span>Extra cheese</span><strong>$1.00</strong></p>
                 <p><span>Bacon</span><strong>$1.50</strong></p>
@@ -90,8 +82,8 @@
             </section>
 
             <section class="mini-menu" aria-labelledby="drinks-title">
-              <div class="mini-heading"><span></span><h2 id="drinks-title">Drinks</h2><span></span></div>
-              <div class="mini-list" data-drinks>
+              <div class="mini-heading"><span aria-hidden="true">★</span><h2 id="drinks-title">Drinks</h2><span aria-hidden="true">★</span></div>
+              <div class="mini-list" data-drinks style="--item-count: 4">
                 <p><span>Water</span><strong>$2.00</strong></p>
                 <p><span>Lemonade</span><strong>$3.00</strong></p>
                 <p><span>Soda</span><strong>$3.00</strong></p>
@@ -109,9 +101,9 @@
       </main>
 
       <footer class="board-footer">
+        <span aria-hidden="true">★</span>
         <p><strong>Bold flavor.</strong> Texas style. Big portions.</p>
-        <span>Menu selections and availability may vary by stop.</span>
-        <img src="/images/big-papas-logo.webp" alt="Big Papa's" width="900" height="900">
+        <span aria-hidden="true">★</span>
       </footer>
     </div>
 
