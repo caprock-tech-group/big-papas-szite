@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="theme-color" content="#171412">
+    <title>Big Papa's Menu Board</title>
+    <link rel="icon" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/images/menu-board-icon-192.webp">
+    <link rel="manifest" href="/menu-board/manifest.webmanifest">
+    <link rel="stylesheet" href="/menu-board/board.css">
+  </head>
+  <body>
+    <div class="board" data-board data-orientation="landscape" data-show-descriptions="true">
+      <div class="announcement" data-announcement hidden></div>
+
+      <header class="board-header">
+        <div class="brand">
+          <img src="/images/big-papas-logo.webp" alt="" width="900" height="900">
+          <div class="brand-copy">
+            <p>Big Papa's</p>
+            <span>Texas Loaded Potatoes</span>
+          </div>
+        </div>
+        <div class="headline">
+          <p>Big portions <span>•</span> Bold flavor <span>•</span> Texas style</p>
+          <h1 data-headline>Pick your potato.</h1>
+          <span data-subheadline>Texas-sized. Fully loaded. Made to satisfy.</span>
+        </div>
+        <div class="board-status" data-board-status>
+          <i aria-hidden="true"></i>
+          <span>Menu live</span>
+        </div>
+      </header>
+
+      <main class="board-main">
+        <section class="products" aria-labelledby="products-title">
+          <div class="section-title">
+            <p>Signature potatoes</p>
+            <h2 id="products-title">The heavy hitters</h2>
+          </div>
+          <div class="product-grid" data-products>
+            <article class="product product--red">
+              <div><p>Signature potato</p><h3>The Big Hoss</h3><span>Smoked brisket, smoked queso, bacon, butter, sour cream, green onions, jalapeños, BBQ drizzle.</span></div><strong>$18.99</strong>
+            </article>
+            <article class="product product--blue">
+              <div><p>Slow-cooked favorite</p><h3>Pulled Pork Papa</h3><span>Pulled pork, cheddar, butter, sour cream, jalapeños, crispy onions, BBQ sauce.</span></div><strong>$15.99</strong>
+            </article>
+            <article class="product product--gold">
+              <div><p>Tex-Mex favorite</p><h3>Taco Tater</h3><span>Seasoned taco meat, queso, cheddar, lettuce, pico, sour cream, jalapeños, tortilla strips.</span></div><strong>$14.99</strong>
+            </article>
+            <article class="product product--red">
+              <div><p>Comfort on comfort</p><h3>Mac Daddy</h3><span>Mac & cheese, cheddar, bacon, sour cream, green onions.</span></div><strong>$13.99</strong>
+            </article>
+            <article class="product product--blue">
+              <div><p>Pizza night, reloaded</p><h3>Pepperoni Pizza Potato</h3><span>Marinara, mozzarella, pepperoni, parmesan.</span></div><strong>$13.99</strong>
+            </article>
+            <article class="product product--gold">
+              <div><p>A classic combination</p><h3>Broccoli Cheddar</h3><span>Broccoli, cheddar cheese sauce, cheddar, butter, sour cream.</span></div><strong>$12.99</strong>
+            </article>
+            <article class="product product--red">
+              <div><p>Country comfort <em>New</em></p><h3>Chicken Fried Steak Tater</h3><span>Chicken fried steak, country gravy, shredded cheese.</span></div><strong>$15.99</strong>
+            </article>
+            <article class="product product--blue">
+              <div><p>Breakfast, loaded <em>New</em></p><h3>Breakfast Tater</h3><span>Sausage, bacon, egg, country gravy, shredded cheese.</span></div><strong>$14.99</strong>
+            </article>
+          </div>
+        </section>
+
+        <aside class="side-menu">
+          <div class="food-photo" aria-hidden="true">
+            <img src="/images/big-hoss-hero.webp" alt="" width="1774" height="887">
+            <div><span>Home of</span><strong>The Big Hoss</strong></div>
+          </div>
+
+          <div class="side-columns">
+            <section class="mini-menu" aria-labelledby="addons-title">
+              <div class="mini-heading"><span></span><h2 id="addons-title">Add-ons</h2><span></span></div>
+              <div class="mini-list" data-add-ons>
+                <p><span>Extra meat</span><strong>$3.00</strong></p>
+                <p><span>Extra cheese</span><strong>$1.00</strong></p>
+                <p><span>Bacon</span><strong>$1.50</strong></p>
+                <p><span>Jalapeños</span><strong>$0.75</strong></p>
+                <p><span>Sour cream</span><strong>$0.75</strong></p>
+                <p><span>BBQ sauce</span><strong>$0.75</strong></p>
+                <p><span>Ranch</span><strong>$0.75</strong></p>
+                <p><span>Green onions</span><strong>$0.50</strong></p>
+              </div>
+            </section>
+
+            <section class="mini-menu" aria-labelledby="drinks-title">
+              <div class="mini-heading"><span></span><h2 id="drinks-title">Drinks</h2><span></span></div>
+              <div class="mini-list" data-drinks>
+                <p><span>Water</span><strong>$2.00</strong></p>
+                <p><span>Lemonade</span><strong>$3.00</strong></p>
+                <p><span>Soda</span><strong>$3.00</strong></p>
+                <p><span>Sweet tea</span><strong>$3.00</strong></p>
+              </div>
+            </section>
+          </div>
+
+          <section class="combo" data-combo>
+            <p data-combo-label>Add a combo</p>
+            <span data-combo-description>Add any drink + cookie</span>
+            <strong data-combo-price>$4.00</strong>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="board-footer">
+        <p><strong>Bold flavor.</strong> Texas style. Big portions.</p>
+        <span>Menu selections and availability may vary by stop.</span>
+        <img src="/images/big-papas-logo.webp" alt="Big Papa's" width="900" height="900">
+      </footer>
+    </div>
+
+    <section class="launch-screen" data-launch-screen hidden>
+      <div class="launch-card">
+        <img src="/images/big-papas-logo.webp" alt="Big Papa's Texas Loaded Potatoes" width="900" height="900">
+        <p>Menu board ready</p>
+        <h2>Fill the screen with flavor.</h2>
+        <span>Start once to hide the browser controls and keep this display awake.</span>
+        <button type="button" data-fullscreen-button>Start menu board</button>
+        <button class="install-button" type="button" data-install-button hidden>Install on this PC</button>
+        <small>Press Esc anytime to leave fullscreen.</small>
+      </div>
+    </section>
+
+    <button class="screen-control" type="button" data-screen-control aria-label="Enter fullscreen" title="Enter fullscreen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
+    </button>
+
+    <script src="/menu-board/board.js" defer></script>
+  </body>
+</html>

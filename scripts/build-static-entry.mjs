@@ -42,6 +42,8 @@ for (const [pathname, filename, contentType] of [
   ["/images/big-hoss-hero.webp", "public/images/big-hoss-hero.webp", "image/webp"],
   ["/images/loaded-potato-lineup.webp", "public/images/loaded-potato-lineup.webp", "image/webp"],
   ["/images/big-papas-logo.webp", "public/images/big-papas-logo.webp", "image/webp"],
+  ["/images/menu-board-icon-192.webp", "public/images/menu-board-icon-192.webp", "image/webp"],
+  ["/images/menu-board-icon-512.webp", "public/images/menu-board-icon-512.webp", "image/webp"],
 ]) {
   binaryAssets[pathname] = {
     body: (await readFile(filename)).toString("base64"),
@@ -95,8 +97,68 @@ const textAssets = {
     contentType: "text/javascript; charset=utf-8",
     cacheControl: "no-cache",
   },
+  "/menu-board": {
+    body: await readFile("public/menu-board/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/menu-board/": {
+    body: await readFile("public/menu-board/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/menu-board/index.html": {
+    body: await readFile("public/menu-board/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/menu-board/board.css": {
+    body: await readFile("public/menu-board/board.css", "utf8"),
+    contentType: "text/css; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/menu-board/board.js": {
+    body: await readFile("public/menu-board/board.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/menu-board/manifest.webmanifest": {
+    body: await readFile("public/menu-board/manifest.webmanifest", "utf8"),
+    contentType: "application/manifest+json; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/menu-board/sw.js": {
+    body: await readFile("public/menu-board/sw.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/menu-admin": {
+    body: await readFile("public/menu-admin/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/menu-admin/": {
+    body: await readFile("public/menu-admin/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/menu-admin/index.html": {
+    body: await readFile("public/menu-admin/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/menu-admin/admin.css": {
+    body: await readFile("public/menu-admin/admin.css", "utf8"),
+    contentType: "text/css; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/menu-admin/admin.js": {
+    body: await readFile("public/menu-admin/admin.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
   "/robots.txt": {
-    body: `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml\n`,
+    body: `User-agent: *\nAllow: /\nDisallow: /menu-board/\nDisallow: /menu-admin/\nDisallow: /update/\nSitemap: ${siteUrl}/sitemap.xml\n`,
     contentType: "text/plain; charset=utf-8",
   },
   "/sitemap.xml": {
@@ -142,6 +204,8 @@ const notFoundHtml = `<!doctype html>
 await rm(netlifyOutputDirectory, { recursive: true, force: true });
 await mkdir(`${netlifyOutputDirectory}/images`, { recursive: true });
 await mkdir(`${netlifyOutputDirectory}/update`, { recursive: true });
+await mkdir(`${netlifyOutputDirectory}/menu-board`, { recursive: true });
+await mkdir(`${netlifyOutputDirectory}/menu-admin`, { recursive: true });
 
 await Promise.all([
   writeFile(`${netlifyOutputDirectory}/index.html`, html),
@@ -155,9 +219,19 @@ await Promise.all([
   cp("public/update/index.html", `${netlifyOutputDirectory}/update/index.html`),
   cp("public/update/admin.css", `${netlifyOutputDirectory}/update/admin.css`),
   cp("public/update/admin.js", `${netlifyOutputDirectory}/update/admin.js`),
+  cp("public/menu-board/index.html", `${netlifyOutputDirectory}/menu-board/index.html`),
+  cp("public/menu-board/board.css", `${netlifyOutputDirectory}/menu-board/board.css`),
+  cp("public/menu-board/board.js", `${netlifyOutputDirectory}/menu-board/board.js`),
+  cp("public/menu-board/manifest.webmanifest", `${netlifyOutputDirectory}/menu-board/manifest.webmanifest`),
+  cp("public/menu-board/sw.js", `${netlifyOutputDirectory}/menu-board/sw.js`),
+  cp("public/menu-admin/index.html", `${netlifyOutputDirectory}/menu-admin/index.html`),
+  cp("public/menu-admin/admin.css", `${netlifyOutputDirectory}/menu-admin/admin.css`),
+  cp("public/menu-admin/admin.js", `${netlifyOutputDirectory}/menu-admin/admin.js`),
   cp("public/images/big-hoss-hero.webp", `${netlifyOutputDirectory}/images/big-hoss-hero.webp`),
   cp("public/images/loaded-potato-lineup.webp", `${netlifyOutputDirectory}/images/loaded-potato-lineup.webp`),
   cp("public/images/big-papas-logo.webp", `${netlifyOutputDirectory}/images/big-papas-logo.webp`),
+  cp("public/images/menu-board-icon-192.webp", `${netlifyOutputDirectory}/images/menu-board-icon-192.webp`),
+  cp("public/images/menu-board-icon-512.webp", `${netlifyOutputDirectory}/images/menu-board-icon-512.webp`),
 ]);
 
 const runtime = `const TEXT_ASSETS = ${JSON.stringify(textAssets)};
@@ -190,9 +264,23 @@ function handler(request) {
   const pathname = new URL(request.url).pathname;
   const textAsset = TEXT_ASSETS[pathname];
   const binaryAsset = BINARY_ASSETS[pathname];
-  const responseHeaders = pathname.startsWith("/update")
-    ? { ...SECURITY_HEADERS, "X-Robots-Tag": "noindex, nofollow, noarchive" }
-    : SECURITY_HEADERS;
+  let responseHeaders = SECURITY_HEADERS;
+  if (pathname.startsWith("/update") || pathname.startsWith("/menu-admin")) {
+    responseHeaders = {
+      ...SECURITY_HEADERS,
+      "Cache-Control": "private, no-store, max-age=0",
+      "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests",
+      "X-Robots-Tag": "noindex, nofollow, noarchive"
+    };
+  } else if (pathname.startsWith("/menu-board")) {
+    responseHeaders = {
+      ...SECURITY_HEADERS,
+      "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-Robots-Tag": "noindex, nofollow, noarchive"
+    };
+    if (pathname === "/menu-board/sw.js") responseHeaders["Service-Worker-Allowed"] = "/menu-board/";
+  }
 
   if (!textAsset && !binaryAsset) {
     return new Response(request.method === "HEAD" ? null : "Not Found", {

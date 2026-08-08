@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="theme-color" content="#171412">
+    <title>Menu board manager | Big Papa's</title>
+    <link rel="icon" href="/favicon.svg">
+    <link rel="stylesheet" href="/menu-admin/admin.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to menu manager</a>
+
+    <header class="admin-header">
+      <a class="brand" href="/" aria-label="Big Papa's website">
+        <img src="/images/big-papas-logo.webp" alt="" width="900" height="900">
+        <span><strong>Big Papa's</strong><small>Menu board studio</small></span>
+      </a>
+      <span class="private-badge"><i aria-hidden="true"></i> Staff only</span>
+    </header>
+
+    <main id="main">
+      <section class="intro">
+        <p class="eyebrow">Your digital menu board</p>
+        <h1>Control the whole board from your phone.</h1>
+        <p>Edit products, prices and availability, choose a screen shape, preview it, and publish every display at once.</p>
+      </section>
+
+      <section class="panel login-panel" data-login-panel aria-labelledby="login-title">
+        <div class="panel-heading">
+          <span class="step-number">01</span>
+          <div><p>Shared staff access</p><h2 id="login-title">Sign in to the studio</h2></div>
+        </div>
+        <form data-login-form>
+          <label for="password">Same password as the live-location updater</label>
+          <div class="password-row">
+            <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="256">
+            <button type="submit">Sign in</button>
+          </div>
+          <p class="form-message" data-login-message role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="dashboard" data-dashboard hidden>
+        <div class="dashboard-topline">
+          <div class="sync-status" data-sync-status>
+            <i aria-hidden="true"></i>
+            <div><small>Menu board</small><strong data-sync-title>Loading your menu…</strong><span data-sync-detail></span></div>
+          </div>
+          <a class="view-board-button" href="/menu-board/" target="_blank" rel="noreferrer noopener">Open menu board <span>↗</span></a>
+        </div>
+
+        <section class="panel display-panel" aria-labelledby="display-title">
+          <div class="panel-heading">
+            <span class="step-number">01</span>
+            <div><p>Screen setup</p><h2 id="display-title">Make it fit any display</h2></div>
+          </div>
+
+          <div class="display-layout">
+            <div class="display-fields">
+              <label class="field" for="orientation">
+                <span>Default orientation</span>
+                <select id="orientation" data-orientation>
+                  <option value="auto">Automatic</option>
+                  <option value="landscape">Landscape · 16:9</option>
+                  <option value="portrait">Portrait · 9:16</option>
+                </select>
+                <small>Each screen link below can override this default.</small>
+              </label>
+
+              <label class="field" for="headline">
+                <span>Board headline</span>
+                <input id="headline" data-headline maxlength="72" placeholder="Pick your potato.">
+              </label>
+
+              <label class="field" for="subheadline">
+                <span>Supporting line</span>
+                <input id="subheadline" data-subheadline maxlength="120" placeholder="Texas-sized. Fully loaded. Made to satisfy.">
+              </label>
+
+              <label class="field" for="announcement">
+                <span>Announcement banner <small>Optional</small></span>
+                <input id="announcement" data-announcement maxlength="120" placeholder="Example: Breakfast taters available until 11 AM">
+              </label>
+
+              <label class="toggle-field" for="show-descriptions">
+                <span><strong>Show descriptions</strong><small>Turn off for extra-large type on smaller displays.</small></span>
+                <input id="show-descriptions" data-show-descriptions type="checkbox" checked>
+                <i aria-hidden="true"></i>
+              </label>
+            </div>
+
+            <div class="preview-studio">
+              <div class="preview-toolbar">
+                <div><strong>Live preview</strong><span>Unsaved edits appear here</span></div>
+                <div class="preview-switcher" role="group" aria-label="Preview orientation">
+                  <button type="button" data-preview-orientation="landscape" aria-pressed="true">Landscape</button>
+                  <button type="button" data-preview-orientation="portrait" aria-pressed="false">Portrait</button>
+                </div>
+              </div>
+              <div class="preview-frame preview-frame--landscape" data-preview-shell>
+                <iframe src="/menu-board/?preview=1&orientation=landscape" title="Menu board preview" data-preview-frame></iframe>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen-links">
+            <article>
+              <span class="screen-icon screen-icon--auto" aria-hidden="true"></span>
+              <div><strong>Automatic</strong><small>Adapts when the screen rotates</small></div>
+              <button type="button" data-copy-board-link="auto">Copy link</button>
+              <a href="/menu-board/?orientation=auto" target="_blank" rel="noreferrer noopener">Open ↗</a>
+            </article>
+            <article>
+              <span class="screen-icon screen-icon--landscape" aria-hidden="true"></span>
+              <div><strong>Landscape</strong><small>Best for a standard television</small></div>
+              <button type="button" data-copy-board-link="landscape">Copy link</button>
+              <a href="/menu-board/?orientation=landscape" target="_blank" rel="noreferrer noopener">Open ↗</a>
+            </article>
+            <article>
+              <span class="screen-icon screen-icon--portrait" aria-hidden="true"></span>
+              <div><strong>Portrait</strong><small>Best for a vertical display</small></div>
+              <button type="button" data-copy-board-link="portrait">Copy link</button>
+              <a href="/menu-board/?orientation=portrait" target="_blank" rel="noreferrer noopener">Open ↗</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel products-panel" aria-labelledby="products-title">
+          <div class="panel-heading panel-heading--action">
+            <span class="step-number">02</span>
+            <div><p>Main menu</p><h2 id="products-title">Loaded potatoes</h2></div>
+            <button type="button" class="add-button" data-add-product>+ Add product</button>
+          </div>
+          <p class="section-help">Use the arrows to control the display order. “Sold out” keeps the item visible; “Show” removes or restores it.</p>
+          <div class="product-editors" data-product-editors></div>
+        </section>
+
+        <div class="two-column-panels">
+          <section class="panel small-items-panel" aria-labelledby="addons-title">
+            <div class="panel-heading panel-heading--action">
+              <span class="step-number">03</span>
+              <div><p>Make it yours</p><h2 id="addons-title">Add-ons</h2></div>
+              <button type="button" class="add-button" data-add-small="addOns">+ Add</button>
+            </div>
+            <div class="small-item-editors" data-small-editors="addOns"></div>
+          </section>
+
+          <section class="panel small-items-panel" aria-labelledby="drinks-title">
+            <div class="panel-heading panel-heading--action">
+              <span class="step-number">04</span>
+              <div><p>Ice cold</p><h2 id="drinks-title">Drinks</h2></div>
+              <button type="button" class="add-button" data-add-small="drinks">+ Add</button>
+            </div>
+            <div class="small-item-editors" data-small-editors="drinks"></div>
+          </section>
+        </div>
+
+        <section class="panel combo-panel" aria-labelledby="combo-title">
+          <div class="panel-heading">
+            <span class="step-number">05</span>
+            <div><p>Easy upsell</p><h2 id="combo-title">Combo callout</h2></div>
+          </div>
+          <div class="combo-fields">
+            <label class="toggle-field" for="combo-enabled">
+              <span><strong>Show combo</strong><small>Display the red combo callout.</small></span>
+              <input id="combo-enabled" data-combo-enabled type="checkbox" checked>
+              <i aria-hidden="true"></i>
+            </label>
+            <label class="field" for="combo-label"><span>Heading</span><input id="combo-label" data-combo-label maxlength="48"></label>
+            <label class="field" for="combo-description"><span>Description</span><input id="combo-description" data-combo-description maxlength="90"></label>
+            <label class="field" for="combo-price"><span>Price</span><input id="combo-price" data-combo-price inputmode="decimal" maxlength="16"></label>
+          </div>
+        </section>
+
+        <section class="setup-guide panel" aria-labelledby="setup-title">
+          <div class="panel-heading">
+            <span class="step-number">06</span>
+            <div><p>Put it on the TV</p><h2 id="setup-title">Three ways to launch</h2></div>
+          </div>
+          <div class="launch-options">
+            <article><span>1</span><div><strong>One-tap fullscreen</strong><p>Open the board in any browser and tap “Start menu board.”</p></div></article>
+            <article><span>2</span><div><strong>Install the web app</strong><p>Use Chrome or Edge’s Install option for an app-like desktop icon.</p></div></article>
+            <article><span>3</span><div><strong>Windows kiosk mode</strong><p>Start the mini PC directly into a fullscreen board after every reboot.</p><button type="button" data-copy-kiosk>Copy kiosk URL</button></div></article>
+          </div>
+        </section>
+
+        <div class="save-dock" data-save-dock>
+          <div><strong data-dirty-label>Everything is saved</strong><span data-save-message role="status" aria-live="polite">Menu changes update every board within seconds.</span></div>
+          <button type="button" data-save-button disabled>Publish menu changes</button>
+          <button class="logout-button" type="button" data-logout-button>Sign out</button>
+        </div>
+      </section>
+    </main>
+
+    <footer><p>Big Papa's menu board studio · Changes affect the board, not SkyTab ordering.</p></footer>
+    <script src="/menu-admin/admin.js" defer></script>
+  </body>
+</html>
