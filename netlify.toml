@@ -39,6 +39,27 @@
     X-Robots-Tag = "noindex, nofollow, noarchive"
 
 [[headers]]
+  for = "/menu-admin/*"
+  [headers.values]
+    Cache-Control = "private, no-store, max-age=0"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+
+[[headers]]
+  for = "/menu-board/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+
+[[headers]]
+  for = "/menu-board/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/menu-board/"
+
+[[headers]]
   for = "/robots.txt"
   [headers.values]
     Cache-Control = "public, max-age=3600"
@@ -51,6 +72,24 @@
 [[redirects]]
   from = "/api/calendar"
   to = "/.netlify/functions/calendar-get"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/admin/login"
+  to = "/.netlify/functions/admin-login"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/menu"
+  to = "/.netlify/functions/menu-get"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/menu/manage"
+  to = "/.netlify/functions/menu-manage"
   status = 200
   force = true
 
@@ -87,4 +126,14 @@
 [[redirects]]
   from = "/update"
   to = "/update/"
+  status = 301
+
+[[redirects]]
+  from = "/menu-board"
+  to = "/menu-board/"
+  status = 301
+
+[[redirects]]
+  from = "/menu-admin"
+  to = "/menu-admin/"
   status = 301
