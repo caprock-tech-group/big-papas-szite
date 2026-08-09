@@ -272,7 +272,7 @@ export default function Home() {
           </div>
           <div className="hero-caption" aria-hidden="true">
             <span>01</span>
-            <div><strong>The Big Hoss</strong><small>Smoked brisket • Signature potato</small></div>
+            <div><strong>The Big Hoss</strong><small>Brisket or pulled pork • Signature potato</small></div>
           </div>
         </section>
 
@@ -283,8 +283,8 @@ export default function Home() {
               <h2 id="menu-title">Pick your potato.</h2>
             </div>
             <p>
-              From slow-smoked brisket and chicken fried steak to breakfast and pizza-night
-              flavor, every option starts with a hot, fluffy baked potato and ends loaded.
+              From slow-smoked brisket and pulled pork to chicken fried steak, breakfast, and
+              Italian-inspired flavor, every option starts with a hot, fluffy baked potato and ends loaded.
             </p>
           </div>
 
@@ -353,7 +353,7 @@ export default function Home() {
           <figure className="lineup-photo">
             <img
               src="/images/loaded-potato-lineup.webp"
-              alt="Mac and cheese, pulled pork, and pepperoni pizza loaded baked potatoes"
+              alt="A lineup of Texas-sized loaded baked potatoes"
               width="1774"
               height="887"
               loading="lazy"

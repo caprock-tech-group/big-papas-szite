@@ -29,7 +29,7 @@ export type BoardSmallItem = {
 };
 
 export type MenuBoardState = {
-  version: 1;
+  version: 2;
   revision: number;
   updatedAt: string;
   board: {
@@ -51,9 +51,9 @@ export type MenuBoardState = {
 };
 
 const defaultState: MenuBoardState = {
-  version: 1,
+  version: 2,
   revision: 1,
-  updatedAt: "2026-08-08T00:00:00.000Z",
+  updatedAt: "2026-08-08T22:00:00.000Z",
   board: {
     orientation: "auto",
     headline: "Texas Loaded Potatoes",
@@ -67,19 +67,8 @@ const defaultState: MenuBoardState = {
       name: "The Big Hoss",
       eyebrow: "Signature potato",
       price: "$18.99",
-      description: "Smoked brisket, smoked queso, bacon, butter, sour cream, green onions, jalapeños, BBQ drizzle.",
+      description: "Choice of smoked brisket or pulled pork, smoked queso, bacon, butter, sour cream, green onions, jalapeños, BBQ drizzle.",
       accent: "red",
-      isNew: false,
-      available: true,
-      visible: true,
-    },
-    {
-      id: "pulled-pork-papa",
-      name: "Pulled Pork Papa",
-      eyebrow: "Slow-cooked favorite",
-      price: "$15.99",
-      description: "Pulled pork, cheddar, butter, sour cream, jalapeños, crispy onions, BBQ sauce.",
-      accent: "blue",
       isNew: false,
       available: true,
       visible: true,
@@ -107,13 +96,13 @@ const defaultState: MenuBoardState = {
       visible: true,
     },
     {
-      id: "pepperoni-pizza-potato",
-      name: "Pepperoni Pizza Potato",
-      eyebrow: "Pizza night, reloaded",
+      id: "italian-stallion",
+      name: "The Italian Stallion",
+      eyebrow: "Italian classic",
       price: "$13.99",
-      description: "Marinara, mozzarella, pepperoni, parmesan.",
+      description: "Meatballs, marinara, provolone.",
       accent: "blue",
-      isNew: false,
+      isNew: true,
       available: true,
       visible: true,
     },
@@ -221,7 +210,7 @@ function uniqueId(value: unknown, fallback: string, used: Set<string>) {
 function normalizeProducts(value: unknown, fallback: BoardProduct[]) {
   if (!Array.isArray(value)) return structuredClone(fallback);
   const used = new Set<string>();
-  return value.slice(0, MAX_PRODUCTS).map((entry, index) => {
+  const normalized = value.slice(0, MAX_PRODUCTS).map((entry, index) => {
     const record = entry && typeof entry === "object" ? entry as Partial<BoardProduct> : {};
     const original = fallback[index] ?? fallback[0];
     const accent = record.accent === "blue" || record.accent === "gold" || record.accent === "red"
@@ -238,6 +227,40 @@ function normalizeProducts(value: unknown, fallback: BoardProduct[]) {
       available: booleanValue(record.available, true),
       visible: booleanValue(record.visible, true),
     };
+  });
+
+  const hasItalianStallion = normalized.some((item) =>
+    item.id === "italian-stallion" || item.name.toLowerCase() === "the italian stallion"
+  );
+
+  return normalized.flatMap((item) => {
+    if (item.id === "pulled-pork-papa" || item.name.toLowerCase() === "pulled pork papa") {
+      return [];
+    }
+
+    if (item.id === "big-hoss" || item.name.toLowerCase() === "the big hoss") {
+      return [{
+        ...item,
+        id: "big-hoss",
+        name: "The Big Hoss",
+        eyebrow: "Signature potato",
+        description: "Choice of smoked brisket or pulled pork, smoked queso, bacon, butter, sour cream, green onions, jalapeños, BBQ drizzle.",
+      }];
+    }
+
+    if (item.id === "pepperoni-pizza-potato" || item.name.toLowerCase() === "pepperoni pizza potato") {
+      if (hasItalianStallion) return [];
+      return [{
+        ...item,
+        id: "italian-stallion",
+        name: "The Italian Stallion",
+        eyebrow: "Italian classic",
+        description: "Meatballs, marinara, provolone.",
+        isNew: true,
+      }];
+    }
+
+    return [item];
   });
 }
 
@@ -275,7 +298,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
   const subheadline = cleanText(board.subheadline, 120, defaultState.board.subheadline);
 
   return {
-    version: 1,
+    version: 2,
     revision,
     updatedAt,
     board: {

@@ -228,7 +228,7 @@
 
   function collectMenu() {
     return {
-      version: 1,
+      version: 2,
       revision: currentMenu?.revision || 1,
       updatedAt: currentMenu?.updatedAt || new Date().toISOString(),
       board: {
