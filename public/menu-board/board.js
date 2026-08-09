@@ -16,7 +16,7 @@
     ? params.get("orientation")
     : null;
   const isPreview = params.get("preview") === "1";
-  const cacheKey = "big-papas-menu-board-cache-v2";
+  const cacheKey = "big-papas-menu-board-cache-v3";
 
   let currentMenu = null;
   let wakeLock = null;

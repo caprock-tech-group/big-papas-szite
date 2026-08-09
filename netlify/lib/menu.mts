@@ -29,7 +29,7 @@ export type BoardSmallItem = {
 };
 
 export type MenuBoardState = {
-  version: 2;
+  version: 3;
   revision: number;
   updatedAt: string;
   board: {
@@ -51,7 +51,7 @@ export type MenuBoardState = {
 };
 
 const defaultState: MenuBoardState = {
-  version: 2,
+  version: 3,
   revision: 1,
   updatedAt: "2026-08-08T22:00:00.000Z",
   board: {
@@ -100,7 +100,7 @@ const defaultState: MenuBoardState = {
       name: "The Italian Stallion",
       eyebrow: "Italian classic",
       price: "$13.99",
-      description: "Meatballs, marinara, provolone.",
+      description: "Meatballs, marinara, provolone, grated Parmesan.",
       accent: "blue",
       isNew: true,
       available: true,
@@ -255,7 +255,7 @@ function normalizeProducts(value: unknown, fallback: BoardProduct[]) {
         id: "italian-stallion",
         name: "The Italian Stallion",
         eyebrow: "Italian classic",
-        description: "Meatballs, marinara, provolone.",
+        description: "Meatballs, marinara, provolone, grated Parmesan.",
         isNew: true,
       }];
     }
@@ -298,7 +298,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
   const subheadline = cleanText(board.subheadline, 120, defaultState.board.subheadline);
 
   return {
-    version: 2,
+    version: 3,
     revision,
     updatedAt,
     board: {
