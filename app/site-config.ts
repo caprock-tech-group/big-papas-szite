@@ -45,7 +45,7 @@ export const menuItems = [
     name: "The Italian Stallion",
     eyebrow: "Italian classic",
     price: "$13.99",
-    description: "Meatballs, marinara, provolone.",
+    description: "Meatballs, marinara, provolone, grated Parmesan.",
     accent: "blue",
     isNew: true,
   },
