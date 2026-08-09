@@ -8,10 +8,7 @@
   const combo = document.querySelector("[data-combo]");
   const announcement = document.querySelector("[data-announcement]");
   const boardStatus = document.querySelector("[data-board-status]");
-  const launchScreen = document.querySelector("[data-launch-screen]");
-  const fullscreenButton = document.querySelector("[data-fullscreen-button]");
   const screenControl = document.querySelector("[data-screen-control]");
-  const installButton = document.querySelector("[data-install-button]");
   if (!board || !products || !addOns || !drinks) return;
 
   const params = new URLSearchParams(window.location.search);
@@ -20,12 +17,8 @@
     : null;
   const isPreview = params.get("preview") === "1";
   const cacheKey = "big-papas-menu-board-cache-v1";
-  const isInstalled = window.matchMedia("(display-mode: fullscreen)").matches
-    || window.matchMedia("(display-mode: standalone)").matches
-    || window.navigator.standalone === true;
 
   let currentMenu = null;
-  let deferredInstallPrompt = null;
   let wakeLock = null;
 
   function text(element, value) {
@@ -166,27 +159,25 @@
       if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
         await document.documentElement.requestFullscreen({ navigationUI: "hide" });
       }
-      launchScreen.hidden = true;
-      await requestWakeLock();
     } catch {
-      launchScreen.hidden = false;
+      // Some browsers, including iPhone browsers, do not support page fullscreen.
     }
+    await requestWakeLock();
+    updateScreenState();
   }
 
-  function updateLaunchState() {
+  function updateScreenState() {
     const fullscreen = Boolean(document.fullscreenElement);
-    launchScreen.hidden = isInstalled || fullscreen || isPreview;
     screenControl?.setAttribute("aria-label", fullscreen ? "Leave fullscreen" : "Enter fullscreen");
     screenControl?.setAttribute("title", fullscreen ? "Leave fullscreen" : "Enter fullscreen");
   }
 
-  fullscreenButton?.addEventListener("click", enterFullscreen);
   screenControl?.addEventListener("click", async () => {
     if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
     else await enterFullscreen();
   });
 
-  document.addEventListener("fullscreenchange", updateLaunchState);
+  document.addEventListener("fullscreenchange", updateScreenState);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible" && wakeLock?.released) void requestWakeLock();
   });
@@ -195,25 +186,6 @@
     if ((orientationOverride || currentMenu?.board?.orientation || "auto") === "auto") {
       applyOrientation("auto");
     }
-  });
-
-  window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    deferredInstallPrompt = event;
-    if (installButton) installButton.hidden = false;
-  });
-
-  installButton?.addEventListener("click", async () => {
-    if (!deferredInstallPrompt) return;
-    deferredInstallPrompt.prompt();
-    await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = null;
-    installButton.hidden = true;
-  });
-
-  window.addEventListener("appinstalled", () => {
-    deferredInstallPrompt = null;
-    if (installButton) installButton.hidden = true;
   });
 
   if (isPreview) {
@@ -233,12 +205,7 @@
   const savedMenu = readSavedMenu();
   if (savedMenu) renderMenu(savedMenu);
   applyOrientation(savedMenu?.board?.orientation || "auto");
-  updateLaunchState();
+  updateScreenState();
   void refreshMenu();
   window.setInterval(refreshMenu, 10_000);
-
-  // Browsers normally reject this until a real click; an installed app does not need it.
-  if (!isInstalled && !isPreview && document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen({ navigationUI: "hide" }).then(updateLaunchState).catch(updateLaunchState);
-  }
 })();
