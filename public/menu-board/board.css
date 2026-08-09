@@ -57,7 +57,7 @@ button {
   min-width: 0;
   min-height: 0;
   display: grid;
-  grid-template-rows: auto 30dvh minmax(0, 1fr) 6.4dvh;
+  grid-template-rows: auto 22dvh minmax(0, 1fr) 5.5dvh;
   grid-template-areas:
     "announcement"
     "masthead"
@@ -137,11 +137,11 @@ button {
   min-width: 0;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 33%) minmax(0, 67%);
+  grid-template-columns: minmax(0, 30%) minmax(0, 70%);
   align-items: stretch;
   gap: 1.8vw;
   overflow: hidden;
-  padding: 1.4dvh 2.2vw 1.2dvh;
+  padding: 0.8dvh 2.2vw 0.6dvh;
   border-bottom: clamp(3px, 0.42vmin, 8px) solid var(--red);
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.08)),
@@ -175,8 +175,9 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0.5dvh 0 0;
+  padding: 0.2dvh 0 0;
   overflow: visible;
+  text-align: center;
 }
 
 .masthead-kicker {
@@ -184,7 +185,7 @@ button {
   margin: 0 0 0.8dvh;
   color: var(--red);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(11px, 1.25vw, 27px);
+  font-size: clamp(11px, min(1.25vw, 2.3dvh), 27px);
   font-style: italic;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -194,20 +195,25 @@ button {
 
 .masthead-copy h1 {
   min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.13em;
   margin: 0;
   color: var(--ink);
   font-family: Impact, "Arial Black", "Franklin Gothic Heavy", sans-serif;
-  font-size: clamp(54px, min(9vw, 13dvh), 176px);
+  font-size: clamp(48px, min(8vw, 11.5dvh), 154px);
   font-stretch: condensed;
   font-weight: 950;
   letter-spacing: -0.025em;
-  line-height: 0.72;
+  line-height: 0.86;
   text-transform: uppercase;
   text-shadow: 1px 1px 0 rgba(116, 70, 37, 0.18);
+  white-space: nowrap;
 }
 
 .masthead-copy h1 span {
-  display: block;
+  display: inline;
 }
 
 .masthead-copy > p {
@@ -218,14 +224,14 @@ button {
   align-items: center;
   justify-content: center;
   gap: 0.75em;
-  margin: 1.35dvh -2.5vw 0 0;
+  margin: 0.6dvh -2.5vw 0 0;
   padding: 0.55dvh 2.5vw 0.45dvh 1.5vw;
   color: var(--paper-light);
   background:
     linear-gradient(90deg, rgba(82, 4, 3, 0.18), transparent 20% 80%, rgba(82, 4, 3, 0.26)),
     var(--red);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(15px, 2.2vw, 46px);
+  font-size: clamp(15px, min(2.2vw, 4dvh), 46px);
   letter-spacing: 0.045em;
   line-height: 1;
   text-align: center;
@@ -303,7 +309,7 @@ button {
 }
 
 .section-title h2 {
-  font-size: clamp(17px, 2.15vw, 46px);
+  font-size: clamp(17px, min(2.15vw, 4dvh), 46px);
 }
 
 .section-title > span,
@@ -328,7 +334,7 @@ button {
   align-items: center;
   gap: 0.8vw;
   overflow: hidden;
-  padding: 0.36dvh 0.5vw 0.32dvh 0.3vw;
+  padding: 0.18dvh 0.5vw 0.16dvh 0.3vw;
   border-bottom: clamp(1px, 0.11vmin, 2px) solid rgba(133, 22, 16, 0.62);
 }
 
@@ -347,7 +353,7 @@ button {
   gap: 0.6em;
   margin: 0 0 0.18dvh;
   color: var(--red);
-  font-size: clamp(7px, 0.55vw, 12px);
+  font-size: clamp(7px, min(0.55vw, 1.55dvh), 12px);
   font-weight: 950;
   letter-spacing: 0.1em;
   line-height: 1;
@@ -357,12 +363,12 @@ button {
 .product p em {
   display: inline-grid;
   place-items: center;
-  padding: 0.32em 0.7em 0.25em;
+  padding: 0.12em 0.5em 0.1em;
   color: var(--paper-light);
   background: var(--red);
   clip-path: polygon(0 20%, 12% 22%, 10% 2%, 28% 13%, 38% 0, 48% 13%, 66% 0, 69% 17%, 91% 9%, 88% 30%, 100% 38%, 89% 50%, 100% 67%, 82% 70%, 86% 94%, 65% 84%, 53% 100%, 42% 84%, 22% 98%, 22% 78%, 0 83%, 9% 60%, 0 50%, 11% 38%);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: 0.9em;
+  font-size: 0.82em;
   font-style: normal;
   letter-spacing: 0.08em;
   transform: rotate(-3deg);
@@ -374,10 +380,10 @@ button {
   overflow: hidden;
   color: var(--ink);
   font-family: Rockwell, "Roboto Slab", Georgia, serif;
-  font-size: clamp(15px, 1.65vw, 35px);
+  font-size: clamp(15px, min(1.65vw, 3.55dvh), 35px);
   font-weight: 950;
   letter-spacing: -0.045em;
-  line-height: 0.94;
+  line-height: 1.02;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -388,22 +394,24 @@ button {
   margin-top: 0.28dvh;
   overflow: hidden;
   color: #2b2721;
-  font-size: clamp(8px, 0.72vw, 15px);
+  font-size: clamp(8px, min(0.72vw, 1.45dvh), 15px);
   font-stretch: condensed;
   font-weight: 850;
   letter-spacing: 0.004em;
   line-height: 1.08;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .product > strong {
   align-self: center;
   color: var(--red);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(20px, 2.15vw, 45px);
+  font-size: clamp(20px, min(2.15vw, 4.65dvh), 45px);
   font-weight: 900;
   letter-spacing: -0.035em;
-  line-height: 0.9;
+  line-height: 0.98;
   white-space: nowrap;
 }
 
@@ -468,7 +476,7 @@ button {
 }
 
 .mini-heading h2 {
-  font-size: clamp(16px, 2vw, 41px);
+  font-size: clamp(16px, min(2vw, 4dvh), 41px);
 }
 
 .mini-list {
@@ -486,7 +494,7 @@ button {
   overflow: hidden;
   color: var(--ink);
   font-family: "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
-  font-size: clamp(10px, 1.1vw, 24px);
+  font-size: clamp(9px, min(1.1vw, 1.9dvh), 24px);
   font-weight: 950;
   letter-spacing: -0.025em;
   line-height: 1;
@@ -575,7 +583,7 @@ button {
   padding-bottom: 0.7dvh;
   border-bottom: clamp(1px, 0.12vmin, 2px) solid rgba(255, 247, 228, 0.7);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(15px, 2vw, 42px);
+  font-size: clamp(15px, min(2vw, 3.8dvh), 42px);
   letter-spacing: 0.05em;
   line-height: 1;
   text-transform: uppercase;
@@ -583,7 +591,7 @@ button {
 
 .combo > span {
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(11px, 1.3vw, 28px);
+  font-size: clamp(11px, min(1.3vw, 2.45dvh), 28px);
   letter-spacing: 0.05em;
   line-height: 1;
   text-transform: uppercase;
@@ -593,7 +601,7 @@ button {
   margin-top: 0.6dvh;
   color: var(--paper);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(30px, 4.1vw, 86px);
+  font-size: clamp(30px, min(4.1vw, 8dvh), 86px);
   letter-spacing: -0.025em;
   line-height: 0.88;
 }
@@ -617,13 +625,13 @@ button {
 
 .board-footer > span {
   color: var(--red-bright);
-  font-size: clamp(15px, 2vw, 42px);
+  font-size: clamp(15px, min(2vw, 4dvh), 42px);
 }
 
 .board-footer p {
   margin: 0;
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(15px, 2.2vw, 46px);
+  font-size: clamp(15px, min(2.2vw, 4.15dvh), 46px);
   letter-spacing: 0.055em;
   line-height: 1;
   text-align: center;
@@ -681,8 +689,15 @@ button {
 }
 
 .board[data-orientation="portrait"] .masthead-copy h1 {
+  display: block;
   font-size: clamp(42px, min(12.5vw, 10dvh), 132px);
   line-height: 0.75;
+  text-align: left;
+  white-space: normal;
+}
+
+.board[data-orientation="portrait"] .masthead-copy h1 span {
+  display: block;
 }
 
 .board[data-orientation="portrait"] .masthead-kicker {
@@ -736,6 +751,7 @@ button {
 .board[data-orientation="portrait"] .product > div > span {
   font-size: clamp(6.5px, 1.12vw, 12px);
   line-height: 1.05;
+  white-space: normal;
 }
 
 .board[data-orientation="portrait"] .product > strong {
