@@ -10,7 +10,9 @@ export default async function handler(request: Request) {
     const menu = await readMenuState();
     return Response.json(menu, {
       headers: {
-        "Cache-Control": "public, max-age=2, s-maxage=5, stale-while-revalidate=30",
+        "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate",
+        "Netlify-CDN-Cache-Control": "no-store",
+        Expires: "0",
         "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
         "Referrer-Policy": "no-referrer",
         "X-Content-Type-Options": "nosniff",

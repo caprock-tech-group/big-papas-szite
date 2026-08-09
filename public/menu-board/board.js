@@ -16,9 +16,12 @@
     ? params.get("orientation")
     : null;
   const isPreview = params.get("preview") === "1";
-  const cacheKey = "big-papas-menu-board-cache-v3";
+  const cacheKey = "big-papas-menu-board-cache-v4";
+  const syncIntervalMs = 5_000;
 
   let currentMenu = null;
+  let currentMenuFingerprint = "";
+  let refreshInFlight = false;
   let wakeLock = null;
 
   function text(element, value) {
@@ -77,6 +80,7 @@
   function renderMenu(menu) {
     if (!menu || typeof menu !== "object") return;
     currentMenu = menu;
+    currentMenuFingerprint = JSON.stringify(menu);
     applyOrientation(menu.board?.orientation);
     board.dataset.showDescriptions = String(menu.board?.showDescriptions !== false);
     text(document.querySelector("[data-headline]"), menu.board?.headline || "Texas Loaded Potatoes");
@@ -126,14 +130,21 @@
   }
 
   async function refreshMenu() {
+    if (refreshInFlight) return;
+    refreshInFlight = true;
     try {
-      const response = await fetch(`/api/menu?board=${Date.now()}`, {
+      const response = await fetch(`/api/menu?sync=${Date.now()}`, {
         cache: "no-store",
-        headers: { Accept: "application/json" },
+        headers: {
+          Accept: "application/json",
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
       });
       if (!response.ok) throw new Error("Menu unavailable");
       const menu = await response.json();
-      if (!currentMenu || menu.version !== currentMenu.version || menu.revision !== currentMenu.revision || menu.updatedAt !== currentMenu.updatedAt) {
+      const fingerprint = JSON.stringify(menu);
+      if (!currentMenu || fingerprint !== currentMenuFingerprint) {
         renderMenu(menu);
       }
       saveLocalMenu(menu);
@@ -142,6 +153,8 @@
       const saved = readSavedMenu();
       if (!currentMenu && saved) renderMenu(saved);
       setConnection(false);
+    } finally {
+      refreshInFlight = false;
     }
   }
 
@@ -179,8 +192,14 @@
 
   document.addEventListener("fullscreenchange", updateScreenState);
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible" && wakeLock?.released) void requestWakeLock();
+    if (document.visibilityState !== "visible") return;
+    if (wakeLock?.released) void requestWakeLock();
+    void refreshMenu();
   });
+
+  window.addEventListener("focus", () => void refreshMenu());
+  window.addEventListener("online", () => void refreshMenu());
+  window.addEventListener("pageshow", () => void refreshMenu());
 
   window.addEventListener("resize", () => {
     if ((orientationOverride || currentMenu?.board?.orientation || "auto") === "auto") {
@@ -198,7 +217,10 @@
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/menu-board/sw.js", { scope: "/menu-board/" }).catch(() => {});
+      navigator.serviceWorker.register("/menu-board/sw.js", {
+        scope: "/menu-board/",
+        updateViaCache: "none",
+      }).catch(() => {});
     });
   }
 
@@ -207,5 +229,5 @@
   applyOrientation(savedMenu?.board?.orientation || "auto");
   updateScreenState();
   void refreshMenu();
-  window.setInterval(refreshMenu, 10_000);
+  window.setInterval(() => void refreshMenu(), syncIntervalMs);
 })();
