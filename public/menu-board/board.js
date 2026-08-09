@@ -16,7 +16,7 @@
     ? params.get("orientation")
     : null;
   const isPreview = params.get("preview") === "1";
-  const cacheKey = "big-papas-menu-board-cache-v1";
+  const cacheKey = "big-papas-menu-board-cache-v2";
 
   let currentMenu = null;
   let wakeLock = null;
@@ -133,7 +133,7 @@
       });
       if (!response.ok) throw new Error("Menu unavailable");
       const menu = await response.json();
-      if (!currentMenu || menu.revision !== currentMenu.revision || menu.updatedAt !== currentMenu.updatedAt) {
+      if (!currentMenu || menu.version !== currentMenu.version || menu.revision !== currentMenu.revision || menu.updatedAt !== currentMenu.updatedAt) {
         renderMenu(menu);
       }
       saveLocalMenu(menu);
