@@ -653,7 +653,7 @@ button {
   bottom: 14px;
   width: 48px;
   height: 48px;
-  display: grid;
+  display: none;
   place-items: center;
   padding: 0;
   border: 2px solid rgba(244, 232, 206, 0.8);
