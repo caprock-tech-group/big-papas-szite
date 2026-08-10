@@ -24,13 +24,15 @@ body {
   background: var(--ink);
 }
 
+html,
+body,
+body * {
+  cursor: none !important;
+}
+
 body,
 button {
   font-family: "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
-}
-
-button {
-  cursor: pointer;
 }
 
 [hidden] {
