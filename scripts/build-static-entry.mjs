@@ -44,6 +44,7 @@ for (const [pathname, filename, contentType] of [
   ["/images/big-papas-logo.webp", "public/images/big-papas-logo.webp", "image/webp"],
   ["/images/menu-board-icon-192.webp", "public/images/menu-board-icon-192.webp", "image/webp"],
   ["/images/menu-board-icon-512.webp", "public/images/menu-board-icon-512.webp", "image/webp"],
+  ["/images/facebook-event-announcement.jpg", "public/images/facebook-event-announcement.jpg", "image/jpeg"],
 ]) {
   binaryAssets[pathname] = {
     body: (await readFile(filename)).toString("base64"),
@@ -232,6 +233,7 @@ await Promise.all([
   cp("public/images/big-papas-logo.webp", `${netlifyOutputDirectory}/images/big-papas-logo.webp`),
   cp("public/images/menu-board-icon-192.webp", `${netlifyOutputDirectory}/images/menu-board-icon-192.webp`),
   cp("public/images/menu-board-icon-512.webp", `${netlifyOutputDirectory}/images/menu-board-icon-512.webp`),
+  cp("public/images/facebook-event-announcement.jpg", `${netlifyOutputDirectory}/images/facebook-event-announcement.jpg`),
 ]);
 
 const runtime = `const TEXT_ASSETS = ${JSON.stringify(textAssets)};
