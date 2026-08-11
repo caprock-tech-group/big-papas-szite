@@ -16,6 +16,10 @@ export type PublicCalendarEvent = {
   detailsLabel: "Event details" | "Get directions" | null;
 };
 
+type CalendarReadOptions = {
+  limit?: number;
+};
+
 function parameterText(value: ParameterValue | undefined) {
   if (!value) return "";
   return (typeof value === "string" ? value : value.val).trim();
@@ -51,7 +55,11 @@ function fallbackInstance(event: VEvent) {
   }];
 }
 
-export async function parseCalendarEvents(icsText: string, now = new Date()): Promise<PublicCalendarEvent[]> {
+export async function parseCalendarEvents(
+  icsText: string,
+  now = new Date(),
+  options: CalendarReadOptions = {},
+): Promise<PublicCalendarEvent[]> {
   const parsed = await ical.async.parseICS(icsText);
   const rangeStart = new Date(now.getTime() - 86_400_000);
   const rangeEnd = new Date(now.getTime() + HORIZON_DAYS * 86_400_000);
@@ -87,8 +95,13 @@ export async function parseCalendarEvents(icsText: string, now = new Date()): Pr
       const eventUrl = safeHttpsUrl(source.url);
       const directionsUrl = createDirectionsUrl(location);
 
+      const recurrenceId = source.recurrenceid instanceof Date
+        ? source.recurrenceid.toISOString()
+        : null;
+      const occurrenceId = recurrenceId ?? (component.rrule ? start.toISOString() : "single");
+
       events.push({
-        id: `${source.uid}:${start.toISOString()}`,
+        id: `${source.uid}:${occurrenceId}`,
         title,
         location,
         start: start.toISOString(),
@@ -103,7 +116,7 @@ export async function parseCalendarEvents(icsText: string, now = new Date()): Pr
   const uniqueEvents = new Map(events.map((event) => [event.id, event]));
   return [...uniqueEvents.values()]
     .sort((left, right) => Date.parse(left.start) - Date.parse(right.start))
-    .slice(0, MAX_PUBLIC_EVENTS);
+    .slice(0, Math.max(1, Math.min(options.limit ?? MAX_PUBLIC_EVENTS, 100)));
 }
 
 function getCalendarUrl() {
@@ -117,7 +130,7 @@ function getCalendarUrl() {
   return url;
 }
 
-export async function readUpcomingCalendarEvents() {
+export async function readUpcomingCalendarEvents(options: CalendarReadOptions = {}) {
   const calendarUrl = getCalendarUrl();
   if (!calendarUrl) return { configured: false, events: [] as PublicCalendarEvent[] };
 
@@ -142,7 +155,7 @@ export async function readUpcomingCalendarEvents() {
     throw new Error("Google Calendar response was larger than expected.");
   }
 
-  return { configured: true, events: await parseCalendarEvents(icsText) };
+  return { configured: true, events: await parseCalendarEvents(icsText, new Date(), options) };
 }
 
 export { CALENDAR_TIMEZONE };
