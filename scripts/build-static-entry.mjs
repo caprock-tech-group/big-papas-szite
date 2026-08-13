@@ -34,7 +34,7 @@ html = html
 
 html = html.replace(
   "</body>",
-  `${structuredDataScripts.join("")}<script src="/live-location.js" defer></script><script src="/calendar-events.js" defer></script></body>`,
+  `${structuredDataScripts.join("")}<script src="/live-location.js" defer></script><script src="/calendar-events.js" defer></script><script src="/public-menu.js" defer></script></body>`,
 );
 
 const binaryAssets = {};
@@ -70,6 +70,11 @@ const textAssets = {
   },
   "/calendar-events.js": {
     body: await readFile("public/calendar-events.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/public-menu.js": {
+    body: await readFile("public/public-menu.js", "utf8"),
     contentType: "text/javascript; charset=utf-8",
     cacheControl: "no-cache",
   },
@@ -228,6 +233,7 @@ await Promise.all([
   cp("public/menu-admin/index.html", `${netlifyOutputDirectory}/menu-admin/index.html`),
   cp("public/menu-admin/admin.css", `${netlifyOutputDirectory}/menu-admin/admin.css`),
   cp("public/menu-admin/admin.js", `${netlifyOutputDirectory}/menu-admin/admin.js`),
+  cp("public/public-menu.js", `${netlifyOutputDirectory}/public-menu.js`),
   cp("public/images/big-hoss-hero.webp", `${netlifyOutputDirectory}/images/big-hoss-hero.webp`),
   cp("public/images/loaded-potato-lineup.webp", `${netlifyOutputDirectory}/images/loaded-potato-lineup.webp`),
   cp("public/images/big-papas-logo.webp", `${netlifyOutputDirectory}/images/big-papas-logo.webp`),

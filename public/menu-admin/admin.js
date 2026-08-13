@@ -81,7 +81,7 @@
     dirty = false;
     if (saveButton) saveButton.disabled = true;
     if (dirtyLabel) dirtyLabel.textContent = "Everything is saved";
-    setMessage(saveMessage, "Menu changes update every board within seconds.");
+    setMessage(saveMessage, "Menu changes update every board and the public website within seconds.");
     syncStatus?.classList.remove("is-dirty");
     if (syncTitle) syncTitle.textContent = "Published and ready";
     if (syncDetail) syncDetail.textContent = `Last updated ${formatDate(menu.updatedAt)}`;
@@ -104,7 +104,7 @@
     setMessage(saveMessage, "Review the preview, then publish when you're ready.");
     syncStatus?.classList.add("is-dirty");
     if (syncTitle) syncTitle.textContent = "Changes waiting to publish";
-    if (syncDetail) syncDetail.textContent = "The live board is still showing the last saved version.";
+    if (syncDetail) syncDetail.textContent = "The live board and public website are still showing the last saved version.";
     queuePreview();
   }
 

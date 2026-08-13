@@ -779,6 +779,26 @@ p {
   background: rgba(185, 61, 50, 0.055);
 }
 
+.menu-card--sold-out {
+  background:
+    linear-gradient(rgba(255, 253, 248, 0.72), rgba(255, 253, 248, 0.72)),
+    repeating-linear-gradient(-45deg, transparent 0 12px, rgba(23, 20, 18, 0.035) 12px 24px);
+}
+
+.menu-card--sold-out::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(246, 239, 224, 0.17);
+  content: "";
+  pointer-events: none;
+}
+
+.menu-card--sold-out > * {
+  position: relative;
+  z-index: 1;
+}
+
 .menu-card-topline {
   min-height: 28px;
   display: flex;
@@ -868,12 +888,43 @@ p {
   color: var(--gold);
 }
 
+.sold-out-tag {
+  display: inline-flex;
+  margin-top: 3px;
+  padding: 8px 10px;
+  border: 1px solid var(--red);
+  background: var(--red);
+  color: var(--white);
+  font-size: 0.61rem;
+  font-weight: 950;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  transform: rotate(-1deg);
+}
+
 .availability-note {
   margin: 17px 0 0;
   color: var(--muted);
   font-size: 0.74rem;
   font-style: italic;
   text-align: right;
+}
+
+.availability-note::before {
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #3aa05a;
+  box-shadow: 0 0 0 3px rgba(58, 160, 90, 0.13);
+  content: "";
+  vertical-align: 0.05em;
+}
+
+.availability-note.is-offline::before {
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(213, 157, 42, 0.14);
 }
 
 .order-callout {
@@ -1012,6 +1063,19 @@ p {
   color: var(--red);
   font-family: "Arial Black", Impact, sans-serif;
   font-size: 0.9rem;
+}
+
+.price-list li.price-list-item--sold-out span {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.price-list li.price-list-item--sold-out strong,
+.menu-panel--drinks .price-list li.price-list-item--sold-out strong {
+  color: var(--red);
+  font-size: 0.67rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .menu-panel--drinks .price-list li strong {

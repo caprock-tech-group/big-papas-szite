@@ -7,6 +7,7 @@ export function LiveLocationLoader() {
     const scripts = [
       { selector: "script[data-live-location-loader]", src: "/live-location.js", key: "liveLocationLoader" },
       { selector: "script[data-calendar-events-loader]", src: "/calendar-events.js", key: "calendarEventsLoader" },
+      { selector: "script[data-public-menu-loader]", src: "/public-menu.js", key: "publicMenuLoader" },
     ] as const;
 
     for (const item of scripts) {
