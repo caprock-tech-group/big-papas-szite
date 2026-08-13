@@ -280,7 +280,7 @@ export default function Home() {
           <div className="section-heading">
             <div>
               <p className="eyebrow"><span /> Meet the heavy hitters</p>
-              <h2 id="menu-title">Pick your potato.</h2>
+              <h2 id="menu-title">Today&apos;s loaded lineup.</h2>
             </div>
             <p>
               From slow-smoked brisket and pulled pork to chicken fried steak, breakfast, and
@@ -288,11 +288,12 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="menu-grid">
+          <div className="menu-grid" data-public-menu-products aria-live="polite">
             {menuItems.map((item) => (
               <article
                 className={`menu-card menu-card--${item.accent}${item.isNew ? " menu-card--new" : ""}`}
                 key={item.name}
+                data-public-menu-product
               >
                 <div className="menu-card-topline">
                   <p>{item.eyebrow}</p>
@@ -311,7 +312,9 @@ export default function Home() {
             ))}
           </div>
 
-          <p className="availability-note">Menu selections and availability may vary by stop.</p>
+          <p className="availability-note" data-public-menu-status>
+            Today&apos;s menu updates here automatically when availability changes.
+          </p>
 
           <aside className="order-callout" aria-labelledby="order-callout-title">
             <div>
@@ -328,7 +331,7 @@ export default function Home() {
             <section className="menu-panel" aria-labelledby="addons-title">
               <p className="eyebrow"><span /> Make it yours</p>
               <h3 id="addons-title">Add-ons</h3>
-              <ul className="price-list price-list--addons">
+              <ul className="price-list price-list--addons" data-public-menu-add-ons>
                 {menuAddOns.map((item) => (
                   <li key={item.name}><span>{item.name}</span><strong>{item.price}</strong></li>
                 ))}
@@ -338,14 +341,14 @@ export default function Home() {
             <section className="menu-panel menu-panel--drinks" aria-labelledby="drinks-title">
               <p className="eyebrow"><span /> Ice cold</p>
               <h3 id="drinks-title">Drinks</h3>
-              <ul className="price-list">
+              <ul className="price-list" data-public-menu-drinks>
                 {drinks.map((item) => (
                   <li key={item.name}><span>{item.name}</span><strong>{item.price}</strong></li>
                 ))}
               </ul>
-              <div className="combo-callout">
-                <div><small>Add a combo</small><strong>Add any drink + cookie</strong></div>
-                <span>$4.00</span>
+              <div className="combo-callout" data-public-menu-combo>
+                <div><small data-public-menu-combo-label>Add a combo</small><strong data-public-menu-combo-description>Add any drink + cookie</strong></div>
+                <span data-public-menu-combo-price>$4.00</span>
               </div>
             </section>
           </div>
