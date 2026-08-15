@@ -45,6 +45,8 @@ for (const [pathname, filename, contentType] of [
   ["/images/menu-board-icon-192.webp", "public/images/menu-board-icon-192.webp", "image/webp"],
   ["/images/menu-board-icon-512.webp", "public/images/menu-board-icon-512.webp", "image/webp"],
   ["/images/facebook-event-announcement.jpg", "public/images/facebook-event-announcement.jpg", "image/jpeg"],
+  ["/images/facebook-event-big-hoss.jpg", "public/images/facebook-event-big-hoss.jpg", "image/jpeg"],
+  ["/images/facebook-event-brand.jpg", "public/images/facebook-event-brand.jpg", "image/jpeg"],
   ["/images/facebook-menu-qr.svg", "public/images/facebook-menu-qr.svg", "image/svg+xml; charset=utf-8"],
 ]) {
   binaryAssets[pathname] = {
@@ -241,6 +243,8 @@ await Promise.all([
   cp("public/images/menu-board-icon-192.webp", `${netlifyOutputDirectory}/images/menu-board-icon-192.webp`),
   cp("public/images/menu-board-icon-512.webp", `${netlifyOutputDirectory}/images/menu-board-icon-512.webp`),
   cp("public/images/facebook-event-announcement.jpg", `${netlifyOutputDirectory}/images/facebook-event-announcement.jpg`),
+  cp("public/images/facebook-event-big-hoss.jpg", `${netlifyOutputDirectory}/images/facebook-event-big-hoss.jpg`),
+  cp("public/images/facebook-event-brand.jpg", `${netlifyOutputDirectory}/images/facebook-event-brand.jpg`),
   cp("public/images/facebook-menu-qr.svg", `${netlifyOutputDirectory}/images/facebook-menu-qr.svg`),
 ]);
 

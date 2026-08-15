@@ -6,13 +6,22 @@ import { readUpcomingCalendarEvents } from "./calendar.mjs";
 const STORE_NAME = "big-papas-facebook-calendar";
 const DEFAULT_GRAPH_API_VERSION = "v25.0";
 const PUBLIC_SCHEDULE_URL = "https://bigpapastaters.com/#schedule";
-const ONLINE_ORDER_URL = "https://online.skytab.com/s/bigpapastexasloadedpotatoes";
-const DEFAULT_IMAGE_URL = "https://bigpapastaters.com/images/facebook-event-announcement.jpg";
+const DEFAULT_IMAGE_URLS = [
+  "https://bigpapastaters.com/images/facebook-event-announcement.jpg",
+  "https://bigpapastaters.com/images/facebook-event-big-hoss.jpg",
+  "https://bigpapastaters.com/images/facebook-event-brand.jpg",
+];
 const HOUR_MILLISECONDS = 60 * 60 * 1_000;
-const PREVIEW_LEAD_MILLISECONDS = 48 * HOUR_MILLISECONDS;
-const REMINDER_LEAD_MILLISECONDS = 3 * HOUR_MILLISECONDS;
+const ANNOUNCEMENT_LEAD_MILLISECONDS = 24 * HOUR_MILLISECONDS;
+const POSTING_WINDOW_START_HOUR = 8;
+const POSTING_WINDOW_END_HOUR = 21;
 const PENDING_LOCK_MILLISECONDS = 10 * 60 * 1_000;
 const RETRY_DELAY_MILLISECONDS = 30 * 60 * 1_000;
+const CENTRAL_HOUR_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/Chicago",
+  hour: "2-digit",
+  hourCycle: "h23",
+});
 
 export type CalendarFacebookPhase = "preview" | "reminder";
 
@@ -20,7 +29,7 @@ type FacebookConfig = {
   pageId: string;
   accessToken: string;
   graphApiVersion: string;
-  imageUrl: string;
+  imageUrls: string[];
 };
 
 type PhaseState = {
@@ -202,18 +211,27 @@ function getConfig(): FacebookConfig | null {
   const graphApiVersion = /^v\d+\.\d+$/.test(requestedVersion)
     ? requestedVersion
     : DEFAULT_GRAPH_API_VERSION;
-  const requestedImageUrl = process.env.FACEBOOK_EVENT_IMAGE_URL?.trim() || DEFAULT_IMAGE_URL;
+  const requestedImageUrls = process.env.FACEBOOK_EVENT_IMAGE_URLS
+    ?.split(/[\n,]/)
+    .map((value) => value.trim())
+    .filter(Boolean) || [];
+  const legacyImageUrl = process.env.FACEBOOK_EVENT_IMAGE_URL?.trim() || "";
+  const candidates = requestedImageUrls.length
+    ? requestedImageUrls
+    : legacyImageUrl
+      ? [legacyImageUrl, ...DEFAULT_IMAGE_URLS]
+      : DEFAULT_IMAGE_URLS;
+  const imageUrls = Array.from(new Set(candidates.flatMap((value) => {
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" ? [url.toString()] : [];
+    } catch {
+      return [];
+    }
+  })));
 
-  let imageUrl = "";
-  try {
-    const url = new URL(requestedImageUrl);
-    if (url.protocol === "https:") imageUrl = url.toString();
-  } catch {
-    imageUrl = "";
-  }
-
-  if (!/^\d{3,30}$/.test(pageId) || accessToken.length < 20 || !imageUrl) return null;
-  return { pageId, accessToken, graphApiVersion, imageUrl };
+  if (!/^\d{3,30}$/.test(pageId) || accessToken.length < 20 || !imageUrls.length) return null;
+  return { pageId, accessToken, graphApiVersion, imageUrls };
 }
 
 async function graphPost(config: FacebookConfig, path: string, fields: Record<string, string>) {
@@ -283,16 +301,19 @@ export function buildCalendarFacebookMessage(
 ) {
   const title = cleanText(event.title, 180) || "Big Papa's next stop";
   const lines = phase === "preview"
-    ? ["🚚 BIG PAPA’S IS ROLLING YOUR WAY!", `Catch us at ${title}!`]
-    : ["⏰ BIG PAPA’S IS ALMOST THERE!", "We’ll be serving in just a few hours!", `📣 ${title}`];
+    ? ["🚚 BIG PAPA’S IS ROLLING OUT!", title]
+    : ["⏰ BIG PAPA’S IS ROLLING OUT TODAY!", title];
 
   lines.push("", `📅 ${formatEventDate(event.start)}`);
   lines.push(`⏰ ${formatEventTime(event)}`);
   if (event.location) lines.push(`📍 ${cleanText(event.location, 240)}`);
-  lines.push("", "Come hungry—we’re bringing Texas-sized loaded potatoes!");
-  lines.push("", `Full schedule: ${PUBLIC_SCHEDULE_URL}`);
-  lines.push(`Order ahead: ${ONLINE_ORDER_URL}`);
+  lines.push("", "Texas-sized loaded potatoes. Come hungry!");
+  lines.push(`Stop details and full schedule: ${PUBLIC_SCHEDULE_URL}`);
   return lines.join("\n");
+}
+
+function centralHour(value: Date) {
+  return Number(CENTRAL_HOUR_FORMATTER.format(value));
 }
 
 export function dueCalendarFacebookPhase(
@@ -301,9 +322,18 @@ export function dueCalendarFacebookPhase(
 ): CalendarFacebookPhase | null {
   const remaining = Date.parse(event.start) - now.getTime();
   if (!Number.isFinite(remaining) || remaining <= 0) return null;
-  if (!event.allDay && remaining <= REMINDER_LEAD_MILLISECONDS) return "reminder";
-  if (remaining <= PREVIEW_LEAD_MILLISECONDS) return "preview";
-  return null;
+  if (remaining > ANNOUNCEMENT_LEAD_MILLISECONDS) return null;
+
+  const hour = centralHour(now);
+  if (hour < POSTING_WINDOW_START_HOUR || hour >= POSTING_WINDOW_END_HOUR) return null;
+
+  return "preview";
+}
+
+function imageUrlForEvent(config: FacebookConfig, event: PublicCalendarEvent) {
+  const digest = createHash("sha256").update(event.id).digest("hex");
+  const index = Number.parseInt(digest.slice(0, 8), 16) % config.imageUrls.length;
+  return config.imageUrls[index];
 }
 
 async function claimPhase(
@@ -317,6 +347,7 @@ async function claimPhase(
     const current = stateForEvent(event, now, entry.state);
     const phaseRecord = current[phase];
 
+    if (phase === "preview" && current.reminder.status === "posted") return null;
     if (phaseRecord.status === "posted" || (phaseRecord.status === "failed" && !phaseRecord.retrySafe)) {
       return null;
     }
@@ -417,7 +448,7 @@ async function publishPhase(
 
   try {
     const result = await graphPost(config, `${config.pageId}/photos`, {
-      url: config.imageUrl,
+      url: imageUrlForEvent(config, event),
       caption: buildCalendarFacebookMessage(event, phase),
       published: "true",
     });

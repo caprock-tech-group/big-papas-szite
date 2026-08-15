@@ -47,12 +47,16 @@ The location is stored in Netlify Blobs and persists across deploys. The updater
 
 Publishing a live pin also creates a post on the connected Big Papa's Facebook Page. Updating an active pin edits that post instead of creating a duplicate. Choosing **We're closed** marks the post closed, and a scheduled Netlify function checks every 15 minutes for expired pins so their posts are closed automatically.
 
+Google Calendar event announcements publish once during the 24 hours before a stop and only between 8:00 AM and 9:00 PM Central. The automation rotates three branded images, uses event-specific copy, and sends customers to one schedule link. It intentionally avoids a repetitive three-hour reminder post; the separate live-location post still announces when the trailer actually opens.
+
 The public map is intentionally independent: a Facebook error never prevents the location from going live. The private updater shows the connection status and offers a safe retry. If a new-post request times out with an uncertain result, the updater first asks an operator to confirm that Facebook did not publish it, preventing an accidental duplicate.
 
 Create a Meta app with access to the Facebook Page, obtain a Page access token that can publish Page posts, and add these values in Netlify as secret environment variables with the Functions scope:
 
 - `FACEBOOK_PAGE_ID`
 - `FACEBOOK_PAGE_ACCESS_TOKEN`
+
+The optional `FACEBOOK_EVENT_IMAGE_URLS` variable accepts a comma-separated list of HTTPS image URLs. When it is omitted, the site rotates its bundled announcement, Big Hoss, and logo artwork automatically. The older single `FACEBOOK_EVENT_IMAGE_URL` variable remains supported.
 
 Never commit the Page access token or paste it into issues, pull requests, or chat. Trigger a new production deploy after adding or rotating either value.
 
