@@ -45,6 +45,7 @@ for (const [pathname, filename, contentType] of [
   ["/images/menu-board-icon-192.webp", "public/images/menu-board-icon-192.webp", "image/webp"],
   ["/images/menu-board-icon-512.webp", "public/images/menu-board-icon-512.webp", "image/webp"],
   ["/images/facebook-event-announcement.jpg", "public/images/facebook-event-announcement.jpg", "image/jpeg"],
+  ["/images/facebook-menu-qr.svg", "public/images/facebook-menu-qr.svg", "image/svg+xml; charset=utf-8"],
 ]) {
   binaryAssets[pathname] = {
     body: (await readFile(filename)).toString("base64"),
@@ -240,6 +241,7 @@ await Promise.all([
   cp("public/images/menu-board-icon-192.webp", `${netlifyOutputDirectory}/images/menu-board-icon-192.webp`),
   cp("public/images/menu-board-icon-512.webp", `${netlifyOutputDirectory}/images/menu-board-icon-512.webp`),
   cp("public/images/facebook-event-announcement.jpg", `${netlifyOutputDirectory}/images/facebook-event-announcement.jpg`),
+  cp("public/images/facebook-menu-qr.svg", `${netlifyOutputDirectory}/images/facebook-menu-qr.svg`),
 ]);
 
 const runtime = `const TEXT_ASSETS = ${JSON.stringify(textAssets)};
@@ -270,6 +272,9 @@ function handler(request) {
   }
 
   const pathname = new URL(request.url).pathname;
+  if (pathname === "/facebook" || pathname === "/facebook/") {
+    return Response.redirect("https://www.facebook.com/bigpapastaters", 302);
+  }
   const textAsset = TEXT_ASSETS[pathname];
   const binaryAsset = BINARY_ASSETS[pathname];
   let responseHeaders = SECURITY_HEADERS;

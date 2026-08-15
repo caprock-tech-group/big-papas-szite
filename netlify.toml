@@ -121,6 +121,12 @@
   force = true
 
 [[redirects]]
+  from = "/facebook"
+  to = "https://www.facebook.com/bigpapastaters"
+  status = 302
+  force = true
+
+[[redirects]]
   from = "http://update.bigpapastaters.com/*"
   to = "https://bigpapastaters.com/update/:splat"
   status = 301

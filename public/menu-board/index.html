@@ -9,7 +9,7 @@
     <link rel="icon" href="/favicon.svg">
     <link rel="apple-touch-icon" href="/images/menu-board-icon-192.webp">
     <link rel="manifest" href="/menu-board/manifest.webmanifest">
-    <link rel="stylesheet" href="/menu-board/board.css?v=8">
+    <link rel="stylesheet" href="/menu-board/board.css?v=9">
   </head>
   <body>
     <div class="board" data-board data-orientation="landscape" data-show-descriptions="true">
@@ -89,11 +89,29 @@
             </section>
           </div>
 
-          <section class="combo" data-combo>
-            <p data-combo-label>Add a combo</p>
-            <span data-combo-description>Add any drink + cookie</span>
-            <strong data-combo-price>$4.00</strong>
-          </section>
+          <div class="side-promos">
+            <section class="combo" data-combo>
+              <p data-combo-label>Add a combo</p>
+              <span data-combo-description>Add any drink + cookie</span>
+              <strong data-combo-price>$4.00</strong>
+            </section>
+
+            <a
+              class="social-qr"
+              href="/facebook"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Follow Big Papa's on Facebook"
+            >
+              <span class="social-qr__code">
+                <img src="/images/facebook-menu-qr.svg" alt="" width="410" height="410">
+              </span>
+              <span class="social-qr__copy">
+                <strong><b aria-hidden="true">f</b> Follow Big Papa's</strong>
+                <small>Scan for locations, events &amp; updates</small>
+              </span>
+            </a>
+          </div>
         </aside>
       </main>
 
@@ -108,6 +126,6 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
     </button>
 
-    <script src="/menu-board/board.js?v=8" defer></script>
+    <script src="/menu-board/board.js?v=9" defer></script>
   </body>
 </html>
