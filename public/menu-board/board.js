@@ -34,7 +34,7 @@
   }
 
   function applyOrientation(preference) {
-    const requested = orientationOverride || preference || "auto";
+    const requested = orientationOverride || preference || "portrait";
     const resolved = requested === "auto"
       ? (window.innerWidth >= window.innerHeight ? "landscape" : "portrait")
       : requested;
@@ -82,6 +82,7 @@
     if (item.available === false) {
       article.setAttribute("aria-label", `${item.name} — sold out`);
       article.dataset.soldOutLabel = `${item.name} — SOLD OUT`;
+      article.dataset.soldOutPortraitLabel = `${item.name}\nSOLD OUT`;
     }
 
     const copy = document.createElement("div");
@@ -246,7 +247,7 @@
   window.addEventListener("pageshow", () => void refreshMenu());
 
   window.addEventListener("resize", () => {
-    if ((orientationOverride || currentMenu?.board?.orientation || "auto") === "auto") {
+    if ((orientationOverride || currentMenu?.board?.orientation || "portrait") === "auto") {
       applyOrientation("auto");
     }
     scheduleAnnouncementLayout();
@@ -271,7 +272,7 @@
 
   const savedMenu = readSavedMenu();
   if (savedMenu) renderMenu(savedMenu);
-  applyOrientation(savedMenu?.board?.orientation || "auto");
+  applyOrientation(savedMenu?.board?.orientation || "portrait");
   updateScreenState();
   document.fonts?.ready.then(scheduleAnnouncementLayout).catch(() => {});
   void refreshMenu();
