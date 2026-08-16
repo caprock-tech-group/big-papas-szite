@@ -22,6 +22,7 @@ const CENTRAL_HOUR_FORMATTER = new Intl.DateTimeFormat("en-US", {
   hour: "2-digit",
   hourCycle: "h23",
 });
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export type CalendarFacebookPhase = "preview" | "reminder";
 
@@ -276,13 +277,19 @@ async function graphPost(config: FacebookConfig, path: string, fields: Record<st
   return result;
 }
 
-function formatEventDate(value: string) {
+function calendarEventDate(event: PublicCalendarEvent, value: string) {
+  return event.allDay && DATE_ONLY_PATTERN.test(value)
+    ? new Date(`${value}T12:00:00.000Z`)
+    : new Date(value);
+}
+
+function formatEventDate(event: PublicCalendarEvent) {
   return new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Chicago",
     weekday: "long",
     month: "long",
     day: "numeric",
-  }).format(new Date(value));
+  }).format(calendarEventDate(event, event.start));
 }
 
 function formatEventTime(event: PublicCalendarEvent) {
@@ -304,7 +311,7 @@ export function buildCalendarFacebookMessage(
     ? ["🚚 BIG PAPA’S IS ROLLING OUT!", title]
     : ["⏰ BIG PAPA’S IS ROLLING OUT TODAY!", title];
 
-  lines.push("", `📅 ${formatEventDate(event.start)}`);
+  lines.push("", `📅 ${formatEventDate(event)}`);
   lines.push(`⏰ ${formatEventTime(event)}`);
   if (event.location) lines.push(`📍 ${cleanText(event.location, 240)}`);
   lines.push("", "Texas-sized loaded potatoes. Come hungry!");
@@ -320,7 +327,7 @@ export function dueCalendarFacebookPhase(
   event: PublicCalendarEvent,
   now = new Date(),
 ): CalendarFacebookPhase | null {
-  const remaining = Date.parse(event.start) - now.getTime();
+  const remaining = calendarEventDate(event, event.start).getTime() - now.getTime();
   if (!Number.isFinite(remaining) || remaining <= 0) return null;
   if (remaining > ANNOUNCEMENT_LEAD_MILLISECONDS) return null;
 
