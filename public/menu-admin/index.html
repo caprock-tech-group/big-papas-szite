@@ -84,6 +84,12 @@
                 <input id="announcement" data-announcement maxlength="120" placeholder="Example: Breakfast taters available until 11 AM">
               </label>
 
+              <label class="field range-field" for="announcement-speed">
+                <span>Announcement scroll speed <output data-announcement-speed-label for="announcement-speed">Normal</output></span>
+                <input id="announcement-speed" data-announcement-speed type="range" min="20" max="80" step="5" value="40">
+                <small><span>Slower</span><span>Faster</span></small>
+              </label>
+
               <label class="toggle-field" for="show-descriptions">
                 <span><strong>Show descriptions</strong><small>Turn off for extra-large type on smaller displays.</small></span>
                 <input id="show-descriptions" data-show-descriptions type="checkbox" checked>

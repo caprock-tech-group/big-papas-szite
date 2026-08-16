@@ -22,6 +22,7 @@
   const isPreview = params.get("preview") === "1";
   const cacheKey = "big-papas-menu-board-cache-v4";
   const syncIntervalMs = 5_000;
+  const defaultAnnouncementSpeed = 40;
 
   let currentMenu = null;
   let currentMenuFingerprint = "";
@@ -58,7 +59,11 @@
 
       announcementClone.hidden = false;
       const shift = announcementClone.offsetLeft - announcementText.offsetLeft;
-      const duration = Math.max(18, shift / 38);
+      const configuredSpeed = Number(currentMenu?.board?.announcementSpeed);
+      const speed = Number.isFinite(configuredSpeed)
+        ? Math.min(80, Math.max(20, configuredSpeed))
+        : defaultAnnouncementSpeed;
+      const duration = Math.max(8, shift / speed);
       announcementTrack.style.setProperty("--announcement-shift", `${shift}px`);
       announcementTrack.style.setProperty("--announcement-duration", `${duration.toFixed(1)}s`);
       announcement.classList.add("is-scrolling");

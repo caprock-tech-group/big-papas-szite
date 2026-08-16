@@ -37,6 +37,7 @@ export type MenuBoardState = {
     headline: string;
     subheadline: string;
     announcement: string;
+    announcementSpeed: number;
     showDescriptions: boolean;
   };
   products: BoardProduct[];
@@ -59,6 +60,7 @@ const defaultState: MenuBoardState = {
     headline: "Texas Loaded Potatoes",
     subheadline: "Bold flavor. Texas style. Big portions.",
     announcement: "",
+    announcementSpeed: 40,
     showDescriptions: true,
   },
   products: [
@@ -196,6 +198,12 @@ function booleanValue(value: unknown, fallback: boolean) {
   return typeof value === "boolean" ? value : fallback;
 }
 
+function numberInRange(value: unknown, minimum: number, maximum: number, fallback: number) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(maximum, Math.max(minimum, Math.round(parsed)));
+}
+
 function uniqueId(value: unknown, fallback: string, used: Set<string>) {
   let id = cleanId(value, fallback);
   let suffix = 2;
@@ -308,6 +316,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
         ? defaultState.board.subheadline
         : subheadline,
       announcement: cleanText(board.announcement, 120),
+      announcementSpeed: numberInRange(board.announcementSpeed, 20, 80, defaultState.board.announcementSpeed),
       showDescriptions: booleanValue(board.showDescriptions, true),
     },
     products: normalizeProducts(record.products, defaultState.products),

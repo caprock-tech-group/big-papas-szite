@@ -77,6 +77,20 @@
     }).format(date);
   }
 
+  function announcementSpeedLabel(value) {
+    const speed = Number(value);
+    if (speed <= 25) return "Slow";
+    if (speed <= 45) return "Normal";
+    if (speed <= 65) return "Fast";
+    return "Very fast";
+  }
+
+  function updateAnnouncementSpeedLabel() {
+    const input = document.querySelector("[data-announcement-speed]");
+    const output = document.querySelector("[data-announcement-speed-label]");
+    if (input && output) output.value = announcementSpeedLabel(input.value);
+  }
+
   function setCleanState(menu) {
     dirty = false;
     if (saveButton) saveButton.disabled = true;
@@ -188,6 +202,8 @@
     document.querySelector("[data-headline]").value = menu.board?.headline || "";
     document.querySelector("[data-subheadline]").value = menu.board?.subheadline || "";
     document.querySelector("[data-announcement]").value = menu.board?.announcement || "";
+    document.querySelector("[data-announcement-speed]").value = String(menu.board?.announcementSpeed || 40);
+    updateAnnouncementSpeedLabel();
     document.querySelector("[data-show-descriptions]").checked = menu.board?.showDescriptions !== false;
     document.querySelector("[data-combo-enabled]").checked = menu.combo?.enabled !== false;
     document.querySelector("[data-combo-label]").value = menu.combo?.label || "";
@@ -236,6 +252,7 @@
         headline: document.querySelector("[data-headline]").value,
         subheadline: document.querySelector("[data-subheadline]").value,
         announcement: document.querySelector("[data-announcement]").value,
+        announcementSpeed: Number(document.querySelector("[data-announcement-speed]").value),
         showDescriptions: document.querySelector("[data-show-descriptions]").checked,
       },
       products: collectProducts(),
@@ -280,6 +297,7 @@
   }
 
   dashboard.addEventListener("input", (event) => {
+    if (event.target.matches("[data-announcement-speed]")) updateAnnouncementSpeedLabel();
     const editor = event.target.closest(".product-editor, .small-item-editor");
     if (editor) {
       const visible = editor.querySelector("[data-product-visible], [data-small-visible]");

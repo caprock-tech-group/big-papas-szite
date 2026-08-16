@@ -416,6 +416,52 @@ main {
   background-size: 5px 5px;
 }
 
+.range-field {
+  padding: 13px 14px 11px;
+  border: 1px solid var(--line);
+  background: rgba(244, 236, 220, 0.45);
+}
+
+.range-field > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.range-field output {
+  color: var(--red);
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.range-field input[type="range"] {
+  min-height: 30px;
+  padding: 0;
+  border: 0;
+  accent-color: var(--red);
+  background: transparent;
+  box-shadow: none;
+  cursor: ew-resize;
+}
+
+.range-field input[type="range"]:focus {
+  border: 0;
+  box-shadow: none;
+  outline: 3px solid rgba(187, 56, 46, 0.16);
+  outline-offset: 3px;
+}
+
+.range-field > small {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .toggle-field {
   position: relative;
   min-height: 65px;
