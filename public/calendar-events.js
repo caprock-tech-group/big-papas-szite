@@ -10,6 +10,7 @@
   if (!grid) return;
 
   const timezone = "America/Chicago";
+  const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/;
   const media = [
     {
       src: "/images/big-hoss-hero.webp",
@@ -64,19 +65,40 @@
       && Number.isFinite(Date.parse(event.end));
   }
 
+  function eventDate(event, value) {
+    if (event.allDay && dateOnlyPattern.test(value)) {
+      return new Date(`${value}T12:00:00.000Z`);
+    }
+    return new Date(value);
+  }
+
+  function dateKeyInCalendarTimezone(value) {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(value);
+    const year = parts.find((part) => part.type === "year")?.value;
+    const month = parts.find((part) => part.type === "month")?.value;
+    const day = parts.find((part) => part.type === "day")?.value;
+    return year && month && day ? `${year}-${month}-${day}` : "";
+  }
+
   function formatTimeRange(event, start, end) {
     if (event.allDay) return "All day";
     return `${timeFormatter.format(start)}–${timeFormatter.format(end)}`;
   }
 
   function buildCard(event, index) {
-    const start = new Date(event.start);
-    const end = new Date(event.end);
+    const start = eventDate(event, event.start);
+    const end = eventDate(event, event.end);
     const cardMedia = media[index % media.length];
     const card = document.createElement("article");
     card.className = "schedule-card";
     card.dataset.calendarCard = "true";
     card.dataset.calendarEnd = event.end;
+    card.dataset.calendarAllDay = event.allDay ? "true" : "false";
     card.innerHTML = `
       <div class="schedule-card__cover${cardMedia.branded ? " schedule-card__cover--brand" : ""}">
         <img width="1774" height="887" loading="lazy">
@@ -131,9 +153,13 @@
 
   function pruneExpiredFallback() {
     const now = Date.now();
+    const today = dateKeyInCalendarTimezone(new Date(now));
     for (const card of grid.querySelectorAll("[data-calendar-card]")) {
-      const end = Date.parse(card.dataset.calendarEnd || "");
-      if (Number.isFinite(end) && end < now) card.remove();
+      const endValue = card.dataset.calendarEnd || "";
+      const expired = card.dataset.calendarAllDay === "true" && dateOnlyPattern.test(endValue)
+        ? Boolean(today) && endValue <= today
+        : Number.isFinite(Date.parse(endValue)) && Date.parse(endValue) < now;
+      if (expired) card.remove();
     }
     const hasCards = grid.querySelector("[data-calendar-card]") !== null;
     grid.hidden = !hasCards;
