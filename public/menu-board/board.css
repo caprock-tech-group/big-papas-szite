@@ -466,7 +466,7 @@ button {
 
 .product.is-sold-out > div,
 .product.is-sold-out > strong {
-  opacity: 0.24;
+  opacity: 0.38;
   filter: grayscale(0.75);
 }
 
@@ -475,25 +475,25 @@ button {
   position: absolute;
   z-index: 4;
   top: 50%;
-  left: -2%;
-  width: 104%;
+  left: 2%;
+  width: 96%;
   content: "";
   pointer-events: none;
-  transform: translateY(-50%) rotate(-2.2deg);
+  transform: translateY(-50%) rotate(-1.15deg);
 }
 
 .product.is-sold-out::before {
-  height: clamp(30px, 4.7dvh, 58px);
+  height: clamp(27px, 4.35dvh, 54px);
   background: rgba(16, 15, 13, 0.5);
   filter: blur(1px);
 }
 
 .product.is-sold-out::after {
-  height: clamp(26px, 4.1dvh, 51px);
+  height: clamp(24px, 3.8dvh, 47px);
   display: grid;
   place-items: center;
   overflow: hidden;
-  padding: 0.08em 1em 0;
+  padding: 0.08em 0.8em 0;
   border-block: clamp(1px, 0.14vmin, 3px) solid rgba(255, 248, 232, 0.8);
   color: var(--paper-light);
   background:
@@ -502,13 +502,15 @@ button {
   box-shadow: 0 0.35dvh 0.8dvh rgba(16, 15, 13, 0.42);
   clip-path: polygon(0.8% 13%, 4% 0, 96% 3%, 99.3% 17%, 98.2% 88%, 94% 100%, 4% 97%, 0 82%);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(18px, min(2.35vw, 4.25dvh), 48px);
-  letter-spacing: 0.13em;
+  font-size: clamp(13px, min(1.65vw, 3.15dvh), 33px);
+  letter-spacing: 0.08em;
   line-height: 1;
-  content: "SOLD OUT";
+  content: attr(data-sold-out-label);
+  text-overflow: ellipsis;
   text-shadow:
     0.07em 0.07em 0 rgba(36, 5, 4, 0.62),
     -0.025em 0 0 rgba(255, 248, 232, 0.32);
+  white-space: nowrap;
 }
 
 .board[data-show-descriptions="false"] .product > div > span {
@@ -624,15 +626,16 @@ button {
 
 .mini-list p.is-sold-out > span,
 .mini-list p.is-sold-out > strong {
-  opacity: 0.22;
+  opacity: 0.34;
 }
 
 .mini-list p.is-sold-out::after {
   position: absolute;
   z-index: 2;
-  right: 0.2vw;
+  left: 2%;
   top: 50%;
-  min-width: 52%;
+  width: 96%;
+  overflow: hidden;
   padding: 0.2em 0.65em 0.14em;
   border: 1px solid rgba(255, 248, 232, 0.74);
   color: var(--paper-light);
@@ -642,13 +645,15 @@ button {
   box-shadow: 0 0.18dvh 0.45dvh rgba(16, 15, 13, 0.35);
   clip-path: polygon(2% 8%, 97% 0, 100% 88%, 4% 100%, 0 22%);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: 0.86em;
-  letter-spacing: 0.12em;
+  font-size: 0.7em;
+  letter-spacing: 0.07em;
   line-height: 1;
   text-align: center;
-  content: "SOLD OUT";
+  content: attr(data-sold-out-label);
+  text-overflow: ellipsis;
   text-shadow: 0.06em 0.06em 0 rgba(48, 5, 4, 0.6);
-  transform: translateY(-50%) rotate(-2deg);
+  transform: translateY(-50%) rotate(-1deg);
+  white-space: nowrap;
 }
 
 .combo {

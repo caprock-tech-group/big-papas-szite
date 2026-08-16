@@ -79,7 +79,10 @@
   function createProduct(item) {
     const article = document.createElement("article");
     article.className = `product product--${item.accent || "red"}${item.available === false ? " is-sold-out" : ""}`;
-    if (item.available === false) article.setAttribute("aria-label", `${item.name} — sold out`);
+    if (item.available === false) {
+      article.setAttribute("aria-label", `${item.name} — sold out`);
+      article.dataset.soldOutLabel = `${item.name} — SOLD OUT`;
+    }
 
     const copy = document.createElement("div");
     const eyebrow = document.createElement("p");
@@ -109,6 +112,7 @@
         if (item.available === false) {
           row.classList.add("is-sold-out");
           row.setAttribute("aria-label", `${item.name} — sold out`);
+          row.dataset.soldOutLabel = `${item.name} — SOLD OUT`;
         }
         const name = document.createElement("span");
         name.textContent = item.name;
