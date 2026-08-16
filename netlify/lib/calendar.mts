@@ -4,6 +4,12 @@ const CALENDAR_TIMEZONE = "America/Chicago";
 const MAX_CALENDAR_BYTES = 2_000_000;
 const MAX_PUBLIC_EVENTS = 6;
 const HORIZON_DAYS = 180;
+const CALENDAR_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: CALENDAR_TIMEZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
 
 export type PublicCalendarEvent = {
   id: string;
@@ -41,6 +47,18 @@ function createDirectionsUrl(location: string) {
   url.searchParams.set("api", "1");
   url.searchParams.set("query", location);
   return url.toString();
+}
+
+function dateOnlyValue(value: Date) {
+  return value.toISOString().slice(0, 10);
+}
+
+function dateKeyInCalendarTimezone(value: Date) {
+  const parts = CALENDAR_DATE_FORMATTER.formatToParts(value);
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+  return year && month && day ? `${year}-${month}-${day}` : dateOnlyValue(value);
 }
 
 function fallbackInstance(event: VEvent) {
@@ -88,7 +106,19 @@ export async function parseCalendarEvents(
       const start = new Date(instance.start);
       const end = new Date(instance.end);
       if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) continue;
-      if (end.getTime() < now.getTime() || start.getTime() > rangeEnd.getTime()) continue;
+      const allDay = instance.isFullDay === true
+        || source.datetype === "date"
+        || source.start.dateOnly === true;
+      const startValue = allDay ? dateOnlyValue(start) : start.toISOString();
+      const endValue = allDay ? dateOnlyValue(end) : end.toISOString();
+
+      if (allDay) {
+        const today = dateKeyInCalendarTimezone(now);
+        const horizon = dateKeyInCalendarTimezone(rangeEnd);
+        if (endValue <= today || startValue > horizon) continue;
+      } else if (end.getTime() < now.getTime() || start.getTime() > rangeEnd.getTime()) {
+        continue;
+      }
 
       const title = parameterText(source.summary ?? instance.summary) || "Big Papa's stop";
       const location = parameterText(source.location);
@@ -104,9 +134,9 @@ export async function parseCalendarEvents(
         id: `${source.uid}:${occurrenceId}`,
         title,
         location,
-        start: start.toISOString(),
-        end: end.toISOString(),
-        allDay: instance.isFullDay,
+        start: startValue,
+        end: endValue,
+        allDay,
         detailsUrl: eventUrl ?? directionsUrl,
         detailsLabel: eventUrl ? "Event details" : directionsUrl ? "Get directions" : null,
       });
