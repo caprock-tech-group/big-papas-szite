@@ -7,6 +7,10 @@
   const drinks = document.querySelector("[data-drinks]");
   const combo = document.querySelector("[data-combo]");
   const announcement = document.querySelector("[data-announcement]");
+  const announcementViewport = document.querySelector("[data-announcement-viewport]");
+  const announcementTrack = document.querySelector("[data-announcement-track]");
+  const announcementText = document.querySelector("[data-announcement-text]");
+  const announcementClone = document.querySelector("[data-announcement-clone]");
   const boardStatus = document.querySelector("[data-board-status]");
   const screenControl = document.querySelector("[data-screen-control]");
   if (!board || !products || !addOns || !drinks) return;
@@ -23,6 +27,7 @@
   let currentMenuFingerprint = "";
   let refreshInFlight = false;
   let wakeLock = null;
+  let announcementLayoutFrame = 0;
 
   function text(element, value) {
     if (element) element.textContent = value;
@@ -34,11 +39,47 @@
       ? (window.innerWidth >= window.innerHeight ? "landscape" : "portrait")
       : requested;
     board.dataset.orientation = resolved;
+    scheduleAnnouncementLayout();
+  }
+
+  function scheduleAnnouncementLayout() {
+    window.cancelAnimationFrame(announcementLayoutFrame);
+    announcementLayoutFrame = window.requestAnimationFrame(() => {
+      if (!announcement || announcement.hidden || !announcementViewport || !announcementTrack || !announcementText || !announcementClone) return;
+
+      announcement.classList.remove("is-scrolling");
+      announcementClone.hidden = true;
+      announcementTrack.style.removeProperty("--announcement-shift");
+      announcementTrack.style.removeProperty("--announcement-duration");
+
+      const availableWidth = announcementViewport.clientWidth;
+      const messageWidth = announcementText.scrollWidth;
+      if (!availableWidth || messageWidth <= availableWidth - 24) return;
+
+      announcementClone.hidden = false;
+      const shift = announcementClone.offsetLeft - announcementText.offsetLeft;
+      const duration = Math.max(18, shift / 38);
+      announcementTrack.style.setProperty("--announcement-shift", `${shift}px`);
+      announcementTrack.style.setProperty("--announcement-duration", `${duration.toFixed(1)}s`);
+      announcement.classList.add("is-scrolling");
+    });
+  }
+
+  function renderAnnouncement(value) {
+    if (!announcement || !announcementText || !announcementClone) return;
+    const message = typeof value === "string" ? value.trim() : "";
+    announcement.hidden = !message;
+    announcementText.textContent = message;
+    announcementClone.textContent = message;
+    announcementClone.hidden = true;
+    announcement.classList.remove("is-scrolling");
+    if (message) scheduleAnnouncementLayout();
   }
 
   function createProduct(item) {
     const article = document.createElement("article");
     article.className = `product product--${item.accent || "red"}${item.available === false ? " is-sold-out" : ""}`;
+    if (item.available === false) article.setAttribute("aria-label", `${item.name} — sold out`);
 
     const copy = document.createElement("div");
     const eyebrow = document.createElement("p");
@@ -65,7 +106,10 @@
       .filter((item) => item && item.visible !== false)
       .map((item) => {
         const row = document.createElement("p");
-        if (item.available === false) row.classList.add("is-sold-out");
+        if (item.available === false) {
+          row.classList.add("is-sold-out");
+          row.setAttribute("aria-label", `${item.name} — sold out`);
+        }
         const name = document.createElement("span");
         name.textContent = item.name;
         const price = document.createElement("strong");
@@ -86,11 +130,7 @@
     text(document.querySelector("[data-headline]"), menu.board?.headline || "Texas Loaded Potatoes");
     text(document.querySelector("[data-subheadline]"), menu.board?.subheadline || "Bold flavor. Texas style. Big portions.");
 
-    const announcementText = typeof menu.board?.announcement === "string" ? menu.board.announcement.trim() : "";
-    if (announcement) {
-      announcement.hidden = !announcementText;
-      announcement.textContent = announcementText;
-    }
+    renderAnnouncement(menu.board?.announcement);
 
     const visibleProducts = Array.isArray(menu.products)
       ? menu.products.filter((item) => item && item.visible !== false)
@@ -205,6 +245,7 @@
     if ((orientationOverride || currentMenu?.board?.orientation || "auto") === "auto") {
       applyOrientation("auto");
     }
+    scheduleAnnouncementLayout();
   });
 
   if (isPreview) {
@@ -228,6 +269,7 @@
   if (savedMenu) renderMenu(savedMenu);
   applyOrientation(savedMenu?.board?.orientation || "auto");
   updateScreenState();
+  document.fonts?.ready.then(scheduleAnnouncementLayout).catch(() => {});
   void refreshMenu();
   window.setInterval(() => void refreshMenu(), syncIntervalMs);
 })();

@@ -107,29 +107,70 @@ button {
   position: relative;
   z-index: 22;
   grid-area: announcement;
-  min-height: 4.6dvh;
-  display: flex;
+  height: 7dvh;
+  min-height: 48px;
+  display: grid;
   align-items: center;
-  justify-content: center;
-  padding: 0.55dvh 4vw;
+  padding: 0.6dvh 0;
   border-bottom: clamp(2px, 0.25vmin, 5px) solid var(--gold);
   color: var(--paper-light);
   background:
     linear-gradient(90deg, rgba(74, 6, 5, 0.25), transparent 15% 85%, rgba(74, 6, 5, 0.25)),
     var(--red);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(12px, 1.25vw, 28px);
-  letter-spacing: 0.09em;
+  font-size: clamp(22px, min(2.55vw, 4.9dvh), 58px);
+  letter-spacing: 0.075em;
   line-height: 1;
   text-align: center;
   text-transform: uppercase;
 }
 
-.announcement::before,
-.announcement::after {
-  margin: 0 1.2em;
+.announcement__viewport {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  padding-inline: 3vw;
+  mask-image: linear-gradient(90deg, transparent, #000 2.5%, #000 97.5%, transparent);
+}
+
+.announcement__track {
+  --announcement-shift: 0px;
+  --announcement-duration: 24s;
+  min-width: 100%;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(5rem, 12vw, 15rem);
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.announcement__message {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75em;
+}
+
+.announcement__message::before,
+.announcement__message::after {
+  flex: 0 0 auto;
   color: var(--paper);
   content: "★";
+  font-size: 0.7em;
+  text-shadow: 0.06em 0.06em 0 rgba(54, 6, 5, 0.42);
+}
+
+.announcement.is-scrolling .announcement__track {
+  min-width: max-content;
+  justify-content: flex-start;
+  animation: board-announcement-scroll var(--announcement-duration) linear infinite;
+}
+
+@keyframes board-announcement-scroll {
+  to {
+    transform: translateX(calc(-1 * var(--announcement-shift)));
+  }
 }
 
 .board-masthead {
@@ -419,21 +460,55 @@ button {
 }
 
 .product.is-sold-out {
-  opacity: 0.53;
+  isolation: isolate;
+  opacity: 1;
+}
+
+.product.is-sold-out > div,
+.product.is-sold-out > strong {
+  opacity: 0.24;
+  filter: grayscale(0.75);
+}
+
+.product.is-sold-out::before,
+.product.is-sold-out::after {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: -2%;
+  width: 104%;
+  content: "";
+  pointer-events: none;
+  transform: translateY(-50%) rotate(-2.2deg);
+}
+
+.product.is-sold-out::before {
+  height: clamp(30px, 4.7dvh, 58px);
+  background: rgba(16, 15, 13, 0.5);
+  filter: blur(1px);
 }
 
 .product.is-sold-out::after {
-  position: absolute;
-  right: 0.3vw;
-  bottom: 0.25dvh;
-  padding: 0.18em 0.5em;
+  height: clamp(26px, 4.1dvh, 51px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 0.08em 1em 0;
+  border-block: clamp(1px, 0.14vmin, 3px) solid rgba(255, 248, 232, 0.8);
   color: var(--paper-light);
-  background: var(--ink);
+  background:
+    repeating-linear-gradient(101deg, transparent 0 11px, rgba(255, 248, 232, 0.1) 11px 12px),
+    linear-gradient(90deg, #7f0c09, var(--red-bright) 14% 86%, #7f0c09);
+  box-shadow: 0 0.35dvh 0.8dvh rgba(16, 15, 13, 0.42);
+  clip-path: polygon(0.8% 13%, 4% 0, 96% 3%, 99.3% 17%, 98.2% 88%, 94% 100%, 4% 97%, 0 82%);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(7px, 0.5vw, 11px);
-  letter-spacing: 0.08em;
+  font-size: clamp(18px, min(2.35vw, 4.25dvh), 48px);
+  letter-spacing: 0.13em;
+  line-height: 1;
   content: "SOLD OUT";
-  transform: rotate(-2deg);
+  text-shadow:
+    0.07em 0.07em 0 rgba(36, 5, 4, 0.62),
+    -0.025em 0 0 rgba(255, 248, 232, 0.32);
 }
 
 .board[data-show-descriptions="false"] .product > div > span {
@@ -542,8 +617,38 @@ button {
 }
 
 .mini-list p.is-sold-out {
-  opacity: 0.42;
-  text-decoration: line-through;
+  position: relative;
+  isolation: isolate;
+  opacity: 1;
+}
+
+.mini-list p.is-sold-out > span,
+.mini-list p.is-sold-out > strong {
+  opacity: 0.22;
+}
+
+.mini-list p.is-sold-out::after {
+  position: absolute;
+  z-index: 2;
+  right: 0.2vw;
+  top: 50%;
+  min-width: 52%;
+  padding: 0.2em 0.65em 0.14em;
+  border: 1px solid rgba(255, 248, 232, 0.74);
+  color: var(--paper-light);
+  background:
+    repeating-linear-gradient(103deg, transparent 0 8px, rgba(255, 248, 232, 0.1) 8px 9px),
+    var(--red);
+  box-shadow: 0 0.18dvh 0.45dvh rgba(16, 15, 13, 0.35);
+  clip-path: polygon(2% 8%, 97% 0, 100% 88%, 4% 100%, 0 22%);
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 0.86em;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-align: center;
+  content: "SOLD OUT";
+  text-shadow: 0.06em 0.06em 0 rgba(48, 5, 4, 0.6);
+  transform: translateY(-50%) rotate(-2deg);
 }
 
 .combo {
@@ -796,6 +901,10 @@ button {
   grid-template-rows: auto 26dvh minmax(0, 1fr) 5.5dvh;
 }
 
+.board[data-orientation="portrait"] .announcement {
+  font-size: clamp(24px, min(4.5vw, 4.3dvh), 62px);
+}
+
 .board[data-orientation="portrait"] .board-masthead {
   grid-template-columns: minmax(0, 46%) minmax(0, 54%);
   gap: 0.8vw;
@@ -957,12 +1066,7 @@ button {
 
   .announcement {
     padding-inline: 2vw;
-    font-size: 10px;
-  }
-
-  .announcement::before,
-  .announcement::after {
-    margin-inline: 0.6em;
+    font-size: clamp(18px, 4.3vw, 24px);
   }
 
   .board[data-orientation="portrait"] .board-masthead {
@@ -1007,5 +1111,10 @@ button {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .announcement.is-scrolling .announcement__track {
+    animation: none;
+    transform: none;
   }
 }

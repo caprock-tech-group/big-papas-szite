@@ -9,11 +9,18 @@
     <link rel="icon" href="/favicon.svg">
     <link rel="apple-touch-icon" href="/images/menu-board-icon-192.webp">
     <link rel="manifest" href="/menu-board/manifest.webmanifest">
-    <link rel="stylesheet" href="/menu-board/board.css?v=9">
+    <link rel="stylesheet" href="/menu-board/board.css?v=10">
   </head>
   <body>
     <div class="board" data-board data-orientation="landscape" data-show-descriptions="true">
-      <div class="announcement" data-announcement hidden></div>
+      <div class="announcement" data-announcement role="status" aria-live="polite" hidden>
+        <div class="announcement__viewport" data-announcement-viewport>
+          <div class="announcement__track" data-announcement-track>
+            <span class="announcement__message" data-announcement-text></span>
+            <span class="announcement__message" data-announcement-clone aria-hidden="true" hidden></span>
+          </div>
+        </div>
+      </div>
 
       <header class="board-masthead">
         <div class="masthead-logo">
@@ -126,6 +133,6 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
     </button>
 
-    <script src="/menu-board/board.js?v=9" defer></script>
+    <script src="/menu-board/board.js?v=10" defer></script>
   </body>
 </html>
