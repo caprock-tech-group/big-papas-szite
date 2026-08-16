@@ -60,7 +60,7 @@ const defaultState: MenuBoardState = {
     headline: "Texas Loaded Potatoes",
     subheadline: "Bold flavor. Texas style. Big portions.",
     announcement: "",
-    announcementSpeed: 40,
+    announcementSpeed: 65,
     showDescriptions: true,
   },
   products: [
@@ -316,7 +316,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
         ? defaultState.board.subheadline
         : subheadline,
       announcement: cleanText(board.announcement, 120),
-      announcementSpeed: numberInRange(board.announcementSpeed, 20, 80, defaultState.board.announcementSpeed),
+      announcementSpeed: numberInRange(board.announcementSpeed, 25, 225, defaultState.board.announcementSpeed),
       showDescriptions: booleanValue(board.showDescriptions, true),
     },
     products: normalizeProducts(record.products, defaultState.products),

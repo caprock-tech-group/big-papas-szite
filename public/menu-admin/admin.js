@@ -79,9 +79,9 @@
 
   function announcementSpeedLabel(value) {
     const speed = Number(value);
-    if (speed <= 25) return "Slow";
-    if (speed <= 45) return "Normal";
-    if (speed <= 65) return "Fast";
+    if (speed <= 45) return "Slow";
+    if (speed <= 85) return "Normal";
+    if (speed <= 145) return "Fast";
     return "Very fast";
   }
 
@@ -202,7 +202,7 @@
     document.querySelector("[data-headline]").value = menu.board?.headline || "";
     document.querySelector("[data-subheadline]").value = menu.board?.subheadline || "";
     document.querySelector("[data-announcement]").value = menu.board?.announcement || "";
-    document.querySelector("[data-announcement-speed]").value = String(menu.board?.announcementSpeed || 40);
+    document.querySelector("[data-announcement-speed]").value = String(menu.board?.announcementSpeed || 65);
     updateAnnouncementSpeedLabel();
     document.querySelector("[data-show-descriptions]").checked = menu.board?.showDescriptions !== false;
     document.querySelector("[data-combo-enabled]").checked = menu.combo?.enabled !== false;

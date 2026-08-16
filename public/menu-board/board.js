@@ -22,7 +22,7 @@
   const isPreview = params.get("preview") === "1";
   const cacheKey = "big-papas-menu-board-cache-v4";
   const syncIntervalMs = 5_000;
-  const defaultAnnouncementSpeed = 40;
+  const defaultAnnouncementSpeed = 65;
 
   let currentMenu = null;
   let currentMenuFingerprint = "";
@@ -61,11 +61,14 @@
       const shift = announcementClone.offsetLeft - announcementText.offsetLeft;
       const configuredSpeed = Number(currentMenu?.board?.announcementSpeed);
       const speed = Number.isFinite(configuredSpeed)
-        ? Math.min(80, Math.max(20, configuredSpeed))
+        ? Math.min(225, Math.max(25, configuredSpeed))
         : defaultAnnouncementSpeed;
-      const duration = Math.max(8, shift / speed);
+      const duration = Math.max(4, shift / speed);
       announcementTrack.style.setProperty("--announcement-shift", `${shift}px`);
       announcementTrack.style.setProperty("--announcement-duration", `${duration.toFixed(1)}s`);
+      // Commit the stopped state before restarting so live preview and TV updates
+      // immediately use the newly selected duration.
+      void announcementTrack.offsetWidth;
       announcement.classList.add("is-scrolling");
     });
   }
