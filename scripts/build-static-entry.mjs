@@ -8,6 +8,25 @@ const siteUrl = (
 const serverModule = await import("../dist/server/index.js");
 const response = await serverModule.default(new Request("http://localhost/"));
 
+const quizRoutes = [
+  "/fun/which-tater",
+  "/fun/which-tater/big-hoss",
+  "/fun/which-tater/taco-tater",
+  "/fun/which-tater/mac-daddy",
+  "/fun/which-tater/italian-stallion",
+  "/fun/which-tater/broccoli-cheddar",
+  "/fun/which-tater/chicken-fried-steak",
+  "/fun/which-tater/breakfast-tater",
+];
+
+const quizPages = await Promise.all(quizRoutes.map(async (pathname) => {
+  const pageResponse = await serverModule.default(new Request(`http://localhost${pathname}`));
+  if (!pageResponse.ok) {
+    throw new Error(`Could not prerender ${pathname}: ${pageResponse.status}`);
+  }
+  return { pathname, html: await pageResponse.text() };
+}));
+
 if (!response.ok) {
   throw new Error(`Could not prerender the homepage: ${response.status}`);
 }
@@ -167,7 +186,7 @@ const textAssets = {
     cacheControl: "no-cache",
   },
   "/robots.txt": {
-    body: `User-agent: *\nAllow: /\nDisallow: /menu-board/\nDisallow: /menu-admin/\nDisallow: /update/\nSitemap: ${siteUrl}/sitemap.xml\n`,
+    body: `User-agent: *\nAllow: /\nDisallow: /fun/which-tater/\nDisallow: /menu-board/\nDisallow: /menu-admin/\nDisallow: /update/\nSitemap: ${siteUrl}/sitemap.xml\n`,
     contentType: "text/plain; charset=utf-8",
   },
   "/sitemap.xml": {
@@ -246,7 +265,15 @@ await Promise.all([
   cp("public/images/facebook-event-big-hoss.jpg", `${netlifyOutputDirectory}/images/facebook-event-big-hoss.jpg`),
   cp("public/images/facebook-event-brand.jpg", `${netlifyOutputDirectory}/images/facebook-event-brand.jpg`),
   cp("public/images/facebook-menu-qr.svg", `${netlifyOutputDirectory}/images/facebook-menu-qr.svg`),
+  cp("dist/client/_next", `${netlifyOutputDirectory}/_next`, { recursive: true }),
+  cp("public/images/tater-quiz", `${netlifyOutputDirectory}/images/tater-quiz`, { recursive: true }),
 ]);
+
+for (const page of quizPages) {
+  const destination = `${netlifyOutputDirectory}${page.pathname}`;
+  await mkdir(destination, { recursive: true });
+  await writeFile(`${destination}/index.html`, page.html);
+}
 
 const runtime = `const TEXT_ASSETS = ${JSON.stringify(textAssets)};
 const BINARY_ASSETS = ${JSON.stringify(binaryAssets)};
