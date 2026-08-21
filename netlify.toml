@@ -49,6 +49,13 @@
     X-Robots-Tag = "noindex, nofollow, noarchive"
 
 [[headers]]
+  for = "/event-planner/*"
+  [headers.values]
+    Cache-Control = "private, no-store, max-age=0"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+
+[[headers]]
   for = "/menu-board/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
@@ -103,6 +110,12 @@
   force = true
 
 [[redirects]]
+  from = "/api/event-planner/manage"
+  to = "/.netlify/functions/event-planner-manage"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/location"
   to = "/.netlify/functions/location-get"
   status = 200
@@ -151,4 +164,9 @@
 [[redirects]]
   from = "/menu-admin"
   to = "/menu-admin/"
+  status = 301
+
+[[redirects]]
+  from = "/event-planner"
+  to = "/event-planner/"
   status = 301
