@@ -12,6 +12,7 @@
   const deepClone = (value) => typeof structuredClone === "function"
     ? structuredClone(value)
     : JSON.parse(JSON.stringify(value));
+  const reviewMode = location.hostname.startsWith("deploy-preview-");
 
   const views = {
     today: ["Daily operations", "Today"],
@@ -774,6 +775,7 @@
       hydrateLocationForm();
       showCommandCenter();
       renderAll();
+      if (reviewMode) globalMessage("Review mode — try anything you like here. Publish and save actions stay inside this preview and will not change the live site.");
     } catch (error) {
       showLogin(error.message || "Could not connect to the Command Center.", "error");
     } finally {
@@ -803,6 +805,25 @@
     const button = qs("[data-publish-location]");
     busy(button, true, "Publishing…");
     setMessage("[data-publish-message]");
+    if (reviewMode) {
+      const now = new Date();
+      state.location = {
+        live: true,
+        latitude: state.coords.latitude,
+        longitude: state.coords.longitude,
+        accuracy: state.coords.accuracy,
+        locationName: qs("[data-location-name]").value,
+        hours: qs("[data-location-hours]").value,
+        note: qs("[data-location-note]").value,
+        updatedAt: now.toISOString(),
+        expiresAt: new Date(now.getTime() + number(qs("[data-location-expiration]").value, 8) * 3_600_000).toISOString(),
+      };
+      state.locationExpired = false;
+      setMessage("[data-publish-message]", "Preview successful — the real website and Facebook Page were not changed.", "success");
+      busy(button, false);
+      renderToday(); renderLocation();
+      return;
+    }
     try {
       const { response, result } = await api("/api/location/manage", { method: "POST", body: JSON.stringify({
         action: "publish",
@@ -829,6 +850,12 @@
   async function closeLocation() {
     if (state.location && !window.confirm("Mark this stop closed, remove the live pin, and update Facebook?")) return;
     const button = qs("[data-close-location]"); busy(button, true, "Closing stop…"); setMessage("[data-publish-message]");
+    if (reviewMode) {
+      state.location = null; state.locationExpired = false; state.coords = null;
+      setMessage("[data-publish-message]", "Preview closed — the real live pin and Facebook Page were not changed.", "success");
+      busy(button, false); renderToday(); renderLocation();
+      return;
+    }
     try {
       const { response, result } = await api("/api/location/manage", { method: "POST", body: JSON.stringify({ action: "clear" }) });
       if (!response.ok) throw new Error(result.message || "Could not close the stop.");
@@ -840,6 +867,10 @@
   }
 
   async function retryFacebook() {
+    if (reviewMode) {
+      globalMessage("Facebook retry previewed. No post or live automation was changed.");
+      return;
+    }
     const confirmedNoPost = state.facebook?.requiresConfirmation
       ? window.confirm("Facebook could not confirm whether the last post succeeded. Check the Page first. Press OK only if no post exists.")
       : false;
@@ -857,6 +888,12 @@
   async function saveMenu() {
     if (!state.menuDirty) return;
     const button = qs("[data-save-menu]"); busy(button, true, "Publishing…");
+    if (reviewMode) {
+      state.menuDirty = false; state.menu.updatedAt = new Date().toISOString();
+      busy(button, false); renderMenu(); renderToday();
+      globalMessage("Menu preview saved for this screen only. The live menu and TV board were not changed.");
+      return;
+    }
     try {
       const { response, result } = await api("/api/menu/manage", { method: "POST", body: JSON.stringify({ action: "save", expectedRevision: state.menu.revision, menu: state.menu }) });
       if (response.status === 401) return showLogin("Your session expired. Sign in again.", "error");
@@ -891,6 +928,12 @@
   async function saveEvents() {
     if (!state.plannerDirty) return;
     const button = qs("[data-save-events]"); busy(button, true, "Saving…");
+    if (reviewMode) {
+      state.plannerDirty = false; state.planner.updatedAt = new Date().toISOString();
+      busy(button, false); renderEvents(); renderReports();
+      globalMessage("Event plan preview saved for this screen only. Your real event plans were not changed.");
+      return;
+    }
     try {
       const { response, result } = await api("/api/event-planner/manage", { method: "POST", body: JSON.stringify({ action: "save", expectedRevision: state.planner.revision, planner: state.planner }) });
       if (response.status === 401) return showLogin("Your session expired. Sign in again.", "error");
