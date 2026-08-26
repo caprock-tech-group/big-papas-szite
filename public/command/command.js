@@ -972,12 +972,13 @@
     qs("[data-print-event]")?.addEventListener("click", () => window.print());
     qs("[data-login-form]")?.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const button = qs("button", event.currentTarget); const password = new FormData(event.currentTarget).get("password");
+      const form = event.currentTarget;
+      const button = qs("button", form); const password = new FormData(form).get("password");
       busy(button, true, "Signing in…"); setMessage("[data-login-message]");
       try {
         const { response, result } = await api("/api/admin/login", { method: "POST", body: JSON.stringify({ password }) });
         if (!response.ok) throw new Error(result.message || "Sign-in failed.");
-        event.currentTarget.reset(); await loadOverview();
+        form.reset(); await loadOverview();
       } catch (error) { setMessage("[data-login-message]", error.message || "Could not sign in.", "error"); }
       finally { busy(button, false); }
     });
