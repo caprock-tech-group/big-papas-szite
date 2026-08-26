@@ -166,8 +166,58 @@ const textAssets = {
     contentType: "text/javascript; charset=utf-8",
     cacheControl: "no-cache",
   },
+  "/event-planner": {
+    body: await readFile("public/event-planner/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/event-planner/": {
+    body: await readFile("public/event-planner/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/event-planner/index.html": {
+    body: await readFile("public/event-planner/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/event-planner/planner.css": {
+    body: await readFile("public/event-planner/planner.css", "utf8"),
+    contentType: "text/css; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/event-planner/planner.js": {
+    body: await readFile("public/event-planner/planner.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/command": {
+    body: await readFile("public/command/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/command/": {
+    body: await readFile("public/command/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/command/index.html": {
+    body: await readFile("public/command/index.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/command/command.css": {
+    body: await readFile("public/command/command.css", "utf8"),
+    contentType: "text/css; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/command/command.js": {
+    body: await readFile("public/command/command.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
   "/robots.txt": {
-    body: `User-agent: *\nAllow: /\nDisallow: /menu-board/\nDisallow: /menu-admin/\nDisallow: /update/\nSitemap: ${siteUrl}/sitemap.xml\n`,
+    body: `User-agent: *\nAllow: /\nDisallow: /menu-board/\nDisallow: /menu-admin/\nDisallow: /event-planner/\nDisallow: /command/\nDisallow: /update/\nSitemap: ${siteUrl}/sitemap.xml\n`,
     contentType: "text/plain; charset=utf-8",
   },
   "/sitemap.xml": {
@@ -215,6 +265,8 @@ await mkdir(`${netlifyOutputDirectory}/images`, { recursive: true });
 await mkdir(`${netlifyOutputDirectory}/update`, { recursive: true });
 await mkdir(`${netlifyOutputDirectory}/menu-board`, { recursive: true });
 await mkdir(`${netlifyOutputDirectory}/menu-admin`, { recursive: true });
+await mkdir(`${netlifyOutputDirectory}/event-planner`, { recursive: true });
+await mkdir(`${netlifyOutputDirectory}/command`, { recursive: true });
 
 await Promise.all([
   writeFile(`${netlifyOutputDirectory}/index.html`, html),
@@ -236,6 +288,12 @@ await Promise.all([
   cp("public/menu-admin/index.html", `${netlifyOutputDirectory}/menu-admin/index.html`),
   cp("public/menu-admin/admin.css", `${netlifyOutputDirectory}/menu-admin/admin.css`),
   cp("public/menu-admin/admin.js", `${netlifyOutputDirectory}/menu-admin/admin.js`),
+  cp("public/event-planner/index.html", `${netlifyOutputDirectory}/event-planner/index.html`),
+  cp("public/event-planner/planner.css", `${netlifyOutputDirectory}/event-planner/planner.css`),
+  cp("public/event-planner/planner.js", `${netlifyOutputDirectory}/event-planner/planner.js`),
+  cp("public/command/index.html", `${netlifyOutputDirectory}/command/index.html`),
+  cp("public/command/command.css", `${netlifyOutputDirectory}/command/command.css`),
+  cp("public/command/command.js", `${netlifyOutputDirectory}/command/command.js`),
   cp("public/public-menu.js", `${netlifyOutputDirectory}/public-menu.js`),
   cp("public/images/big-hoss-hero.webp", `${netlifyOutputDirectory}/images/big-hoss-hero.webp`),
   cp("public/images/loaded-potato-lineup.webp", `${netlifyOutputDirectory}/images/loaded-potato-lineup.webp`),
@@ -282,7 +340,7 @@ function handler(request) {
   const textAsset = TEXT_ASSETS[pathname];
   const binaryAsset = BINARY_ASSETS[pathname];
   let responseHeaders = SECURITY_HEADERS;
-  if (pathname.startsWith("/update") || pathname.startsWith("/menu-admin")) {
+  if (pathname.startsWith("/update") || pathname.startsWith("/menu-admin") || pathname.startsWith("/event-planner") || pathname.startsWith("/command")) {
     responseHeaders = {
       ...SECURITY_HEADERS,
       "Cache-Control": "private, no-store, max-age=0",

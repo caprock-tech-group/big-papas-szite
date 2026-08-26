@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="theme-color" content="#171310">
+    <title>Event Command Center | Big Papa's</title>
+    <link rel="icon" href="/favicon.svg">
+    <link rel="stylesheet" href="/event-planner/planner.css?v=1">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to planner</a>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Big Papa's website">
+        <img src="/images/big-papas-logo.webp" alt="" width="900" height="900">
+        <span><strong>Big Papa's</strong><small>Event Command Center</small></span>
+      </a>
+      <span class="private"><i></i>Private operations</span>
+    </header>
+
+    <main id="main">
+      <section class="login card" data-login-panel>
+        <p class="kicker">Planning without guesswork</p>
+        <h1>Turn every event into a better game plan.</h1>
+        <p>Forecast demand, build the oven timeline, run service, and learn from the actual numbers afterward.</p>
+        <form data-login-form>
+          <label for="password">Same staff password as the menu board</label>
+          <div class="login-row"><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="256"><button>Enter command center</button></div>
+          <p class="message" data-login-message role="status"></p>
+        </form>
+      </section>
+
+      <section class="app" data-app hidden>
+        <aside class="event-rail">
+          <div class="rail-heading"><div><small>Saved plans</small><strong>Your events</strong></div><button type="button" data-new-event title="New blank event">+</button></div>
+          <button class="template-button" type="button" data-template-2590>Use 2590 playbook template</button>
+          <div class="event-list" data-event-list></div>
+          <div class="rail-actions"><button type="button" data-duplicate>Duplicate</button><button class="danger" type="button" data-delete>Delete</button></div>
+        </aside>
+
+        <div class="workspace">
+          <div class="workspace-header">
+            <div><p class="kicker">Operational planning studio</p><h1 data-event-title>New event</h1><p data-save-state>Everything is saved.</p></div>
+            <div class="workspace-actions"><button class="secondary" type="button" data-print>Print / Save PDF</button><button class="primary" type="button" data-save disabled>Save event plan</button><button class="text-button" type="button" data-logout>Sign out</button></div>
+          </div>
+
+          <nav class="tabs" aria-label="Planner sections">
+            <button type="button" data-tab="plan" aria-selected="true">Plan</button>
+            <button type="button" data-tab="production">Production</button>
+            <button type="button" data-tab="live">Live shift</button>
+            <button type="button" data-tab="review">Review</button>
+          </nav>
+
+          <section class="tab-panel" data-panel="plan">
+            <div class="section-heading"><span>01</span><div><p>Event brief</p><h2>Start with the facts</h2></div></div>
+            <div class="form-grid basics-grid">
+              <label class="wide">Event name<input data-field="name" maxlength="100"></label>
+              <label class="wide">Location<input data-field="location" maxlength="140" placeholder="Venue or address"></label>
+              <label>Date<input data-field="eventDate" type="date"></label>
+              <label>Setup time<input data-field="setupTime" type="time"></label>
+              <label>Open time<input data-field="openTime" type="time"></label>
+              <label>Close time<input data-field="closeTime" type="time"></label>
+              <label>Expected attendance<input data-field="attendance" type="number" min="0" max="100000" inputmode="numeric"></label>
+              <label>Expected capture %<input data-field="captureRate" type="number" min="0" max="100" step="0.1" inputmode="decimal"></label>
+              <label>Prep buffer %<input data-field="bufferRate" type="number" min="0" max="100" step="0.1" inputmode="decimal"></label>
+              <label>Crew count<input data-field="crewCount" type="number" min="1" max="30" inputmode="numeric"></label>
+              <label class="full">Operational notes<textarea data-field="notes" rows="3" maxlength="2000" placeholder="Parking, power, service restrictions, special menu, venue contact…"></textarea></label>
+            </div>
+
+            <div class="metric-grid" data-forecast-metrics></div>
+
+            <div class="section-heading section-heading--compact"><span>02</span><div><p>Demand mix</p><h2>How many of each tater?</h2></div></div>
+            <p class="helper">Set the expected sales mix. The planner converts the forecast into counts; exact ingredient purchasing can be added once your portion recipes are entered.</p>
+            <div class="menu-mix" data-menu-mix></div>
+            <div class="mix-total" data-mix-total></div>
+          </section>
+
+          <section class="tab-panel" data-panel="production" hidden>
+            <div class="section-heading"><span>03</span><div><p>Single-combi production</p><h2>Build backward from opening</h2></div></div>
+            <div class="form-grid oven-grid">
+              <label>Batch size<input data-field="batchSize" type="number" min="1" max="200"></label>
+              <label>Cycle minutes<input data-field="cycleMinutes" type="number" min="1" max="240"></label>
+              <label>Opening ready<input data-field="openingReady" type="number" min="0" max="1000"></label>
+              <label>Opening cooking<input data-field="openingCooking" type="number" min="0" max="1000"></label>
+            </div>
+            <div class="rule-banner"><strong>One-oven rule</strong><span>Reheat hot toppings first. Once the first potato batch starts, keep the combi on potatoes unless the PIC calls a recovery.</span></div>
+            <div class="production-grid"><div><h3>Countdown timeline</h3><ol class="timeline" data-timeline></ol></div><div><h3>Opening targets</h3><div class="target-card" data-opening-targets></div></div></div>
+            <div class="section-heading section-heading--compact"><span>04</span><div><p>Service controls</p><h2>Pace calls and triggers</h2></div></div>
+            <div class="pace-cards">
+              <article class="pace pace--green"><small>Green · 0–6 sold / 15 min</small><strong>Up to 24 per hour</strong><p>Keep 20–45 ready plus one batch cooking. Delay 10–15 minutes only if ready exceeds 45 and demand is falling.</p></article>
+              <article class="pace pace--yellow"><small>Yellow · 7–8 sold / 15 min</small><strong>28–32 per hour</strong><p>Bake nonstop. Protect the oven rhythm and stage the next 30.</p></article>
+              <article class="pace pace--red"><small>Red · 9+ sold / 15 min</small><strong>36+ per hour</strong><p>Above oven capacity. Quote waits, count queued orders, and do not run off-cycle topping reheats.</p></article>
+            </div>
+            <div class="trigger-list">
+              <h3>Replenishment triggers</h3>
+              <ul><li><strong>Potatoes:</strong> ready ≤30 or Yellow/Red pace → stage the next 30.</li><li><strong>Hot toppings:</strong> ⅓ pan → replenish from hot backup only.</li><li><strong>Meat, mac, gravy:</strong> ½ pan → replenish from hot backup.</li><li><strong>Cold garnish / packaging:</strong> 25% remaining → restock.</li><li><strong>Sell-through:</strong> ready + in oven ≤ paid/queued +10 → quote ETA or cap orders.</li></ul>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="live" hidden>
+            <div class="section-heading"><span>05</span><div><p>Day-of command sheet</p><h2>Run the shift from one screen</h2></div></div>
+            <div class="live-summary" data-live-summary></div>
+            <div class="live-grid">
+              <section><div class="table-heading"><h3>15-minute sales & oven control</h3><button type="button" data-add-pace>+ Row</button></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Sold / 15</th><th>Ready</th><th>In oven</th><th>Next ETA</th><th>Pace / action</th><th></th></tr></thead><tbody data-pace-log></tbody></table></div></section>
+              <section><div class="table-heading"><h3>Production record</h3><button type="button" data-add-production>+ Row</button></div><div class="table-wrap"><table><thead><tr><th>Batch / task</th><th>In</th><th>Out</th><th>End temp</th><th>Initials</th><th></th></tr></thead><tbody data-production-log></tbody></table></div></section>
+              <section><div class="table-heading"><h3>Hot-hold checks</h3><button type="button" data-add-temp>+ Row</button></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Item</th><th>Temp</th><th>Action / discard</th><th>Initials</th><th></th></tr></thead><tbody data-temp-log></tbody></table></div></section>
+            </div>
+            <p class="local-note">Live shift entries stay on this device for the event. Save the plan to preserve planning and review numbers.</p>
+          </section>
+
+          <section class="tab-panel" data-panel="review" hidden>
+            <div class="section-heading"><span>06</span><div><p>Close the loop</p><h2>Teach the next plan</h2></div></div>
+            <div class="form-grid review-grid">
+              <label>Actual orders<input data-field="actualOrders" type="number" min="0" max="100000" placeholder="—"></label>
+              <label>Total waste / discard<input data-field="actualWaste" type="number" min="0" max="100000" placeholder="—"></label>
+              <label>Peak sold in 15 min<input data-field="peakFifteen" type="number" min="0" max="10000" placeholder="—"></label>
+              <label class="full">What should change next time?<textarea data-field="reviewNotes" rows="5" maxlength="4000" placeholder="Demand surprises, sellouts, bottlenecks, portion changes, staffing lessons…"></textarea></label>
+            </div>
+            <div class="review-results" data-review-results></div>
+            <h3>Item-level actuals</h3><div class="actual-items" data-actual-items></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script src="/event-planner/planner.js?v=1" defer></script>
+  </body>
+</html>
