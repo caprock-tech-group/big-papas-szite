@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#171310">
     <title>Big Papa's Command Center</title>
     <link rel="icon" href="/favicon.svg">
-    <link rel="stylesheet" href="/command/command.css?v=1">
+    <link rel="stylesheet" href="/command/command.css?v=2">
   </head>
   <body>
     <a class="skip-link" href="#workspace">Skip to command center</a>
@@ -100,6 +100,14 @@
         <section class="view" data-view="menu" hidden>
           <div class="section-intro"><div><p class="eyebrow">Menu & display control</p><h2>Change it once. Update it everywhere.</h2><p>Availability changes are prominent. Product details stay tucked away until you need them.</p></div><a class="outline-link" href="/menu-board/?orientation=portrait" target="_blank" rel="noreferrer noopener">Open menu board ↗</a></div>
           <article class="panel announcement-editor"><div><p class="eyebrow">Top announcement</p><h3>What should customers see?</h3></div><div class="announcement-fields"><label>Message<input data-menu-announcement maxlength="120" placeholder="Optional announcement"></label><label>Scroll speed <output data-speed-output>Normal</output><input data-menu-speed type="range" min="25" max="225" step="5"></label></div></article>
+          <article class="panel drinks-stop-control">
+            <div><p class="eyebrow">At this stop</p><h3>Sell drinks here?</h3><p>Turn this off at Skooterz or any stop that sells its own drinks. It hides Drinks and the drink combo from the TV board and online menu without deleting anything.</p></div>
+            <label class="drinks-switch" for="drinks-enabled">
+              <input id="drinks-enabled" data-drinks-enabled type="checkbox" role="switch" checked>
+              <span class="drinks-switch-track" aria-hidden="true"><i></i></span>
+              <strong data-drinks-status>Drinks shown</strong>
+            </label>
+          </article>
           <div class="menu-toolbar"><div><strong data-menu-status>Menu is published</strong><span data-menu-updated></span></div><button type="button" data-save-menu disabled>Publish menu changes</button></div>
           <div class="product-list" data-command-products></div>
           <details class="panel compact-editor"><summary>Drinks, add-ons and combo <span>Open editor</span></summary><div data-small-menu-editor></div></details>
@@ -138,6 +146,6 @@
         <button type="button" data-nav="today" aria-current="page"><span>⌂</span>Today</button><button type="button" data-nav="location"><span>⌖</span>Location</button><button type="button" data-nav="menu"><span>☷</span>Menu</button><button type="button" data-nav="events"><span>□</span>Events</button><button type="button" data-nav="marketing"><span>◉</span>More</button>
       </nav>
     </div>
-    <script src="/command/command.js?v=1" defer></script>
+    <script src="/command/command.js?v=2" defer></script>
   </body>
 </html>

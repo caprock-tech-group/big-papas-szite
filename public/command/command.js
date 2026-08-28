@@ -383,6 +383,16 @@
     target.append(combo);
   }
 
+  function renderDrinksControl() {
+    const input = qs("[data-drinks-enabled]");
+    const status = qs("[data-drinks-status]");
+    if (!input || !status || !state.menu) return;
+    const enabled = state.menu.drinksEnabled !== false;
+    input.checked = enabled;
+    status.textContent = enabled ? "Drinks shown" : "Drinks hidden";
+    status.classList.toggle("is-hidden", !enabled);
+  }
+
   function renderMenu() {
     if (!state.menu) return;
     qs("[data-menu-announcement]").value = state.menu.board.announcement || "";
@@ -391,6 +401,7 @@
     qs("[data-menu-status]").textContent = state.menuDirty ? "Menu changes are waiting" : "Menu is published";
     qs("[data-menu-updated]").textContent = state.menuDirty ? "Publish when you are ready." : `Last updated ${formatDateTime(state.menu.updatedAt)}`;
     qs("[data-save-menu]").disabled = !state.menuDirty;
+    renderDrinksControl();
     renderMenuProducts();
     renderSmallMenuEditor();
   }
@@ -964,6 +975,12 @@
     qs("[data-save-menu]")?.addEventListener("click", saveMenu);
     qs("[data-menu-announcement]")?.addEventListener("input", (event) => { if (!state.menu) return; state.menu.board.announcement = event.target.value; markMenuDirty(); });
     qs("[data-menu-speed]")?.addEventListener("input", (event) => { if (!state.menu) return; state.menu.board.announcementSpeed = number(event.target.value, 65); qs("[data-speed-output]").value = speedLabel(event.target.value); markMenuDirty(); });
+    qs("[data-drinks-enabled]")?.addEventListener("change", (event) => {
+      if (!state.menu) return;
+      state.menu.drinksEnabled = event.target.checked;
+      renderDrinksControl();
+      markMenuDirty();
+    });
     qs("[data-new-event]")?.addEventListener("click", () => requestEventTemplate("blank"));
     qs("[data-template-event]")?.addEventListener("click", () => requestEventTemplate("2590"));
     qs("[data-duplicate-event]")?.addEventListener("click", duplicateEvent);

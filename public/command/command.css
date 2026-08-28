@@ -292,6 +292,19 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
 .announcement-fields { display: grid; grid-template-columns: minmax(0,1fr) 210px; gap: 16px; }
 .announcement-fields output { color: var(--red); }
 .announcement-fields input[type="range"] { width: 100%; accent-color: var(--red); }
+.drinks-stop-control { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 24px; align-items: center; margin-top: 18px; padding: 22px; }
+.drinks-stop-control h3 { margin: 0; font-family: Georgia, serif; font-size: 1.35rem; }
+.drinks-stop-control p:last-child { max-width: 680px; margin: 7px 0 0; color: var(--muted); line-height: 1.45; }
+.drinks-switch { display: grid !important; grid-template-columns: auto minmax(96px,auto); gap: 10px 13px !important; align-items: center; min-width: 190px; padding: 14px 16px; border: 2px solid var(--green); background: #eef9ef; cursor: pointer; }
+.drinks-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.drinks-switch-track { position: relative; width: 58px; height: 32px; border-radius: 18px; background: var(--green); transition: background 160ms ease; }
+.drinks-switch-track i { position: absolute; top: 4px; left: 30px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,.25); transition: left 160ms ease; }
+.drinks-switch strong { color: var(--green); font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+.drinks-switch:has(input:not(:checked)) { border-color: var(--red); background: #f9e8e4; }
+.drinks-switch input:not(:checked) + .drinks-switch-track { background: var(--red); }
+.drinks-switch input:not(:checked) + .drinks-switch-track i { left: 4px; }
+.drinks-switch strong.is-hidden { color: var(--red-dark); }
+.drinks-switch:has(input:focus-visible) { outline: 3px solid var(--gold); outline-offset: 3px; }
 .menu-toolbar { position: sticky; top: 10px; z-index: 15; display: flex; justify-content: space-between; gap: 18px; align-items: center; margin: 18px 0; padding: 13px 16px; background: var(--ink); color: #fff; box-shadow: var(--shadow); }
 .menu-toolbar strong, .menu-toolbar span { display: block; }
 .menu-toolbar span { margin-top: 2px; color: #d7c6ad; font-size: .72rem; }
@@ -482,6 +495,8 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
   .step-card:last-child { grid-column: auto; }
   .mini-status { width: 100%; }
   .announcement-editor, .announcement-fields { grid-template-columns: 1fr; }
+  .drinks-stop-control { grid-template-columns: 1fr; }
+  .drinks-switch { width: 100%; grid-template-columns: auto 1fr; }
   .menu-toolbar { top: 74px; }
   .event-layout { grid-template-columns: 1fr; }
   .event-list-panel { position: static; }

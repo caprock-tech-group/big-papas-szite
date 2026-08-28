@@ -98,8 +98,12 @@
       : [];
     drinks.replaceChildren(...visibleDrinks.map(createSmallItem));
 
+    const drinksEnabled = menu.drinksEnabled !== false;
+    const drinksSection = drinks.closest(".menu-panel--drinks");
+    if (drinksSection) drinksSection.hidden = !drinksEnabled;
+
     if (combo) {
-      combo.hidden = menu.combo?.enabled === false;
+      combo.hidden = !drinksEnabled || menu.combo?.enabled === false;
       setText(combo.querySelector("[data-public-menu-combo-label]"), menu.combo?.label || "Add a combo");
       setText(combo.querySelector("[data-public-menu-combo-description]"), menu.combo?.description || "Add any drink + cookie");
       setText(combo.querySelector("[data-public-menu-combo-price]"), menu.combo?.price || "$4.00");
