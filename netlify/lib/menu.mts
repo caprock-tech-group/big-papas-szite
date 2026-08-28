@@ -42,6 +42,7 @@ export type MenuBoardState = {
   };
   products: BoardProduct[];
   addOns: BoardSmallItem[];
+  drinksEnabled: boolean;
   drinks: BoardSmallItem[];
   combo: {
     enabled: boolean;
@@ -152,6 +153,7 @@ const defaultState: MenuBoardState = {
     { id: "ranch", name: "Ranch", price: "$0.75", available: true, visible: true },
     { id: "green-onions", name: "Green onions", price: "$0.50", available: true, visible: true },
   ],
+  drinksEnabled: true,
   drinks: [
     { id: "water", name: "Water", price: "$2.00", available: true, visible: true },
     { id: "lemonade", name: "Lemonade", price: "$3.00", available: true, visible: true },
@@ -321,6 +323,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
     },
     products: normalizeProducts(record.products, defaultState.products),
     addOns: normalizeSmallItems(record.addOns, defaultState.addOns, "add-on"),
+    drinksEnabled: booleanValue(record.drinksEnabled, true),
     drinks: normalizeSmallItems(record.drinks, defaultState.drinks, "drink"),
     combo: {
       enabled: booleanValue(combo.enabled, true),

@@ -257,6 +257,7 @@
       },
       products: collectProducts(),
       addOns: collectSmallItems("addOns"),
+      drinksEnabled: currentMenu?.drinksEnabled !== false,
       drinks: collectSmallItems("drinks"),
       combo: {
         enabled: document.querySelector("[data-combo-enabled]").checked,

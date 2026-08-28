@@ -5,6 +5,7 @@
   const products = document.querySelector("[data-products]");
   const addOns = document.querySelector("[data-add-ons]");
   const drinks = document.querySelector("[data-drinks]");
+  const drinksSection = document.querySelector("[data-drinks-section]");
   const combo = document.querySelector("[data-combo]");
   const announcement = document.querySelector("[data-announcement]");
   const announcementViewport = document.querySelector("[data-announcement-viewport]");
@@ -153,8 +154,12 @@
     renderSmallList(addOns, Array.isArray(menu.addOns) ? menu.addOns : []);
     renderSmallList(drinks, Array.isArray(menu.drinks) ? menu.drinks : []);
 
+    const drinksEnabled = menu.drinksEnabled !== false;
+    board.dataset.drinksEnabled = String(drinksEnabled);
+    if (drinksSection) drinksSection.hidden = !drinksEnabled;
+
     if (combo) {
-      combo.hidden = menu.combo?.enabled === false;
+      combo.hidden = !drinksEnabled || menu.combo?.enabled === false;
       text(combo.querySelector("[data-combo-label]"), menu.combo?.label || "Add a combo");
       text(combo.querySelector("[data-combo-description]"), menu.combo?.description || "Add any drink + cookie");
       text(combo.querySelector("[data-combo-price]"), menu.combo?.price || "$4.00");

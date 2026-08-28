@@ -546,6 +546,10 @@ button {
   overflow: hidden;
 }
 
+.board[data-drinks-enabled="false"] .side-columns {
+  grid-template-rows: minmax(0, 1fr);
+}
+
 .mini-menu {
   display: grid;
   grid-template-rows: 4.8dvh minmax(0, 1fr);
