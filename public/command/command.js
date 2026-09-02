@@ -127,6 +127,20 @@
     return "Very fast";
   }
 
+  function priceInCents(value) {
+    const amount = Number(String(value ?? "").replace(/^\$/, ""));
+    return Number.isFinite(amount) ? Math.max(0, Math.round(amount * 100)) : 0;
+  }
+
+  function formatPrice(cents) {
+    return `$${(Math.max(0, cents) / 100).toFixed(2)}`;
+  }
+
+  function lunchProductPrice(price) {
+    if (state.menu?.lunchPricing?.enabled !== true) return price;
+    return formatPrice(priceInCents(price) - priceInCents(state.menu.lunchPricing.reduction));
+  }
+
   function showLogin(text = "", type = "") {
     qs("[data-login-screen]").hidden = false;
     qs("[data-command-shell]").hidden = true;
@@ -318,7 +332,9 @@
       const summary = el("div", "product-summary");
       const name = el("div", "product-name");
       name.append(el("small", "", product.visible ? product.eyebrow : "Hidden from menu"), el("strong", "", product.name));
-      const price = el("span", "product-price", product.price);
+      const price = el("div", "product-price-group");
+      price.append(el("span", "product-price", lunchProductPrice(product.price)));
+      if (state.menu?.lunchPricing?.enabled === true) price.append(el("small", "", `Regular ${product.price}`));
       const stock = el("button", `stock-toggle${product.available ? "" : " is-sold"}`, product.available ? "In stock" : "Sold out");
       stock.type = "button";
       stock.addEventListener("click", () => { product.available = !product.available; markMenuDirty(); renderMenuProducts(); });
@@ -393,6 +409,19 @@
     status.classList.toggle("is-hidden", !enabled);
   }
 
+  function renderLunchPricingControl(options = {}) {
+    const enabledInput = qs("[data-lunch-enabled]");
+    const reductionInput = qs("[data-lunch-reduction]");
+    const status = qs("[data-lunch-status]");
+    if (!enabledInput || !reductionInput || !status || !state.menu) return;
+    const enabled = state.menu.lunchPricing?.enabled === true;
+    const reduction = state.menu.lunchPricing?.reduction ?? "$0.00";
+    enabledInput.checked = enabled;
+    if (!options.keepReductionInput) reductionInput.value = (priceInCents(reduction) / 100).toFixed(2);
+    status.textContent = enabled ? `Lunch prices on · $${(priceInCents(reduction) / 100).toFixed(2)} less` : "Regular prices";
+    status.classList.toggle("is-hidden", !enabled);
+  }
+
   function renderMenu() {
     if (!state.menu) return;
     qs("[data-menu-announcement]").value = state.menu.board.announcement || "";
@@ -401,6 +430,7 @@
     qs("[data-menu-status]").textContent = state.menuDirty ? "Menu changes are waiting" : "Menu is published";
     qs("[data-menu-updated]").textContent = state.menuDirty ? "Publish when you are ready." : `Last updated ${formatDateTime(state.menu.updatedAt)}`;
     qs("[data-save-menu]").disabled = !state.menuDirty;
+    renderLunchPricingControl();
     renderDrinksControl();
     renderMenuProducts();
     renderSmallMenuEditor();
@@ -975,6 +1005,22 @@
     qs("[data-save-menu]")?.addEventListener("click", saveMenu);
     qs("[data-menu-announcement]")?.addEventListener("input", (event) => { if (!state.menu) return; state.menu.board.announcement = event.target.value; markMenuDirty(); });
     qs("[data-menu-speed]")?.addEventListener("input", (event) => { if (!state.menu) return; state.menu.board.announcementSpeed = number(event.target.value, 65); qs("[data-speed-output]").value = speedLabel(event.target.value); markMenuDirty(); });
+    qs("[data-lunch-enabled]")?.addEventListener("change", (event) => {
+      if (!state.menu) return;
+      state.menu.lunchPricing ||= { enabled: false, reduction: "$0.00" };
+      state.menu.lunchPricing.enabled = event.target.checked;
+      renderLunchPricingControl({ keepReductionInput: true });
+      renderMenuProducts();
+      markMenuDirty();
+    });
+    qs("[data-lunch-reduction]")?.addEventListener("input", (event) => {
+      if (!state.menu) return;
+      state.menu.lunchPricing ||= { enabled: false, reduction: "$0.00" };
+      state.menu.lunchPricing.reduction = event.target.value;
+      renderLunchPricingControl({ keepReductionInput: true });
+      renderMenuProducts();
+      markMenuDirty();
+    });
     qs("[data-drinks-enabled]")?.addEventListener("change", (event) => {
       if (!state.menu) return;
       state.menu.drinksEnabled = event.target.checked;

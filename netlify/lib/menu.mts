@@ -41,6 +41,10 @@ export type MenuBoardState = {
     showDescriptions: boolean;
   };
   products: BoardProduct[];
+  lunchPricing: {
+    enabled: boolean;
+    reduction: string;
+  };
   addOns: BoardSmallItem[];
   drinksEnabled: boolean;
   drinks: BoardSmallItem[];
@@ -143,6 +147,10 @@ const defaultState: MenuBoardState = {
       visible: true,
     },
   ],
+  lunchPricing: {
+    enabled: false,
+    reduction: "$0.00",
+  },
   addOns: [
     { id: "extra-meat", name: "Extra meat", price: "$3.00", available: true, visible: true },
     { id: "extra-cheese", name: "Extra cheese", price: "$1.00", available: true, visible: true },
@@ -194,6 +202,13 @@ function cleanId(value: unknown, fallback: string) {
 function cleanPrice(value: unknown, fallback = "$0.00") {
   const price = cleanText(value, 16, fallback);
   return /^[\$]?[0-9]{1,4}(?:\.[0-9]{1,2})?$/.test(price) ? (price.startsWith("$") ? price : `$${price}`) : fallback;
+}
+
+function cleanReduction(value: unknown, fallback = "$0.00") {
+  const raw = typeof value === "number" ? String(value) : cleanText(value, 16, fallback);
+  const amount = Number(raw.replace(/^\$/, ""));
+  if (!Number.isFinite(amount) || amount < 0 || amount > 100) return fallback;
+  return `$${amount.toFixed(2)}`;
 }
 
 function booleanValue(value: unknown, fallback: boolean) {
@@ -294,6 +309,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
   if (!value || typeof value !== "object") return structuredClone(defaultState);
   const record = value as Partial<MenuBoardState>;
   const board = record.board && typeof record.board === "object" ? record.board : {};
+  const lunchPricing = record.lunchPricing && typeof record.lunchPricing === "object" ? record.lunchPricing : {};
   const combo = record.combo && typeof record.combo === "object" ? record.combo : {};
   const orientation = board.orientation === "landscape" || board.orientation === "portrait" || board.orientation === "auto"
     ? board.orientation
@@ -322,6 +338,10 @@ function normalizeMenuState(value: unknown): MenuBoardState {
       showDescriptions: booleanValue(board.showDescriptions, true),
     },
     products: normalizeProducts(record.products, defaultState.products),
+    lunchPricing: {
+      enabled: booleanValue(lunchPricing.enabled, false),
+      reduction: cleanReduction(lunchPricing.reduction, defaultState.lunchPricing.reduction),
+    },
     addOns: normalizeSmallItems(record.addOns, defaultState.addOns, "add-on"),
     drinksEnabled: booleanValue(record.drinksEnabled, true),
     drinks: normalizeSmallItems(record.drinks, defaultState.drinks, "drink"),

@@ -85,6 +85,17 @@
     if (message) scheduleAnnouncementLayout();
   }
 
+  function priceInCents(value) {
+    const amount = Number(String(value ?? "").replace(/^\$/, ""));
+    return Number.isFinite(amount) ? Math.max(0, Math.round(amount * 100)) : 0;
+  }
+
+  function productPrice(value) {
+    if (currentMenu?.lunchPricing?.enabled !== true) return value;
+    const cents = Math.max(0, priceInCents(value) - priceInCents(currentMenu.lunchPricing.reduction));
+    return `$${(cents / 100).toFixed(2)}`;
+  }
+
   function createProduct(item) {
     const article = document.createElement("article");
     article.className = `product product--${item.accent || "red"}${item.available === false ? " is-sold-out" : ""}`;
@@ -109,7 +120,7 @@
     copy.append(eyebrow, title, description);
 
     const price = document.createElement("strong");
-    price.textContent = item.price;
+    price.textContent = productPrice(item.price);
     article.append(copy, price);
     return article;
   }

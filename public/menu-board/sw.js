@@ -1,8 +1,8 @@
-const CACHE_NAME = "big-papas-menu-board-v15";
+const CACHE_NAME = "big-papas-menu-board-v16";
 const SHELL = [
   "/menu-board/",
-  "/menu-board/board.css?v=15",
-  "/menu-board/board.js?v=15",
+  "/menu-board/board.css?v=16",
+  "/menu-board/board.js?v=16",
   "/menu-board/manifest.webmanifest",
   "/images/big-papas-logo.webp",
   "/images/big-hoss-hero.webp",
