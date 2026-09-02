@@ -22,7 +22,18 @@
     return item && typeof item === "object" && typeof item.name === "string";
   }
 
-  function createProduct(item) {
+  function priceInCents(value) {
+    const amount = Number(String(value ?? "").replace(/^\$/, ""));
+    return Number.isFinite(amount) ? Math.max(0, Math.round(amount * 100)) : 0;
+  }
+
+  function productPrice(value, lunchPricing) {
+    if (lunchPricing?.enabled !== true) return value;
+    const cents = Math.max(0, priceInCents(value) - priceInCents(lunchPricing.reduction));
+    return `$${(cents / 100).toFixed(2)}`;
+  }
+
+  function createProduct(item, lunchPricing) {
     const article = document.createElement("article");
     const accent = ["red", "blue", "gold"].includes(item.accent) ? item.accent : "red";
     article.className = `menu-card menu-card--${accent}${item.isNew ? " menu-card--new" : ""}${item.available === false ? " menu-card--sold-out" : ""}`;
@@ -46,7 +57,7 @@
     title.textContent = item.name;
     const price = document.createElement("strong");
     price.className = "menu-price";
-    price.textContent = item.price || "";
+    price.textContent = productPrice(item.price || "", lunchPricing);
     heading.append(title, price);
 
     const rule = document.createElement("span");
@@ -86,7 +97,7 @@
     const visibleProducts = Array.isArray(menu.products)
       ? menu.products.filter((item) => validItem(item) && item.visible !== false)
       : [];
-    products.replaceChildren(...visibleProducts.map(createProduct));
+    products.replaceChildren(...visibleProducts.map((item) => createProduct(item, menu.lunchPricing)));
 
     const visibleAddOns = Array.isArray(menu.addOns)
       ? menu.addOns.filter((item) => validItem(item) && item.visible !== false)

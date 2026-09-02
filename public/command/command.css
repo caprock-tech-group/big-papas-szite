@@ -292,6 +292,13 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
 .announcement-fields { display: grid; grid-template-columns: minmax(0,1fr) 210px; gap: 16px; }
 .announcement-fields output { color: var(--red); }
 .announcement-fields input[type="range"] { width: 100%; accent-color: var(--red); }
+.lunch-pricing-control { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 24px; align-items: center; margin-top: 18px; padding: 22px; }
+.lunch-pricing-control h3 { margin: 0; font-family: Georgia, serif; font-size: 1.35rem; }
+.lunch-pricing-control > div:first-child > p:last-child { max-width: 680px; margin: 7px 0 0; color: var(--muted); line-height: 1.45; }
+.lunch-pricing-actions { display: grid; grid-template-columns: minmax(210px,auto) minmax(220px,auto); gap: 12px; align-items: stretch; }
+.lunch-reduction-field { display: grid !important; gap: 7px !important; align-content: center; padding: 10px 14px; border: 1px solid var(--line); background: #fffdfa; font-size: .78rem; font-weight: 850; }
+.lunch-reduction-field span { display: grid; grid-template-columns: auto minmax(90px,1fr); align-items: center; gap: 5px; color: var(--red); font: 1.35rem/1 Impact, sans-serif; }
+.lunch-reduction-field input { width: 100%; padding: 8px 9px; color: var(--ink); background: #fff; font: 1rem/1.2 Inter,Arial,sans-serif; }
 .drinks-stop-control { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 24px; align-items: center; margin-top: 18px; padding: 22px; }
 .drinks-stop-control h3 { margin: 0; font-family: Georgia, serif; font-size: 1.35rem; }
 .drinks-stop-control p:last-child { max-width: 680px; margin: 7px 0 0; color: var(--muted); line-height: 1.45; }
@@ -305,6 +312,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
 .drinks-switch input:not(:checked) + .drinks-switch-track i { left: 4px; }
 .drinks-switch strong.is-hidden { color: var(--red-dark); }
 .drinks-switch:has(input:focus-visible) { outline: 3px solid var(--gold); outline-offset: 3px; }
+.lunch-switch { min-width: 220px; }
 .menu-toolbar { position: sticky; top: 10px; z-index: 15; display: flex; justify-content: space-between; gap: 18px; align-items: center; margin: 18px 0; padding: 13px 16px; background: var(--ink); color: #fff; box-shadow: var(--shadow); }
 .menu-toolbar strong, .menu-toolbar span { display: block; }
 .menu-toolbar span { margin-top: 2px; color: #d7c6ad; font-size: .72rem; }
@@ -318,6 +326,8 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
 .product-name small { color: var(--red); font-size: .62rem; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }
 .product-name strong { margin-top: 3px; font-family: Georgia, serif; font-size: 1.24rem; }
 .product-price { font: 1.6rem/1 Impact, sans-serif; color: var(--red); }
+.product-price-group { min-width: 94px; text-align: right; }
+.product-price-group small { display: block; margin-top: 3px; color: var(--muted); font-size: .68rem; font-weight: 750; white-space: nowrap; }
 .stock-toggle { min-width: 130px; padding: 11px 14px; border: 0; background: #277f42; color: #fff; font-size: .73rem; font-weight: 950; letter-spacing: .07em; text-transform: uppercase; }
 .stock-toggle.is-sold { background: var(--red); }
 .product-edit-toggle { grid-column: 1 / -1; justify-self: start; border: 0; background: transparent; color: var(--muted); padding: 2px 0; font-size: .72rem; font-weight: 850; }
@@ -495,6 +505,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
   .step-card:last-child { grid-column: auto; }
   .mini-status { width: 100%; }
   .announcement-editor, .announcement-fields { grid-template-columns: 1fr; }
+  .lunch-pricing-control, .lunch-pricing-actions { grid-template-columns: 1fr; }
   .drinks-stop-control { grid-template-columns: 1fr; }
   .drinks-switch { width: 100%; grid-template-columns: auto 1fr; }
   .menu-toolbar { top: 74px; }

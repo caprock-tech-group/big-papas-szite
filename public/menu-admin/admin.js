@@ -256,6 +256,7 @@
         showDescriptions: document.querySelector("[data-show-descriptions]").checked,
       },
       products: collectProducts(),
+      lunchPricing: currentMenu?.lunchPricing || { enabled: false, reduction: "$0.00" },
       addOns: collectSmallItems("addOns"),
       drinksEnabled: currentMenu?.drinksEnabled !== false,
       drinks: collectSmallItems("drinks"),
