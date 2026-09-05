@@ -243,14 +243,14 @@ function normalizeProducts(value: unknown, fallback: BoardProduct[]) {
       : original.accent;
     return {
       id: uniqueId(record.id, `product-${index + 1}`, used),
-      name: cleanText(record.name, 70, `Menu item ${index + 1}`),
-      eyebrow: cleanText(record.eyebrow, 48, "Loaded potato"),
+      name: cleanText(record.name, 70, original.name),
+      eyebrow: cleanText(record.eyebrow, 48, original.eyebrow),
       price: cleanPrice(record.price, original.price),
-      description: cleanText(record.description, 220),
+      description: cleanText(record.description, 220, original.description),
       accent,
-      isNew: booleanValue(record.isNew, false),
-      available: booleanValue(record.available, true),
-      visible: booleanValue(record.visible, true),
+      isNew: booleanValue(record.isNew, original.isNew),
+      available: booleanValue(record.available, original.available),
+      visible: booleanValue(record.visible, original.visible),
     };
   });
 
@@ -269,7 +269,6 @@ function normalizeProducts(value: unknown, fallback: BoardProduct[]) {
         id: "big-hoss",
         name: "The Big Hoss",
         eyebrow: "Signature potato",
-        description: "Choice of smoked brisket or pulled pork, smoked queso, bacon, butter, sour cream, green onions, jalapeños, BBQ drizzle.",
       }];
     }
 
@@ -297,10 +296,10 @@ function normalizeSmallItems(value: unknown, fallback: BoardSmallItem[], prefix:
     const original = fallback[index] ?? fallback[0];
     return {
       id: uniqueId(record.id, `${prefix}-${index + 1}`, used),
-      name: cleanText(record.name, 60, `Item ${index + 1}`),
+      name: cleanText(record.name, 60, original.name),
       price: cleanPrice(record.price, original.price),
-      available: booleanValue(record.available, true),
-      visible: booleanValue(record.visible, true),
+      available: booleanValue(record.available, original.available),
+      visible: booleanValue(record.visible, original.visible),
     };
   });
 }
