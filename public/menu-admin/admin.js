@@ -248,6 +248,7 @@
       revision: currentMenu?.revision || 1,
       updatedAt: currentMenu?.updatedAt || new Date().toISOString(),
       board: {
+        ...currentMenu?.board,
         orientation: document.querySelector("[data-orientation]").value,
         headline: document.querySelector("[data-headline]").value,
         subheadline: document.querySelector("[data-subheadline]").value,

@@ -30,6 +30,31 @@
   let refreshInFlight = false;
   let wakeLock = null;
   let announcementLayoutFrame = 0;
+  let previewMenuReceived = false;
+  let fitFrame = 0;
+
+  function reportPreviewFit() {
+    if (!isPreview) return;
+    cancelAnimationFrame(fitFrame);
+    fitFrame = requestAnimationFrame(() => {
+      const elements = board.querySelectorAll(".product, .product h3, .product > div, .product > div > span, .product > strong, .mini-list p, .mini-list p > span, .mini-list p > strong, .combo");
+      const overflow = [...elements].some((node) => {
+        if (!node.getClientRects().length) return false;
+        const bounds = node.getBoundingClientRect();
+        const parent = node.parentElement.getBoundingClientRect();
+        const style = getComputedStyle(node);
+        // Row decorations (especially the rotated sold-out sash) can extend
+        // beyond a row without clipping its text. Measure the text children.
+        const textOverflow = !node.matches(".product, .mini-list p")
+          && ((["hidden", "clip"].includes(style.overflowY) && node.scrollHeight > node.clientHeight + 2)
+            || (["hidden", "clip"].includes(style.overflowX) && node.scrollWidth > node.clientWidth + 2));
+        return textOverflow
+          || bounds.top < parent.top - 2 || bounds.bottom > parent.bottom + 2
+          || bounds.right > parent.right + 2 || bounds.left < parent.left - 2;
+      });
+      window.parent.postMessage({ type: "bigpapas-menu-preview-fit", overflow }, window.location.origin);
+    });
+  }
 
   function text(element, value) {
     if (element) element.textContent = value;
@@ -152,6 +177,11 @@
     currentMenuFingerprint = JSON.stringify(menu);
     applyOrientation(menu.board?.orientation);
     board.dataset.showDescriptions = String(menu.board?.showDescriptions !== false);
+    for (const key of ["names", "prices", "descriptions", "sides", "announcement"]) {
+      const value = menu.board?.fontSizes?.[key];
+      const size = typeof value === "number" && Number.isFinite(value) ? Math.min(200, Math.max(80, value)) : 100;
+      board.style.setProperty(`--font-${key}`, String(size / 100));
+    }
     text(document.querySelector("[data-headline]"), menu.board?.headline || "Texas Loaded Potatoes");
     text(document.querySelector("[data-subheadline]"), menu.board?.subheadline || "Bold flavor. Texas style. Big portions.");
 
@@ -175,6 +205,7 @@
       text(combo.querySelector("[data-combo-description]"), menu.combo?.description || "Add any drink + cookie");
       text(combo.querySelector("[data-combo-price]"), menu.combo?.price || "$4.00");
     }
+    reportPreviewFit();
   }
 
   function setConnection(online) {
@@ -199,7 +230,7 @@
   }
 
   async function refreshMenu() {
-    if (refreshInFlight) return;
+    if (refreshInFlight || (isPreview && previewMenuReceived)) return;
     refreshInFlight = true;
     try {
       const response = await fetch(`/api/menu?sync=${Date.now()}`, {
@@ -212,6 +243,7 @@
       });
       if (!response.ok) throw new Error("Menu unavailable");
       const menu = await response.json();
+      if (isPreview && previewMenuReceived) return;
       const fingerprint = JSON.stringify(menu);
       if (!currentMenu || fingerprint !== currentMenuFingerprint) {
         renderMenu(menu);
@@ -275,14 +307,17 @@
       applyOrientation("auto");
     }
     scheduleAnnouncementLayout();
+    reportPreviewFit();
   });
 
   if (isPreview) {
     window.addEventListener("message", (event) => {
-      if (event.origin !== window.location.origin || event.data?.type !== "bigpapas-menu-preview") return;
+      if (event.origin !== window.location.origin || event.source !== window.parent || event.data?.type !== "bigpapas-menu-preview") return;
+      previewMenuReceived = true;
       renderMenu(event.data.menu);
       setConnection(true);
     });
+    window.parent.postMessage({ type: "bigpapas-menu-preview-ready" }, window.location.origin);
   }
 
   if ("serviceWorker" in navigator) {
@@ -298,7 +333,7 @@
   if (savedMenu) renderMenu(savedMenu);
   applyOrientation(savedMenu?.board?.orientation || "portrait");
   updateScreenState();
-  document.fonts?.ready.then(scheduleAnnouncementLayout).catch(() => {});
+  document.fonts?.ready.then(() => { scheduleAnnouncementLayout(); reportPreviewFit(); }).catch(() => {});
   void refreshMenu();
   window.setInterval(() => void refreshMenu(), syncIntervalMs);
 })();

@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#171310">
     <title>Big Papa's Command Center</title>
     <link rel="icon" href="/favicon.svg">
-    <link rel="stylesheet" href="/command/command.css?v=3">
+    <link rel="stylesheet" href="/command/command.css?v=4">
   </head>
   <body>
     <a class="skip-link" href="#workspace">Skip to command center</a>
@@ -100,6 +100,29 @@
         <section class="view" data-view="menu" hidden>
           <div class="section-intro"><div><p class="eyebrow">Menu & display control</p><h2>Change it once. Update it everywhere.</h2><p>Availability changes are prominent. Product details stay tucked away until you need them.</p></div><a class="outline-link" href="/menu-board/?orientation=portrait" target="_blank" rel="noreferrer noopener">Open menu board ↗</a></div>
           <article class="panel announcement-editor"><div><p class="eyebrow">Top announcement</p><h3>What should customers see?</h3></div><div class="announcement-fields"><label>Message<input data-menu-announcement maxlength="120" placeholder="Optional announcement"></label><label>Scroll speed <output data-speed-output>Normal</output><input data-menu-speed type="range" min="25" max="225" step="5"></label></div></article>
+          <details class="panel board-settings" data-board-settings>
+            <summary>Menu board settings <span>Font sizes & live preview</span></summary>
+            <div class="board-settings-body">
+              <div class="board-font-controls">
+                <h3>Make your menu easier to read</h3>
+                <p>Slide right for larger text. 100% is the original size. Publish menu changes to apply these sizes to all your menu screens.</p>
+                <label for="font-names">Potato names <output data-font-output="names" for="font-names">100%</output><input id="font-names" data-font-size="names" type="range" min="80" max="200" step="5" value="100"></label>
+                <label for="font-prices">Potato prices <output data-font-output="prices" for="font-prices">100%</output><input id="font-prices" data-font-size="prices" type="range" min="80" max="200" step="5" value="100"></label>
+                <label for="font-descriptions">Ingredients / descriptions <output data-font-output="descriptions" for="font-descriptions">100%</output><input id="font-descriptions" data-font-size="descriptions" type="range" min="80" max="200" step="5" value="100"></label>
+                <label for="font-sides">Drinks, add-ons & combo <output data-font-output="sides" for="font-sides">100%</output><input id="font-sides" data-font-size="sides" type="range" min="80" max="200" step="5" value="100"></label>
+                <label for="font-announcement">Top announcement <output data-font-output="announcement" for="font-announcement">100%</output><input id="font-announcement" data-font-size="announcement" type="range" min="80" max="200" step="5" value="100"></label>
+                <label class="check-field"><input data-menu-descriptions type="checkbox" checked>Show ingredients / descriptions</label>
+                <p>For the clearest window display, try names and prices at 150%. If space gets tight, hide descriptions or reduce the sizes.</p>
+                <button type="button" data-reset-fonts>Reset sizes to 100%</button>
+              </div>
+              <div class="board-preview">
+                <div class="board-preview-toolbar"><strong>Live preview</strong><label>Screen shape<select data-board-preview-shape aria-label="Preview screen shape"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label></div>
+                <p>Unsaved changes appear here.</p>
+                <p class="board-fit-message" data-board-fit-message role="status" hidden></p>
+                <div class="board-preview-shell" data-board-preview-shell><iframe data-board-preview title="Live menu board preview"></iframe></div>
+              </div>
+            </div>
+          </details>
           <article class="panel lunch-pricing-control">
             <div><p class="eyebrow">Potato pricing</p><h3>Lunch prices</h3><p>Use smaller potatoes and portions for lunch. This discount applies only to potatoes—never drinks, add-ons, or the combo.</p></div>
             <div class="lunch-pricing-actions">
@@ -157,6 +180,6 @@
         <button type="button" data-nav="today" aria-current="page"><span>⌂</span>Today</button><button type="button" data-nav="location"><span>⌖</span>Location</button><button type="button" data-nav="menu"><span>☷</span>Menu</button><button type="button" data-nav="events"><span>□</span>Events</button><button type="button" data-nav="marketing"><span>◉</span>More</button>
       </nav>
     </div>
-    <script src="/command/command.js?v=3" defer></script>
+    <script src="/command/command.js?v=4" defer></script>
   </body>
 </html>

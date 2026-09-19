@@ -108,7 +108,7 @@ button {
   z-index: 22;
   grid-area: announcement;
   height: 7dvh;
-  min-height: 48px;
+  min-height: max(48px, calc(1em + 1.5dvh));
   display: grid;
   align-items: center;
   padding: 0.6dvh 0;
@@ -118,7 +118,7 @@ button {
     linear-gradient(90deg, rgba(74, 6, 5, 0.25), transparent 15% 85%, rgba(74, 6, 5, 0.25)),
     var(--red);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(22px, min(2.55vw, 4.9dvh), 58px);
+  font-size: calc(clamp(22px, min(2.55vw, 4.9dvh), 58px) * var(--font-announcement, 1));
   letter-spacing: 0.075em;
   line-height: 1;
   text-align: center;
@@ -424,12 +424,13 @@ button {
   overflow: hidden;
   color: var(--ink);
   font-family: Rockwell, "Roboto Slab", Georgia, serif;
-  font-size: clamp(15px, min(1.65vw, 3.55dvh), 35px);
+  font-size: calc(clamp(15px, min(1.65vw, 3.55dvh), 35px) * var(--font-names, 1));
   font-weight: 950;
   letter-spacing: -0.045em;
   line-height: 1.02;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .product > div > span {
@@ -438,21 +439,21 @@ button {
   margin-top: 0.28dvh;
   overflow: hidden;
   color: #2b2721;
-  font-size: clamp(8px, min(0.72vw, 1.45dvh), 15px);
+  font-size: calc(clamp(8px, min(0.72vw, 1.45dvh), 15px) * var(--font-descriptions, 1));
   font-stretch: condensed;
   font-weight: 850;
   letter-spacing: 0.004em;
   line-height: 1.08;
   text-overflow: ellipsis;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .product > strong {
   align-self: center;
   color: var(--red);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(20px, min(2.15vw, 4.65dvh), 45px);
+  font-size: calc(clamp(20px, min(2.15vw, 4.65dvh), 45px) * var(--font-prices, 1));
   font-weight: 900;
   letter-spacing: -0.035em;
   line-height: 0.98;
@@ -518,7 +519,7 @@ button {
 }
 
 .board[data-show-descriptions="false"] .product h3 {
-  font-size: clamp(18px, 1.95vw, 42px);
+  font-size: calc(clamp(18px, 1.95vw, 42px) * var(--font-names, 1));
 }
 
 .side-menu {
@@ -589,7 +590,7 @@ button {
   overflow: hidden;
   color: var(--ink);
   font-family: "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
-  font-size: clamp(9px, min(1.1vw, 1.9dvh), 24px);
+  font-size: calc(clamp(9px, min(1.1vw, 1.9dvh), 24px) * var(--font-sides, 1));
   font-weight: 950;
   letter-spacing: -0.025em;
   line-height: 1;
@@ -602,7 +603,8 @@ button {
   display: flex;
   align-items: baseline;
   overflow: hidden;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .mini-list p > span::after {
@@ -711,7 +713,7 @@ button {
   padding-bottom: 0.7dvh;
   border-bottom: clamp(1px, 0.12vmin, 2px) solid rgba(255, 247, 228, 0.7);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(15px, min(2vw, 3.8dvh), 42px);
+  font-size: calc(clamp(15px, min(2vw, 3.8dvh), 42px) * var(--font-sides, 1));
   letter-spacing: 0.05em;
   line-height: 1;
   text-transform: uppercase;
@@ -719,7 +721,7 @@ button {
 
 .combo > span {
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(11px, min(1.3vw, 2.45dvh), 28px);
+  font-size: calc(clamp(11px, min(1.3vw, 2.45dvh), 28px) * var(--font-sides, 1));
   letter-spacing: 0.05em;
   line-height: 1;
   text-transform: uppercase;
@@ -729,7 +731,7 @@ button {
   margin-top: 0.6dvh;
   color: var(--paper);
   font-family: Impact, "Arial Black", sans-serif;
-  font-size: clamp(30px, min(4.1vw, 8dvh), 86px);
+  font-size: calc(clamp(30px, min(4.1vw, 8dvh), 86px) * var(--font-sides, 1));
   letter-spacing: -0.025em;
   line-height: 0.88;
 }
@@ -911,7 +913,7 @@ button {
 }
 
 .board[data-orientation="portrait"] .announcement {
-  font-size: clamp(24px, min(4.5vw, 4.3dvh), 62px);
+  font-size: calc(clamp(24px, min(4.5vw, 4.3dvh), 62px) * var(--font-announcement, 1));
 }
 
 .board[data-orientation="portrait"] .board-masthead {
@@ -977,17 +979,17 @@ button {
 }
 
 .board[data-orientation="portrait"] .product h3 {
-  font-size: clamp(13px, 2.7vw, 29px);
+  font-size: calc(clamp(13px, 2.7vw, 29px) * var(--font-names, 1));
 }
 
 .board[data-orientation="portrait"] .product > div > span {
-  font-size: clamp(6.5px, 1.12vw, 12px);
+  font-size: calc(clamp(6.5px, 1.12vw, 12px) * var(--font-descriptions, 1));
   line-height: 1.05;
   white-space: normal;
 }
 
 .board[data-orientation="portrait"] .product > strong {
-  font-size: clamp(16px, 3.25vw, 35px);
+  font-size: calc(clamp(16px, 3.25vw, 35px) * var(--font-prices, 1));
 }
 
 .board[data-orientation="portrait"] .product.is-sold-out::before {
@@ -1007,7 +1009,7 @@ button {
 }
 
 .board[data-orientation="portrait"][data-show-descriptions="false"] .product h3 {
-  font-size: clamp(15px, 3.1vw, 34px);
+  font-size: calc(clamp(15px, 3.1vw, 34px) * var(--font-names, 1));
 }
 
 .board[data-orientation="portrait"] .side-menu {
@@ -1049,7 +1051,7 @@ button {
 }
 
 .board[data-orientation="portrait"] .mini-list p {
-  font-size: clamp(7px, 1.6vw, 17px);
+  font-size: calc(clamp(7px, 1.6vw, 17px) * var(--font-sides, 1));
 }
 
 .board[data-orientation="portrait"] .mini-list p.is-sold-out::after {
@@ -1067,15 +1069,15 @@ button {
 }
 
 .board[data-orientation="portrait"] .combo p {
-  font-size: clamp(11px, 2.7vw, 29px);
+  font-size: calc(clamp(11px, 2.7vw, 29px) * var(--font-sides, 1));
 }
 
 .board[data-orientation="portrait"] .combo > span {
-  font-size: clamp(8px, 1.9vw, 20px);
+  font-size: calc(clamp(8px, 1.9vw, 20px) * var(--font-sides, 1));
 }
 
 .board[data-orientation="portrait"] .combo > strong {
-  font-size: clamp(24px, 5.8vw, 62px);
+  font-size: calc(clamp(24px, 5.8vw, 62px) * var(--font-sides, 1));
 }
 
 .board[data-orientation="portrait"] .board-footer {
@@ -1101,7 +1103,7 @@ button {
 
   .announcement {
     padding-inline: 2vw;
-    font-size: clamp(18px, 4.3vw, 24px);
+    font-size: calc(clamp(18px, 4.3vw, 24px) * var(--font-announcement, 1));
   }
 
   .board[data-orientation="portrait"] .board-masthead {
@@ -1117,19 +1119,19 @@ button {
   }
 
   .board[data-orientation="portrait"] .product h3 {
-    font-size: clamp(11px, 3.05vw, 16px);
+    font-size: calc(clamp(11px, 3.05vw, 16px) * var(--font-names, 1));
   }
 
   .board[data-orientation="portrait"] .product > strong {
-    font-size: clamp(14px, 3.6vw, 19px);
+    font-size: calc(clamp(14px, 3.6vw, 19px) * var(--font-prices, 1));
   }
 
   .board[data-orientation="portrait"] .product > div > span {
-    font-size: clamp(5.5px, 1.4vw, 7px);
+    font-size: calc(clamp(5.5px, 1.4vw, 7px) * var(--font-descriptions, 1));
   }
 
   .board[data-orientation="portrait"] .mini-list p {
-    font-size: clamp(6px, 1.7vw, 9px);
+    font-size: calc(clamp(6px, 1.7vw, 9px) * var(--font-sides, 1));
   }
 
   .screen-control {
