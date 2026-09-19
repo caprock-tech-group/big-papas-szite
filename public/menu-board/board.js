@@ -42,7 +42,13 @@
         if (!node.getClientRects().length) return false;
         const bounds = node.getBoundingClientRect();
         const parent = node.parentElement.getBoundingClientRect();
-        return node.scrollHeight > node.clientHeight + 2 || node.scrollWidth > node.clientWidth + 2
+        const style = getComputedStyle(node);
+        // Row decorations (especially the rotated sold-out sash) can extend
+        // beyond a row without clipping its text. Measure the text children.
+        const textOverflow = !node.matches(".product, .mini-list p")
+          && ((["hidden", "clip"].includes(style.overflowY) && node.scrollHeight > node.clientHeight + 2)
+            || (["hidden", "clip"].includes(style.overflowX) && node.scrollWidth > node.clientWidth + 2));
+        return textOverflow
           || bounds.top < parent.top - 2 || bounds.bottom > parent.bottom + 2
           || bounds.right > parent.right + 2 || bounds.left < parent.left - 2;
       });
