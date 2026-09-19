@@ -298,6 +298,48 @@
     qs("[data-menu-status]").textContent = "Menu changes are waiting";
     qs("[data-menu-updated]").textContent = "Publish when you are ready.";
     renderToday();
+    sendBoardPreview();
+  }
+
+  function sendBoardPreview() {
+    const frame = qs("[data-board-preview]");
+    if (state.menu && frame?.hasAttribute("src")) {
+      frame.contentWindow?.postMessage({ type: "bigpapas-menu-preview", menu: state.menu }, location.origin);
+    }
+  }
+
+  function renderFontControls() {
+    qsa("[data-font-size]").forEach((input) => {
+      const key = input.dataset.fontSize;
+      const value = state.menu.board.fontSizes?.[key] ?? 100;
+      input.value = String(value);
+      qs(`[data-font-output="${key}"]`).value = `${value}%`;
+      input.setAttribute("aria-valuetext", `${value} percent`);
+    });
+    qs("[data-menu-descriptions]").checked = state.menu.board.showDescriptions !== false;
+  }
+
+  function resizeBoardPreview() {
+    const shell = qs("[data-board-preview-shell]");
+    const frame = qs("[data-board-preview]");
+    const portrait = qs("[data-board-preview-shape]").value === "portrait";
+    const width = portrait ? 1080 : 1920;
+    const height = portrait ? 1920 : 1080;
+    const scale = shell.clientWidth / width;
+    frame.style.width = `${width}px`;
+    frame.style.height = `${height}px`;
+    frame.style.transform = `scale(${scale})`;
+    shell.style.height = `${height * scale}px`;
+  }
+
+  function openBoardPreview() {
+    if (!qs("[data-board-settings]").open) return;
+    const frame = qs("[data-board-preview]");
+    const shape = qs("[data-board-preview-shape]").value;
+    const src = `/menu-board/?preview=1&orientation=${shape}`;
+    if (frame.getAttribute("src") !== src) frame.src = src;
+    resizeBoardPreview();
+    sendBoardPreview();
   }
 
   function createCheck(labelText, checked, onChange) {
@@ -434,6 +476,8 @@
     renderDrinksControl();
     renderMenuProducts();
     renderSmallMenuEditor();
+    renderFontControls();
+    sendBoardPreview();
   }
 
   function activeEvent() {
@@ -991,6 +1035,37 @@
   }
 
   function bindEvents() {
+    qs("[data-board-settings]").addEventListener("toggle", openBoardPreview);
+    qs("[data-board-preview-shape]").addEventListener("change", openBoardPreview);
+    qs("[data-board-preview]").addEventListener("load", sendBoardPreview);
+    new ResizeObserver(resizeBoardPreview).observe(qs("[data-board-preview-shell]"));
+    window.addEventListener("message", (event) => {
+      if (event.origin !== location.origin || event.source !== qs("[data-board-preview]").contentWindow) return;
+      if (event.data?.type === "bigpapas-menu-preview-ready") sendBoardPreview();
+      if (event.data?.type === "bigpapas-menu-preview-fit") {
+        const message = qs("[data-board-fit-message]");
+        message.hidden = !event.data.overflow;
+        message.textContent = "Some text does not fit at these sizes. Lower a slider, hide descriptions, or show fewer menu items before publishing.";
+      }
+    });
+    qsa("[data-font-size]").forEach((input) => input.addEventListener("input", () => {
+      if (!state.menu) return;
+      state.menu.board.fontSizes ||= {};
+      state.menu.board.fontSizes[input.dataset.fontSize] = number(input.value, 100);
+      renderFontControls();
+      markMenuDirty();
+    }));
+    qs("[data-reset-fonts]").addEventListener("click", () => {
+      if (!state.menu) return;
+      state.menu.board.fontSizes = {};
+      renderFontControls();
+      markMenuDirty();
+    });
+    qs("[data-menu-descriptions]").addEventListener("change", (event) => {
+      if (!state.menu) return;
+      state.menu.board.showDescriptions = event.target.checked;
+      markMenuDirty();
+    });
     qsa("[data-nav]").forEach((button) => button.addEventListener("click", () => setActiveView(button.dataset.nav)));
     qsa("[data-go]").forEach((button) => button.addEventListener("click", () => setActiveView(button.dataset.go)));
     qsa("[data-logout]").forEach((button) => button.addEventListener("click", logout));

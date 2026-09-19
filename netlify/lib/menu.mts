@@ -39,6 +39,7 @@ export type MenuBoardState = {
     announcement: string;
     announcementSpeed: number;
     showDescriptions: boolean;
+    fontSizes: { names: number; prices: number; descriptions: number; sides: number; announcement: number };
   };
   products: BoardProduct[];
   lunchPricing: {
@@ -67,6 +68,7 @@ const defaultState: MenuBoardState = {
     announcement: "",
     announcementSpeed: 65,
     showDescriptions: true,
+    fontSizes: { names: 100, prices: 100, descriptions: 100, sides: 100, announcement: 100 },
   },
   products: [
     {
@@ -321,6 +323,11 @@ function normalizeMenuState(value: unknown): MenuBoardState {
     : defaultState.updatedAt;
   const headline = cleanText(board.headline, 72, defaultState.board.headline);
   const subheadline = cleanText(board.subheadline, 120, defaultState.board.subheadline);
+  const fontSizes = Object.fromEntries(Object.keys(defaultState.board.fontSizes).map((key) => {
+    const value = board.fontSizes?.[key];
+    return [key, typeof value === "number" && Number.isFinite(value)
+      ? numberInRange(value, 80, 200, 100) : 100];
+  })) as MenuBoardState["board"]["fontSizes"];
 
   return {
     version: 3,
@@ -335,6 +342,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
       announcement: cleanText(board.announcement, 120),
       announcementSpeed: numberInRange(board.announcementSpeed, 25, 225, defaultState.board.announcementSpeed),
       showDescriptions: booleanValue(board.showDescriptions, true),
+      fontSizes,
     },
     products: normalizeProducts(record.products, defaultState.products),
     lunchPricing: {

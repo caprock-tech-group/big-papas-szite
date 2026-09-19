@@ -287,6 +287,27 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
 .facebook-state button { margin-top: 9px; border: 0; background: var(--ink); color: #fff; padding: 8px 10px; font-weight: 850; }
 
 /* Menu */
+.board-settings { margin-top: 18px; padding: 22px; }
+.board-settings > summary { cursor: pointer; font-weight: 850; font-size: 1.08rem; }
+.board-settings > summary > span { display: block; margin-top: 6px; color: var(--muted); font-size: .8rem; font-weight: 500; }
+.board-settings-body { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 28px; padding-top: 22px; }
+.board-font-controls h3 { margin: 0; font-family: Georgia, serif; }
+.board-font-controls p, .board-preview > p { color: var(--muted); font-size: .85rem; line-height: 1.5; }
+.board-font-controls > label:not(.check-field) { display: grid; grid-template-columns: 1fr auto; gap: 5px 12px; margin: 14px 0; font-size: .9rem; font-weight: 800; }
+.board-font-controls output { color: var(--red); font-variant-numeric: tabular-nums; }
+.board-font-controls input[type="range"] { grid-column: 1 / -1; width: 100%; min-height: 44px; margin: 0; accent-color: var(--red); cursor: pointer; }
+.board-font-controls button { min-height: 44px; padding: 10px 16px; background: var(--paper); color: var(--ink); border: 1px solid var(--line); font-weight: 800; }
+.board-preview { min-width: 0; }
+.board-preview-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.board-preview-toolbar label { display: grid; gap: 5px; font-size: .75rem; }
+.board-preview-toolbar select { min-height: 44px; padding: 8px; }
+.board-preview-shell { width: 100%; overflow: hidden; background: #100f0d; }
+.board-preview-shell iframe { display: block; border: 0; transform-origin: top left; }
+.board-preview .board-fit-message { padding: 12px; border-left: 4px solid var(--red); color: var(--red); background: #fff0e5; }
+@media (max-width: 760px) {
+  .board-settings { padding: 17px; }
+  .board-settings-body { grid-template-columns: minmax(0,1fr); }
+}
 .announcement-editor { display: grid; grid-template-columns: minmax(180px,.6fr) minmax(0,1.4fr); gap: 24px; align-items: end; padding: 22px; }
 .announcement-editor h3 { margin: 0; font-family: Georgia, serif; font-size: 1.35rem; }
 .announcement-fields { display: grid; grid-template-columns: minmax(0,1fr) 210px; gap: 16px; }
