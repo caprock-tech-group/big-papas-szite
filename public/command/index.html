@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#171310">
     <title>Big Papa's Command Center</title>
     <link rel="icon" href="/favicon.svg">
-    <link rel="stylesheet" href="/command/command.css?v=4">
+    <link rel="stylesheet" href="/command/command.css?v=5">
   </head>
   <body>
     <a class="skip-link" href="#workspace">Skip to command center</a>
@@ -99,6 +99,16 @@
 
         <section class="view" data-view="menu" hidden>
           <div class="section-intro"><div><p class="eyebrow">Menu & display control</p><h2>Change it once. Update it everywhere.</h2><p>Availability changes are prominent. Product details stay tucked away until you need them.</p></div><a class="outline-link" href="/menu-board/?orientation=portrait" target="_blank" rel="noreferrer noopener">Open menu board ↗</a></div>
+          <article class="panel cooking-control" data-cooking-control>
+            <div><p class="eyebrow">Between batches</p><h3>Taters cooking</h3><p>Temporarily out of potatoes? Show a large “Temporarily sold out — more taters are cooking” notice on the board and online menu.</p></div>
+            <label class="drinks-switch" for="taters-cooking">
+              <input id="taters-cooking" data-taters-cooking type="checkbox" role="switch" aria-label="Taters cooking" aria-describedby="cooking-help">
+              <span class="drinks-switch-track" aria-hidden="true"><i></i></span><strong data-cooking-status>Normal menu</strong>
+            </label>
+            <label class="cooking-message-field" data-cooking-message-field hidden>Next batch message (optional)<input data-cooking-message maxlength="120" placeholder="Example: Next batch around 12:45 PM"></label>
+            <p id="cooking-help" class="cooking-help">Publish to update every display. When the batch is ready, turn this off and publish again. Individual sold-outs stay as you set them. Online ordering is managed separately in SkyTab.</p>
+          </article>
+          <div class="menu-toolbar"><div><strong data-menu-status>Menu is published</strong><span data-menu-updated></span></div><button type="button" data-save-menu disabled>Publish menu changes</button></div>
           <article class="panel announcement-editor"><div><p class="eyebrow">Top announcement</p><h3>What should customers see?</h3></div><div class="announcement-fields"><label>Message<input data-menu-announcement maxlength="120" placeholder="Optional announcement"></label><label>Scroll speed <output data-speed-output>Normal</output><input data-menu-speed type="range" min="25" max="225" step="5"></label></div></article>
           <details class="panel board-settings" data-board-settings>
             <summary>Menu board settings <span>Font sizes & live preview</span></summary>
@@ -142,7 +152,6 @@
               <strong data-drinks-status>Drinks shown</strong>
             </label>
           </article>
-          <div class="menu-toolbar"><div><strong data-menu-status>Menu is published</strong><span data-menu-updated></span></div><button type="button" data-save-menu disabled>Publish menu changes</button></div>
           <div class="product-list" data-command-products></div>
           <details class="panel compact-editor"><summary>Drinks, add-ons and combo <span>Open editor</span></summary><div data-small-menu-editor></div></details>
         </section>
@@ -180,6 +189,6 @@
         <button type="button" data-nav="today" aria-current="page"><span>⌂</span>Today</button><button type="button" data-nav="location"><span>⌖</span>Location</button><button type="button" data-nav="menu"><span>☷</span>Menu</button><button type="button" data-nav="events"><span>□</span>Events</button><button type="button" data-nav="marketing"><span>◉</span>More</button>
       </nav>
     </div>
-    <script src="/command/command.js?v=4" defer></script>
+    <script src="/command/command.js?v=5" defer></script>
   </body>
 </html>

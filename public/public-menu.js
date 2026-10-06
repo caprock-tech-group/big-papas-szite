@@ -33,7 +33,7 @@
     return `$${(cents / 100).toFixed(2)}`;
   }
 
-  function createProduct(item, lunchPricing) {
+  function createProduct(item, lunchPricing, cooking) {
     const article = document.createElement("article");
     const accent = ["red", "blue", "gold"].includes(item.accent) ? item.accent : "red";
     article.className = `menu-card menu-card--${accent}${item.isNew ? " menu-card--new" : ""}${item.available === false ? " menu-card--sold-out" : ""}`;
@@ -72,6 +72,11 @@
       soldOut.className = "sold-out-tag";
       soldOut.textContent = "Sold out today";
       article.appendChild(soldOut);
+    } else if (cooking) {
+      const waiting = document.createElement("span");
+      waiting.className = "cooking-tag";
+      waiting.textContent = "Temporarily sold out · Taters cooking";
+      article.appendChild(waiting);
     } else if (item.id === "big-hoss" || item.name.trim().toLowerCase() === "the big hoss") {
       const signature = document.createElement("span");
       signature.className = "signature-tag";
@@ -94,10 +99,18 @@
   }
 
   function renderMenu(menu) {
+    const cooking = menu.board?.tatersCooking === true;
+    const notice = document.querySelector("[data-public-cooking-notice]");
+    const message = document.querySelector("[data-public-cooking-message]");
+    if (notice) notice.hidden = !cooking;
+    if (message) {
+      message.textContent = menu.board?.cookingMessage || "";
+      message.hidden = !menu.board?.cookingMessage;
+    }
     const visibleProducts = Array.isArray(menu.products)
       ? menu.products.filter((item) => validItem(item) && item.visible !== false)
       : [];
-    products.replaceChildren(...visibleProducts.map((item) => createProduct(item, menu.lunchPricing)));
+    products.replaceChildren(...visibleProducts.map((item) => createProduct(item, menu.lunchPricing, cooking)));
 
     const visibleAddOns = Array.isArray(menu.addOns)
       ? menu.addOns.filter((item) => validItem(item) && item.visible !== false)

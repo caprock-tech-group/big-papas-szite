@@ -727,6 +727,13 @@ p {
   line-height: 1.72;
 }
 
+.menu-cooking-notice { margin-bottom: 24px; padding: 24px; border: 3px solid #d09a39; background: #201b15; color: #fff8e8; }
+.menu-cooking-notice[hidden] { display: none; }
+.menu-cooking-notice strong { display: block; color: #f4c369; font-size: clamp(1.3rem, 3vw, 2rem); line-height: 1.2; }
+.menu-cooking-notice p { margin: 12px 0; font-size: 1.2rem; overflow-wrap: anywhere; }
+.menu-cooking-notice span { display: block; margin-top: 10px; }
+.cooking-tag { display: inline-block; margin-top: 16px; padding: 7px 10px; background: #ffe6ae; color: #3b2814; font-size: .85rem; font-weight: 800; }
+
 .menu-grid {
   position: relative;
   z-index: 1;

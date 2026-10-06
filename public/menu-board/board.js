@@ -37,7 +37,7 @@
     if (!isPreview) return;
     cancelAnimationFrame(fitFrame);
     fitFrame = requestAnimationFrame(() => {
-      const elements = board.querySelectorAll(".product, .product h3, .product > div, .product > div > span, .product > strong, .mini-list p, .mini-list p > span, .mini-list p > strong, .combo");
+      const elements = board.querySelectorAll(".product, .product h3, .product > div, .product > div > span, .product > strong, .mini-list p, .mini-list p > span, .mini-list p > strong, .combo, .cooking-notice, .cooking-notice > *");
       const overflow = [...elements].some((node) => {
         if (!node.getClientRects().length) return false;
         const bounds = node.getBoundingClientRect();
@@ -186,6 +186,16 @@
     text(document.querySelector("[data-subheadline]"), menu.board?.subheadline || "Bold flavor. Texas style. Big portions.");
 
     renderAnnouncement(menu.board?.announcement);
+
+    const cooking = menu.board?.tatersCooking === true;
+    const cookingNotice = document.querySelector("[data-cooking-notice]");
+    const cookingMessage = document.querySelector("[data-cooking-notice-message]");
+    if (cookingNotice) cookingNotice.hidden = !cooking;
+    if (cookingMessage) {
+      text(cookingMessage, menu.board?.cookingMessage || "");
+      cookingMessage.hidden = !menu.board?.cookingMessage;
+    }
+    products.hidden = cooking;
 
     const visibleProducts = Array.isArray(menu.products)
       ? menu.products.filter((item) => item && item.visible !== false)

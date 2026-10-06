@@ -34,7 +34,7 @@ html = html
 
 html = html.replace(
   "</body>",
-  `${structuredDataScripts.join("")}<script src="/live-location.js" defer></script><script src="/calendar-events.js" defer></script><script src="/public-menu.js" defer></script></body>`,
+  `${structuredDataScripts.join("")}<script src="/live-location.js" defer></script><script src="/calendar-events.js" defer></script><script src="/public-menu.js?v=3" defer></script></body>`,
 );
 
 const binaryAssets = {};
