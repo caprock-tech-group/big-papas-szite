@@ -288,6 +288,11 @@ export default function Home() {
             </p>
           </div>
 
+          <div className="menu-cooking-notice" data-public-cooking-notice role="status" aria-live="polite" hidden>
+            <strong>Temporarily sold out — more taters are cooking!</strong>
+            <p data-public-cooking-message hidden />
+            <span>Thanks for your patience. Ask us about the next batch.</span>
+          </div>
           <div className="menu-grid" data-public-menu-products aria-live="polite">
             {menuItems.map((item) => (
               <article

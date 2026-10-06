@@ -217,9 +217,12 @@
     menuTarget.replaceChildren();
     const products = state.menu?.products?.filter((item) => item.visible) || [];
     const sold = products.filter((item) => !item.available);
+    const cooking = state.menu?.board?.tatersCooking === true;
     const summary = el("div", "availability-summary");
-    summary.append(el("strong", "", sold.length ? String(sold.length) : "✓"), el("span", "", sold.length ? `${sold.length === 1 ? "item is" : "items are"} sold out` : "Everything shown is available"));
+    summary.append(el("strong", "", cooking ? "⏱" : sold.length ? String(sold.length) : "✓"), el("span", "", cooking ? "Taters cooking — temporarily sold out" : sold.length ? `${sold.length === 1 ? "item is" : "items are"} sold out` : "Everything shown is available"));
     menuTarget.append(summary);
+    if (cooking && state.menu.board.cookingMessage) menuTarget.append(el("p", "", state.menu.board.cookingMessage));
+    if (state.menuDirty) menuTarget.append(el("p", "", "Unpublished changes — publish from Menu to update customers."));
     if (sold.length) {
       const list = el("div", "sold-list");
       sold.forEach((item) => list.append(el("span", "", item.name)));
@@ -474,6 +477,7 @@
     qs("[data-save-menu]").disabled = !state.menuDirty;
     renderLunchPricingControl();
     renderDrinksControl();
+    renderCookingControl();
     renderMenuProducts();
     renderSmallMenuEditor();
     renderFontControls();
@@ -482,6 +486,16 @@
 
   function activeEvent() {
     return state.planner?.events?.find((event) => event.id === state.activeEventId) || null;
+  }
+
+  function renderCookingControl() {
+    if (!state.menu) return;
+    const cooking = state.menu.board.tatersCooking === true;
+    qs("[data-taters-cooking]").checked = cooking;
+    qs("[data-cooking-status]").textContent = cooking ? "Temporarily sold out" : "Normal menu";
+    qs("[data-cooking-control]").classList.toggle("is-cooking", cooking);
+    qs("[data-cooking-message-field]").hidden = !cooking;
+    qs("[data-cooking-message]").value = state.menu.board.cookingMessage || "";
   }
 
   function eventForecast(event) {
@@ -1078,6 +1092,19 @@
     qs("[data-close-location]")?.addEventListener("click", closeLocation);
     qs("[data-facebook-retry]")?.addEventListener("click", retryFacebook);
     qs("[data-save-menu]")?.addEventListener("click", saveMenu);
+    qs("[data-taters-cooking]")?.addEventListener("change", (event) => {
+      if (!state.menu) return;
+      state.menu.board.tatersCooking = event.target.checked;
+      // Each batch gets a fresh estimate; never reuse an old ready time.
+      if (!event.target.checked) state.menu.board.cookingMessage = "";
+      renderCookingControl();
+      markMenuDirty();
+    });
+    qs("[data-cooking-message]")?.addEventListener("input", (event) => {
+      if (!state.menu) return;
+      state.menu.board.cookingMessage = event.target.value;
+      markMenuDirty();
+    });
     qs("[data-menu-announcement]")?.addEventListener("input", (event) => { if (!state.menu) return; state.menu.board.announcement = event.target.value; markMenuDirty(); });
     qs("[data-menu-speed]")?.addEventListener("input", (event) => { if (!state.menu) return; state.menu.board.announcementSpeed = number(event.target.value, 65); qs("[data-speed-output]").value = speedLabel(event.target.value); markMenuDirty(); });
     qs("[data-lunch-enabled]")?.addEventListener("change", (event) => {

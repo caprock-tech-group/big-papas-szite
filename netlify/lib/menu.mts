@@ -38,6 +38,8 @@ export type MenuBoardState = {
     subheadline: string;
     announcement: string;
     announcementSpeed: number;
+    tatersCooking: boolean;
+    cookingMessage: string;
     showDescriptions: boolean;
     fontSizes: { names: number; prices: number; descriptions: number; sides: number; announcement: number };
   };
@@ -67,6 +69,8 @@ const defaultState: MenuBoardState = {
     subheadline: "Bold flavor. Texas style. Big portions.",
     announcement: "",
     announcementSpeed: 65,
+    tatersCooking: false,
+    cookingMessage: "",
     showDescriptions: true,
     fontSizes: { names: 100, prices: 100, descriptions: 100, sides: 100, announcement: 100 },
   },
@@ -341,6 +345,8 @@ function normalizeMenuState(value: unknown): MenuBoardState {
         : subheadline,
       announcement: cleanText(board.announcement, 120),
       announcementSpeed: numberInRange(board.announcementSpeed, 25, 225, defaultState.board.announcementSpeed),
+      tatersCooking: booleanValue(board.tatersCooking, false),
+      cookingMessage: cleanText(board.cookingMessage, 120),
       showDescriptions: booleanValue(board.showDescriptions, true),
       fontSizes,
     },
