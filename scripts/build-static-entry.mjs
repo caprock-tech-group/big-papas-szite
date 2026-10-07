@@ -216,6 +216,26 @@ const textAssets = {
     contentType: "text/javascript; charset=utf-8",
     cacheControl: "no-cache",
   },
+  "/command/print-menu.html": {
+    body: await readFile("public/command/print-menu.html", "utf8"),
+    contentType: "text/html; charset=utf-8",
+    cacheControl: "no-store",
+  },
+  "/command/print-menu.css": {
+    body: await readFile("public/command/print-menu.css", "utf8"),
+    contentType: "text/css; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/command/print-menu.js": {
+    body: await readFile("public/command/print-menu.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
+  "/command/print-menu-model.js": {
+    body: await readFile("public/command/print-menu-model.js", "utf8"),
+    contentType: "text/javascript; charset=utf-8",
+    cacheControl: "no-cache",
+  },
   "/robots.txt": {
     body: `User-agent: *\nAllow: /\nDisallow: /menu-board/\nDisallow: /menu-admin/\nDisallow: /event-planner/\nDisallow: /command/\nDisallow: /update/\nSitemap: ${siteUrl}/sitemap.xml\n`,
     contentType: "text/plain; charset=utf-8",
@@ -294,6 +314,7 @@ await Promise.all([
   cp("public/command/index.html", `${netlifyOutputDirectory}/command/index.html`),
   cp("public/command/command.css", `${netlifyOutputDirectory}/command/command.css`),
   cp("public/command/command.js", `${netlifyOutputDirectory}/command/command.js`),
+  ...["print-menu.html", "print-menu.css", "print-menu.js", "print-menu-model.js"].map((file) => cp(`public/command/${file}`, `${netlifyOutputDirectory}/command/${file}`)),
   cp("public/public-menu.js", `${netlifyOutputDirectory}/public-menu.js`),
   cp("public/images/big-hoss-hero.webp", `${netlifyOutputDirectory}/images/big-hoss-hero.webp`),
   cp("public/images/loaded-potato-lineup.webp", `${netlifyOutputDirectory}/images/loaded-potato-lineup.webp`),

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <title>Big Papa's · Print menu</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/command/print-menu.css?v=1">
+    <script type="module" src="/command/print-menu.js?v=1"></script>
+  </head>
+  <body>
+    <header class="print-tools">
+      <div><h1>Print the current menu</h1><p>US Letter · 8½ × 11 inches · Portrait</p></div>
+      <div class="print-actions"><button data-print disabled>Print menu</button><button class="secondary" data-reload>Reload latest menu</button><a href="/command/?view=menu">Back to Command Center</a></div>
+      <p class="print-status" data-status role="status">Loading the published menu…</p>
+      <p class="print-help">Choose Letter paper and turn off browser headers and footers. On iPhone, use Safari with an AirPrint printer on the same Wi-Fi. If the dialog does not open, tap Print menu again or use Share → Print. On a PC, you can also choose Save as PDF.</p>
+      <p class="fit-warning" data-fit-warning hidden>This menu is too long for one readable page. It will continue onto additional pages. Hide unneeded items or shorten descriptions in the Command Center for a single-page menu.</p>
+    </header>
+    <p class="print-error" data-print-error>The menu has not loaded. Return to the page and reload before printing.</p>
+    <div class="preview">
+      <main class="menu-sheet" data-sheet data-density="normal" hidden>
+        <header class="menu-brand">
+          <img src="/images/big-papas-logo.webp" alt="Big Papa's Texas Loaded Potatoes" width="116" height="116">
+          <div><p class="brand-kicker">Bold flavor. Big portions.</p><h2>BIG PAPA’S</h2><p class="brand-subtitle" data-headline>Texas Loaded Potatoes</p><p class="brand-tagline" data-subheadline></p></div>
+        </header>
+        <p class="menu-announcement" data-announcement hidden></p>
+        <div class="service-notice" data-cooking hidden><strong>Temporarily sold out — more taters are cooking!</strong><span data-cooking-message></span></div>
+        <div class="section-heading"><h3 data-potatoes-title>Loaded potatoes</h3><span data-pricing-note>Big Papa’s favorites</span></div>
+        <section class="potato-grid" data-products aria-label="Loaded potatoes"></section>
+        <div class="menu-extras" data-extras>
+          <section class="extras-section" data-add-ons-section><h3>Add-ons</h3><ul data-add-ons></ul></section>
+          <section class="extras-section" data-drinks-section><h3>Drinks</h3><ul data-drinks></ul></section>
+          <section class="combo-section" data-combo><h3 data-combo-label></h3><p data-combo-description></p><strong data-combo-price></strong></section>
+        </div>
+        <footer class="menu-footer"><strong>bigpapastaters.com</strong><span data-printed-at></span><small>Prices and availability can change. Check our website for the latest menu.</small></footer>
+      </main>
+    </div>
+    <noscript><p class="no-script">Enable JavaScript to load the current menu before printing.</p></noscript>
+  </body>
+</html>
