@@ -6,15 +6,24 @@
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Big Papa's · Print menu</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/command/print-menu.css?v=1">
-    <script type="module" src="/command/print-menu.js?v=1"></script>
+    <link rel="stylesheet" href="/command/print-menu.css?v=2">
+    <script type="module" src="/command/print-menu.js?v=2"></script>
   </head>
   <body>
     <header class="print-tools">
       <div><h1>Print the current menu</h1><p>US Letter · 8½ × 11 inches · Portrait</p></div>
       <div class="print-actions"><button data-print disabled>Print menu</button><button class="secondary" data-reload>Reload latest menu</button><a href="/command/?view=menu">Back to Command Center</a></div>
       <p class="print-status" data-status role="status">Loading the published menu…</p>
-      <p class="print-help">Choose Letter paper and turn off browser headers and footers. On iPhone, use Safari with an AirPrint printer on the same Wi-Fi. If the dialog does not open, tap Print menu again or use Share → Print. On a PC, you can also choose Save as PDF.</p>
+      <p class="print-help">Choose Letter paper. On a PC, turn off browser headers and footers; you can also choose Save as PDF.</p>
+      <details class="iphone-print-help" data-print-help>
+        <summary>iPhone: no print dialog?</summary>
+        <ol>
+          <li>Open this menu in <strong>Safari</strong>. If you opened it from a Home Screen icon or inside another app, open Safari and enter <strong>bigpapastaters.com/command/print-menu</strong>.</li>
+          <li>Wait for the menu to load, then tap Safari’s <strong>Share</strong> button (the square with an up arrow) and choose <strong>Print</strong>. You may need to scroll down the actions.</li>
+          <li>Select an <strong>AirPrint printer on the same Wi-Fi</strong>, check the preview, then tap <strong>Print</strong>.</li>
+        </ol>
+        <p>This prints the menu only. These buttons and instructions will not appear on paper.</p>
+      </details>
       <p class="fit-warning" data-fit-warning hidden>This menu is too long for one readable page. It will continue onto additional pages. Hide unneeded items or shorten descriptions in the Command Center for a single-page menu.</p>
     </header>
     <p class="print-error" data-print-error>The menu has not loaded. Return to the page and reload before printing.</p>
