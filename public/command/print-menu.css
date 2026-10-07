@@ -13,6 +13,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .print-actions a { color: #54231a; font-size: .9rem; }
 .print-status { font-weight: 700; }
 .print-help { font-size: .85rem; color: #5d5147; }
+.iphone-print-help { margin: 14px 0; padding: 14px 16px; border: 1px solid #c9b798; border-radius: 8px; background: #fffaf2; font-size: .95rem; line-height: 1.5; }
+.iphone-print-help summary { cursor: pointer; color: #8e2720; font-weight: 700; }
+.iphone-print-help ol { padding-left: 22px; margin: 12px 0; }
+.iphone-print-help li + li { margin-top: 10px; }
+.iphone-print-help strong { overflow-wrap: anywhere; }
 .fit-warning { padding: 12px; border: 1px solid #aa6328; background: #fff3d9; }
 .preview { width: fit-content; margin: 0 auto 30px; }
 .menu-sheet { --name-size: 16pt; --description-size: 10.5pt; --section-size: 14pt; --small-size: 10.5pt; --row-gap: 14px; width: 7.8in; height: 10.2in; padding: .08in; background: #fff; display: flex; flex-direction: column; gap: 12px; outline: 1px solid #cbbda9; }

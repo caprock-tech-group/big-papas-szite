@@ -5,6 +5,9 @@ const sheet = qs("[data-sheet]");
 const printButton = qs("[data-print]");
 const reloadButton = qs("[data-reload]");
 const status = qs("[data-status]");
+const printHelp = qs("[data-print-help]");
+const isAppleMobile = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isStandalone = navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
 let ready = false;
 let loading = false;
 
@@ -81,9 +84,12 @@ function fitSheet() {
 
 function printMenu() {
   if (!ready) return;
-  fitSheet();
+  // Keep this synchronous: Safari must receive the request directly from the tap.
+  // window.print() can also silently do nothing in an in-app/Home Screen browser.
+  printHelp.open = true;
+  status.textContent = "If no print dialog appears, follow the iPhone steps below. Nothing prints until you confirm with your printer.";
   try { window.print(); }
-  catch { status.textContent = "Use your browser’s Share or menu button, then Print."; }
+  catch { status.textContent = "This browser could not open printing. Use Safari’s Share → Print, or your browser’s print menu."; }
 }
 
 async function loadMenu(autoprint = false) {
@@ -109,8 +115,10 @@ async function loadMenu(autoprint = false) {
     ready = true;
     document.body.classList.add("is-ready");
     printButton.disabled = false;
-    status.textContent = fits ? "Current published menu · Fits one Letter page. Choose your printer to finish." : "Current published menu · See the page-length note below.";
-    if (autoprint && fits) printMenu();
+    status.textContent = fits ? "Current published menu · Fits one Letter page. Tap Print menu above to choose your printer." : "Current published menu · See the page-length note below, then tap Print menu.";
+    // A tap on the previous page is no longer a user gesture after fetching the
+    // menu, decoding images and waiting for layout. Do not auto-print on iOS.
+    if (autoprint && fits && !isAppleMobile && !isStandalone) printMenu();
   } catch {
     sheet.hidden = true;
     status.textContent = "Could not load the current menu. Check your connection, then tap Reload latest menu. Nothing has been sent to a printer.";
@@ -125,5 +133,6 @@ printButton.addEventListener("click", printMenu);
 reloadButton.addEventListener("click", () => loadMenu());
 window.addEventListener("resize", sizePreview);
 window.addEventListener("beforeprint", () => { if (ready) fitSheet(); });
+printHelp.open = isAppleMobile || isStandalone;
 sizePreview();
 void loadMenu(new URLSearchParams(location.search).get("autoprint") === "1");
