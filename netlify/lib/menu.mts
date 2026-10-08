@@ -29,7 +29,7 @@ export type BoardSmallItem = {
 };
 
 export type MenuBoardState = {
-  version: 3;
+  version: 4;
   revision: number;
   updatedAt: string;
   board: {
@@ -60,7 +60,7 @@ export type MenuBoardState = {
 };
 
 const defaultState: MenuBoardState = {
-  version: 3,
+  version: 4,
   revision: 1,
   updatedAt: "2026-08-08T22:00:00.000Z",
   board: {
@@ -159,6 +159,8 @@ const defaultState: MenuBoardState = {
   },
   addOns: [
     { id: "extra-meat", name: "Extra meat", price: "$3.00", available: true, visible: true },
+    { id: "add-brisket", name: "Add brisket", price: "$7.00", available: true, visible: true },
+    { id: "add-pulled-pork", name: "Add pulled pork", price: "$5.00", available: true, visible: true },
     { id: "extra-cheese", name: "Extra cheese", price: "$1.00", available: true, visible: true },
     { id: "bacon", name: "Bacon", price: "$1.50", available: true, visible: true },
     { id: "jalapenos", name: "Jalapeños", price: "$0.75", available: true, visible: true },
@@ -333,8 +335,16 @@ function normalizeMenuState(value: unknown): MenuBoardState {
       ? numberInRange(value, 80, 200, 100) : 100];
   })) as MenuBoardState["board"]["fontSizes"];
 
+  const addOns = normalizeSmallItems(record.addOns, defaultState.addOns, "add-on");
+  if (Number(record.version) < 4) {
+    for (const item of defaultState.addOns.filter(({ id }) => id === "add-brisket" || id === "add-pulled-pork")) {
+      const alreadyPresent = addOns.some((candidate) => candidate.id === item.id || candidate.name.toLowerCase() === item.name.toLowerCase());
+      if (!alreadyPresent && addOns.length < MAX_SMALL_ITEMS) addOns.push(structuredClone(item));
+    }
+  }
+
   return {
-    version: 3,
+    version: 4,
     revision,
     updatedAt,
     board: {
@@ -355,7 +365,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
       enabled: booleanValue(lunchPricing.enabled, false),
       reduction: cleanReduction(lunchPricing.reduction, defaultState.lunchPricing.reduction),
     },
-    addOns: normalizeSmallItems(record.addOns, defaultState.addOns, "add-on"),
+    addOns,
     drinksEnabled: booleanValue(record.drinksEnabled, true),
     drinks: normalizeSmallItems(record.drinks, defaultState.drinks, "drink"),
     combo: {

@@ -411,16 +411,52 @@
     }
   }
 
-  function smallMenuSection(title, items) {
+  function addSmallMenuItem(category) {
+    const items = state.menu?.[category];
+    if (!Array.isArray(items)) return;
+    if (items.length >= 24) return globalMessage(`The ${category === "addOns" ? "add-ons" : "drinks"} list is full. Remove an item before adding another.`, "error");
+    const prefix = category === "addOns" ? "add-on" : "drink";
+    items.push({
+      id: `${prefix}-${Date.now().toString(36)}`,
+      name: category === "addOns" ? "New add-on" : "New drink",
+      price: "$0.00",
+      available: true,
+      visible: true,
+    });
+    markMenuDirty();
+    renderSmallMenuEditor();
+    const section = qs(`[data-small-menu-section="${category}"]`);
+    const input = qsa("input[type=text]", section).at(-2);
+    input?.focus();
+    input?.select();
+  }
+
+  function smallMenuSection(title, items, category) {
     const section = el("section", "small-menu-section");
-    section.append(el("h3", "", title));
-    items.forEach((item) => {
+    section.dataset.smallMenuSection = category;
+    const heading = el("div", "small-menu-heading");
+    const addButton = el("button", "small-menu-add", `+ Add ${category === "addOns" ? "add-on" : "drink"}`);
+    addButton.type = "button";
+    addButton.addEventListener("click", () => addSmallMenuItem(category));
+    heading.append(el("h3", "", title), addButton);
+    section.append(heading);
+    items.forEach((item, index) => {
       const row = el("div", "small-editor-row");
+      const remove = el("button", "small-menu-remove", "Remove");
+      remove.type = "button";
+      remove.setAttribute("aria-label", `Remove ${item.name || "item"}`);
+      remove.addEventListener("click", () => {
+        items.splice(index, 1);
+        markMenuDirty();
+        renderSmallMenuEditor();
+        renderToday();
+      });
       row.append(
         createInputField("Name", item.name, (value) => { item.name = value; markMenuDirty(); }),
         createInputField("Price", item.price, (value) => { item.price = value; markMenuDirty(); }),
         createCheck("Available", item.available, (value) => { item.available = value; markMenuDirty(); renderToday(); }),
         createCheck("Show", item.visible, (value) => { item.visible = value; markMenuDirty(); }),
+        remove,
       );
       section.append(row);
     });
@@ -431,7 +467,7 @@
     const target = qs("[data-small-menu-editor]");
     target.replaceChildren();
     if (!state.menu) return;
-    target.append(smallMenuSection("Add-ons", state.menu.addOns), smallMenuSection("Drinks", state.menu.drinks));
+    target.append(smallMenuSection("Add-ons", state.menu.addOns, "addOns"), smallMenuSection("Drinks", state.menu.drinks, "drinks"));
     const combo = el("section", "small-menu-section");
     combo.append(el("h3", "", "Combo"));
     const row = el("div", "small-editor-row");
