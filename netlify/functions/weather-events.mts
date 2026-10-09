@@ -17,6 +17,17 @@ function reviewSnapshot(): WeatherSnapshot {
   start.setHours(17, 0, 0, 0);
   const end = new Date(start.getTime() + 5 * 3_600_000);
   const settings = normalizeWeatherSettings(null);
+  const demoHourly = Array.from({ length: 6 }, (_, index) => ({
+    time: new Date(start.getTime() + index * 3_600_000).toLocaleString("sv-SE", { timeZone: "America/Chicago" }).slice(0, 13).replace(" ", "T") + ":00",
+    temperature: 72 - index * 2,
+    apparentTemperature: 71 - index * 2,
+    precipitationProbability: 25 + index * 4,
+    precipitation: index > 3 ? 0.02 : 0,
+    windSpeed: 15 + index,
+    windGust: 24 + index,
+    weatherCode: index > 3 ? 61 : 2,
+    conditions: index > 3 ? "Light rain" : "Partly cloudy",
+  }));
   return {
     generatedAt: now.toISOString(),
     settings,
@@ -45,17 +56,7 @@ function reviewSnapshot(): WeatherSnapshot {
       windSpeed: 18,
       windGust: 29,
       conditions: "Partly cloudy",
-      hourly: Array.from({ length: 6 }, (_, index) => ({
-        time: new Date(start.getTime() + index * 3_600_000).toLocaleString("sv-SE", { timeZone: "America/Chicago" }).slice(0, 13).replace(" ", "T") + ":00",
-        temperature: 72 - index * 2,
-        apparentTemperature: 71 - index * 2,
-        precipitationProbability: 25 + index * 4,
-        precipitation: index > 3 ? 0.02 : 0,
-        windSpeed: 15 + index,
-        windGust: 24 + index,
-        weatherCode: index > 3 ? 61 : 2,
-        conditions: index > 3 ? "Light rain" : "Partly cloudy",
-      })),
+      hourly: demoHourly,
       alerts: [],
       forecastSource: "National Weather Service + Open-Meteo",
       confidence: "high",
@@ -85,7 +86,7 @@ function reviewSnapshot(): WeatherSnapshot {
       windSpeed: 18,
       windGust: 29,
       conditions: "Partly cloudy",
-      hourly: [],
+      hourly: demoHourly,
       alerts: [],
       forecastSource: "National Weather Service + Open-Meteo",
       confidence: "high",
