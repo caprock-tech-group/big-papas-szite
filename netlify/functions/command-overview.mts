@@ -53,7 +53,7 @@ export default async function handler(request: Request) {
   }
   const url = new URL(request.url);
   const isDeployPreview = process.env.CONTEXT === "deploy-preview" || url.hostname.startsWith("deploy-preview-");
-  if (!isPasswordConfigured() && isDeployPreview) {
+  if (isDeployPreview) {
     return json(reviewOverview());
   }
   if (!isPasswordConfigured()) {

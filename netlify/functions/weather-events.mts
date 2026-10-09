@@ -106,7 +106,7 @@ export default async function handler(request: Request) {
     return json({ message: "Method not allowed." }, 405, { Allow: "GET, POST" });
   }
   const review = isReview(request);
-  if (!isPasswordConfigured() && review) {
+  if (review) {
     if (request.method === "POST") return json({ saved: true, preview: true, weather: reviewSnapshot() });
     return json({ weather: reviewSnapshot() });
   }
