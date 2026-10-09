@@ -759,6 +759,7 @@ async function weatherForEvent(event: WeatherEventInput, settings: WeatherSettin
     const hours = bundle.hourly.filter((hour) => hour.time >= startKey && hour.time <= endKey);
     if (!hours.length) return unavailableEvent(event, {
       resolvedLocation: resolved.label,
+      matchedVenueName: resolved.venueName || null,
       availableAt: daysAway > 0 ? addDays(startKey.slice(0, 10), -MAX_FORECAST_DAYS) : null,
     });
     const alerts = bundle.alerts.filter((alert) => alertOverlaps(alert, event.start, event.end));
@@ -804,7 +805,7 @@ async function weatherForEvent(event: WeatherEventInput, settings: WeatherSettin
     };
   } catch (error) {
     console.warn("Weather forecast unavailable", event.title, error);
-    return unavailableEvent(event, { resolvedLocation: resolved.label, summary: "Forecast temporarily unavailable" });
+    return unavailableEvent(event, { resolvedLocation: resolved.label, matchedVenueName: resolved.venueName || null, summary: "Forecast temporarily unavailable" });
   }
 }
 

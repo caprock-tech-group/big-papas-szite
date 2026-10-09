@@ -669,7 +669,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
   .venue-card { grid-template-columns: 1fr auto; }
   .venue-card label { grid-column: 1 / -1; }
   .venue-card label.venue-aliases, .venue-card details { grid-column: 1 / -1; }
-  .venue-remove { grid-column: 2; grid-row: 1; }
+  .venue-remove { grid-column: 1 / -1; grid-row: auto; justify-self: end; }
   .venue-actions { flex-direction: column; }
   .venue-actions button { width: 100%; }
   .event-weather-heading { align-items: stretch; flex-direction: column; }

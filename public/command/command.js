@@ -1329,7 +1329,7 @@
       const { response, result } = await api("/api/weather/events", { method: "POST", body: JSON.stringify({ action: "saveVenues", venues: draft }) });
       if (response.status === 401) return showLogin("Your session expired. Sign in again.", "error");
       if (!response.ok) throw new Error(result.message || "Could not save the venues.");
-      state.weather.venues = result.venues || result.weather?.venues || draft;
+      state.weather.venues = reviewMode ? draft : (result.venues || result.weather?.venues || draft);
       state.venuesDirty = false;
       renderWeatherVenues();
       setMessage("[data-weather-venues-message]", reviewMode ? "Preview venues saved for this screen only." : "Saved venues updated. Event weather is refreshing now.", "success");
