@@ -5,6 +5,7 @@ import type { EventPlan } from "./events.mjs";
 
 const STORE_NAME = "big-papas-weather";
 const SETTINGS_KEY = "settings";
+const VENUES_KEY = "venues";
 const ALERT_STATE_KEY = "alert-state";
 const FORECAST_CACHE_MINUTES = 15;
 const MAX_FORECAST_DAYS = 16;
@@ -25,6 +26,16 @@ export type WeatherSettings = {
   coldHigh: number;
 };
 
+export type WeatherVenue = {
+  id: string;
+  name: string;
+  aliases: string[];
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+  updatedAt: string;
+};
+
 export type WeatherEventInput = {
   id: string;
   source: "calendar" | "planner";
@@ -40,8 +51,10 @@ type ResolvedLocation = {
   latitude: number;
   longitude: number;
   label: string;
-  source: "google" | "openstreetmap" | "coordinates";
+  source: "google" | "openstreetmap" | "coordinates" | "saved-venue";
   resolvedAt: string;
+  venueId?: string;
+  venueName?: string;
 };
 
 export type WeatherHour = {
@@ -106,6 +119,7 @@ export type EventWeather = {
   updatedAt: string | null;
   availableAt: string | null;
   locationNeedsAttention: boolean;
+  matchedVenueName: string | null;
 };
 
 export type WeatherSnapshot = {
@@ -113,6 +127,7 @@ export type WeatherSnapshot = {
   settings: WeatherSettings;
   notificationsConfigured: boolean;
   geocodingSource: "Google Places" | "OpenStreetMap fallback";
+  venues: WeatherVenue[];
   events: EventWeather[];
 };
 
@@ -128,6 +143,16 @@ const DEFAULT_SETTINGS: WeatherSettings = {
   coldWatch: 32,
   coldHigh: 20,
 };
+
+const DEFAULT_VENUES: WeatherVenue[] = [{
+  id: "the-nesting-place",
+  name: "The Nesting Place",
+  aliases: ["Bushland at The Nesting Place", "Nesting Place Bushland"],
+  address: "1900 S FM 2381, Bushland, TX 79012",
+  latitude: 35.1928282,
+  longitude: -102.0643532,
+  updatedAt: "2026-10-09T00:00:00.000Z",
+}];
 
 function store() {
   return getStore({ name: STORE_NAME, consistency: "strong" });
@@ -171,6 +196,75 @@ export async function saveWeatherSettings(value: unknown) {
   const settings = normalizeWeatherSettings(value);
   await store().setJSON(SETTINGS_KEY, settings);
   return settings;
+}
+
+function cleanText(value: unknown, maximum = 180) {
+  return String(value ?? "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, maximum);
+}
+
+function venueId(value: unknown, name: string, address: string) {
+  const provided = cleanText(value, 80).toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+  if (provided) return provided;
+  return `venue-${createHash("sha256").update(`${name}|${address}`).digest("hex").slice(0, 12)}`;
+}
+
+function coordinate(value: unknown, minimum: number, maximum: number) {
+  if (value === "" || value === null || value === undefined) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= minimum && parsed <= maximum ? parsed : null;
+}
+
+export function normalizeWeatherVenues(value: unknown): WeatherVenue[] {
+  if (!Array.isArray(value)) return DEFAULT_VENUES.map((venue) => ({ ...venue, aliases: [...venue.aliases] }));
+  const seen = new Set<string>();
+  return value.slice(0, 100).flatMap((entry): WeatherVenue[] => {
+    const record = entry && typeof entry === "object" ? entry as Partial<WeatherVenue> : {};
+    const name = cleanText(record.name, 100);
+    const address = cleanText(record.address, 220);
+    if (!name || !address) return [];
+    let id = venueId(record.id, name, address);
+    if (seen.has(id)) id = `${id}-${seen.size + 1}`;
+    seen.add(id);
+    const rawAliases = Array.isArray(record.aliases) ? record.aliases : String(record.aliases ?? "").split(/[,\n]/);
+    const aliases = [...new Set(rawAliases.map((alias) => cleanText(alias, 100)).filter(Boolean))].slice(0, 12);
+    return [{
+      id,
+      name,
+      aliases,
+      address,
+      latitude: coordinate(record.latitude, -90, 90),
+      longitude: coordinate(record.longitude, -180, 180),
+      updatedAt: cleanText(record.updatedAt, 40) || new Date().toISOString(),
+    }];
+  });
+}
+
+export async function readWeatherVenues() {
+  const saved = await store().get(VENUES_KEY, { type: "json", consistency: "strong" });
+  return normalizeWeatherVenues(saved);
+}
+
+export function normalizeVenueMatchText(value: unknown) {
+  return cleanText(value, 500)
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/\b(?:farm\s+to\s+market|fm\s*road)\b/g, " fm ")
+    .replace(/\b(?:south)\b/g, " s ")
+    .replace(/\b(?:north)\b/g, " n ")
+    .replace(/\b(?:east)\b/g, " e ")
+    .replace(/\b(?:west)\b/g, " w ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function matchWeatherVenue(event: Pick<WeatherEventInput, "title" | "location">, venues: WeatherVenue[]) {
+  const eventText = normalizeVenueMatchText(`${event.title} ${event.location}`);
+  if (!eventText) return null;
+  return venues.find((venue) => [venue.name, ...venue.aliases, venue.address].some((candidate) => {
+    const needle = normalizeVenueMatchText(candidate);
+    return needle.length >= 4 && (` ${eventText} `).includes(` ${needle} `);
+  })) || null;
 }
 
 function chicagoOffsetMinutes(approximate: Date) {
@@ -342,6 +436,40 @@ export async function resolveWeatherLocation(location: string): Promise<Resolved
     console.warn("Weather location could not be resolved", location, error);
   }
   if (resolved) await store().setJSON(key, resolved);
+  return resolved;
+}
+
+async function resolvedSavedVenue(venue: WeatherVenue): Promise<ResolvedLocation | null> {
+  if (venue.latitude !== null && venue.longitude !== null) return {
+    latitude: venue.latitude,
+    longitude: venue.longitude,
+    label: venue.address,
+    source: "saved-venue",
+    resolvedAt: venue.updatedAt,
+    venueId: venue.id,
+    venueName: venue.name,
+  };
+  const resolved = await resolveWeatherLocation(venue.address);
+  return resolved ? { ...resolved, label: venue.address, source: "saved-venue", venueId: venue.id, venueName: venue.name } : null;
+}
+
+export async function saveWeatherVenues(value: unknown) {
+  if (Array.isArray(value) && value.some((entry) => {
+    const record = entry && typeof entry === "object" ? entry as Partial<WeatherVenue> : {};
+    return !cleanText(record.name, 100) || !cleanText(record.address, 220);
+  })) throw new Error("Every saved venue needs both a venue name and a complete address.");
+  const venues = normalizeWeatherVenues(value);
+  const resolved: WeatherVenue[] = [];
+  for (const venue of venues) {
+    if (venue.latitude !== null && venue.longitude !== null) {
+      resolved.push({ ...venue, updatedAt: new Date().toISOString() });
+      continue;
+    }
+    const location = await resolveWeatherLocation(venue.address);
+    if (!location) throw new Error(`We could not verify the address for ${venue.name}. Check the street, city, state, and ZIP code.`);
+    resolved.push({ ...venue, latitude: location.latitude, longitude: location.longitude, updatedAt: new Date().toISOString() });
+  }
+  await store().setJSON(VENUES_KEY, resolved);
   return resolved;
 }
 
@@ -606,17 +734,19 @@ function unavailableEvent(event: WeatherEventInput, details: Partial<EventWeathe
     updatedAt: null,
     availableAt: null,
     locationNeedsAttention: false,
+    matchedVenueName: null,
     ...details,
   };
 }
 
-async function weatherForEvent(event: WeatherEventInput, settings: WeatherSettings, now: Date): Promise<EventWeather> {
+async function weatherForEvent(event: WeatherEventInput, settings: WeatherSettings, venues: WeatherVenue[], now: Date): Promise<EventWeather> {
   const daysAway = (Date.parse(event.start) - now.getTime()) / 86_400_000;
   if (daysAway > MAX_FORECAST_DAYS) {
     const eventDate = localHourKey(event.start).slice(0, 10);
     return unavailableEvent(event, { availableAt: addDays(eventDate, -MAX_FORECAST_DAYS) });
   }
-  const resolved = await resolveWeatherLocation(event.location);
+  const matchedVenue = matchWeatherVenue(event, venues);
+  const resolved = matchedVenue ? await resolvedSavedVenue(matchedVenue) : await resolveWeatherLocation(event.location);
   if (!resolved) return unavailableEvent(event, {
     summary: "Location needs confirmation",
     recommendation: "Use a complete street address or venue and city so weather can be matched accurately.",
@@ -670,6 +800,7 @@ async function weatherForEvent(event: WeatherEventInput, settings: WeatherSettin
       updatedAt: bundle.fetchedAt,
       availableAt: null,
       locationNeedsAttention: false,
+      matchedVenueName: resolved.venueName || null,
     };
   } catch (error) {
     console.warn("Weather forecast unavailable", event.title, error);
@@ -685,14 +816,15 @@ export function notificationsConfigured() {
 
 export async function getWeatherSnapshot(events: WeatherEventInput[], options: { now?: Date } = {}): Promise<WeatherSnapshot> {
   const now = options.now ?? new Date();
-  const settings = await readWeatherSettings();
+  const [settings, venues] = await Promise.all([readWeatherSettings(), readWeatherVenues()]);
   const output: EventWeather[] = [];
-  for (const event of events.slice(0, 30)) output.push(await weatherForEvent(event, settings, now));
+  for (const event of events.slice(0, 30)) output.push(await weatherForEvent(event, settings, venues, now));
   return {
     generatedAt: new Date().toISOString(),
     settings,
     notificationsConfigured: notificationsConfigured(),
     geocodingSource: process.env.GOOGLE_MAPS_API_KEY?.trim() ? "Google Places" : "OpenStreetMap fallback",
+    venues,
     events: output,
   };
 }
