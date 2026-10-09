@@ -1,4 +1,3 @@
-import type { Config } from "@netlify/functions";
 import { readUpcomingCalendarEvents } from "../lib/calendar.mjs";
 import { readEventPlannerState } from "../lib/events.mjs";
 import { collectWeatherEvents, getWeatherSnapshot, monitorWeather } from "../lib/weather.mjs";
@@ -19,7 +18,3 @@ export default async function handler() {
     return new Response(null, { status: 500 });
   }
 }
-
-export const config = {
-  schedule: "*/15 * * * *",
-} satisfies Config;
