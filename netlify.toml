@@ -132,6 +132,12 @@
   force = true
 
 [[redirects]]
+  from = "/api/weather/events"
+  to = "/.netlify/functions/weather-events"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/location"
   to = "/.netlify/functions/location-get"
   status = 200
