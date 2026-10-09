@@ -11,6 +11,9 @@
 [functions."calendar-facebook-sync"]
   schedule = "*/15 * * * *"
 
+[functions."weather-monitor"]
+  schedule = "*/15 * * * *"
+
 [build.environment]
   NODE_VERSION = "22"
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
@@ -125,6 +128,12 @@
 [[redirects]]
   from = "/api/command/overview"
   to = "/.netlify/functions/command-overview"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/weather/events"
+  to = "/.netlify/functions/weather-events"
   status = 200
   force = true
 
