@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#171310">
     <title>Big Papa's Command Center</title>
     <link rel="icon" href="/favicon.svg">
-    <link rel="stylesheet" href="/command/command.css?v=7">
+    <link rel="stylesheet" href="/command/command.css?v=8">
   </head>
   <body>
     <a class="skip-link" href="#workspace">Skip to command center</a>
@@ -158,11 +158,31 @@
 
         <section class="view" data-view="events" hidden>
           <div class="section-intro"><div><p class="eyebrow">Event operations</p><h2>Plan it. Run it. Learn from it.</h2><p>Start simple, then open the production controls only when you need them.</p></div><div class="event-actions"><button type="button" data-new-event>+ New event</button><button type="button" data-template-event>Use 2590 template</button></div></div>
+          <details class="panel weather-settings" data-weather-settings>
+            <summary><span><b>Weather alerts</b><small data-weather-settings-summary>Loading forecast protection…</small></span><strong>Settings</strong></summary>
+            <div class="weather-settings-body">
+              <div class="weather-settings-intro"><p class="eyebrow">Automatic event protection</p><h3>Only alert us when weather matters.</h3><p>Forecasts use the event location and service window. Watches and warnings come from the National Weather Service, and alerts go to both phones through Pushover.</p><label class="weather-alert-switch"><input data-weather-alerts-enabled type="checkbox" role="switch"><span><b>Push weather alerts</b><small>Send planning, worsening-condition, and severe-weather notices</small></span></label><p class="weather-delivery-status" data-weather-delivery-status></p></div>
+              <div class="weather-thresholds">
+                <h3>When should we worry?</h3>
+                <div class="threshold-grid">
+                  <label>Wind caution<input data-weather-setting="windWatch" type="number" min="5" max="70" inputmode="numeric"><span>mph gusts</span></label>
+                  <label>High wind risk<input data-weather-setting="windHigh" type="number" min="10" max="100" inputmode="numeric"><span>mph gusts</span></label>
+                  <label>Rain caution<input data-weather-setting="rainWatch" type="number" min="1" max="100" inputmode="numeric"><span>% chance</span></label>
+                  <label>High rain risk<input data-weather-setting="rainHigh" type="number" min="1" max="100" inputmode="numeric"><span>% chance</span></label>
+                  <label>Heat caution<input data-weather-setting="heatWatch" type="number" min="70" max="130" inputmode="numeric"><span>°F feels like</span></label>
+                  <label>High heat risk<input data-weather-setting="heatHigh" type="number" min="75" max="140" inputmode="numeric"><span>°F feels like</span></label>
+                </div>
+                <div class="weather-settings-actions"><button type="button" data-test-weather-alert>Send test alert</button><button type="button" data-save-weather-settings>Save weather settings</button></div>
+                <p class="form-message" data-weather-settings-message role="status"></p>
+              </div>
+            </div>
+          </details>
           <div class="event-layout">
             <aside class="panel event-list-panel"><h3>Saved events</h3><div data-command-event-list></div></aside>
             <div class="event-workspace" data-event-workspace>
               <article class="panel event-basics"><div class="panel-heading"><div><p>Event brief</p><h2 data-active-event-name>Select an event</h2></div><div class="event-record-actions"><button type="button" data-duplicate-event>Duplicate</button><button type="button" data-delete-event>Delete</button></div></div><div class="event-form" data-event-fields></div></article>
               <div class="forecast-grid" data-event-forecast></div>
+              <article class="panel event-weather" data-event-weather></article>
               <details class="panel planner-details" open><summary>Menu forecast <span>Expected quantities</span></summary><div class="mix-editor" data-event-mix></div></details>
               <details class="panel planner-details"><summary>Production plan <span>Oven timeline & pace calls</span></summary><div class="oven-controls" data-oven-fields></div><div class="oven-rule"><strong>One-oven rule</strong><span>Reheat hot toppings first. Once potato production begins, protect the combi for potatoes.</span></div><ol class="command-timeline" data-event-timeline></ol><div class="pace-strip"><article><i class="green"></i><strong>Green</strong><span>0–6 sold / 15</span></article><article><i class="yellow"></i><strong>Yellow</strong><span>7–8 sold / 15</span></article><article><i class="red"></i><strong>Red</strong><span>9+ sold / 15</span></article></div></details>
               <details class="panel planner-details"><summary>Day-of shift log <span>Sales, production & temperatures</span></summary><div class="shift-log" data-shift-log></div></details>
@@ -189,6 +209,6 @@
         <button type="button" data-nav="today" aria-current="page"><span>⌂</span>Today</button><button type="button" data-nav="location"><span>⌖</span>Location</button><button type="button" data-nav="menu"><span>☷</span>Menu</button><button type="button" data-nav="events"><span>□</span>Events</button><button type="button" data-nav="marketing"><span>◉</span>More</button>
       </nav>
     </div>
-    <script src="/command/command.js?v=6" defer></script>
+    <script src="/command/command.js?v=7" defer></script>
   </body>
 </html>

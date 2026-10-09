@@ -30,12 +30,14 @@
     menu: null,
     planner: null,
     calendar: { configured: false, events: [] },
+    weather: { loading: true, events: [], settings: null, notificationsConfigured: false },
     refreshedAt: null,
     activeView: views[new URLSearchParams(location.search).get("view")] ? new URLSearchParams(location.search).get("view") : "today",
     activeEventId: null,
     coords: null,
     menuDirty: false,
     plannerDirty: false,
+    weatherDirty: false,
     openProducts: new Set(),
   };
 
@@ -119,6 +121,37 @@
     return Number.isNaN(end.getTime()) ? formatter.format(start) : `${formatter.format(start)}–${formatter.format(end)}`;
   }
 
+  function weatherFor(source, sourceId) {
+    return state.weather?.events?.find((event) => event.source === source && event.sourceId === sourceId) || null;
+  }
+
+  function riskLabel(risk) {
+    return { good: "Good", watch: "Watch", high: "High risk", severe: "Severe", unavailable: "Pending" }[risk] || "Pending";
+  }
+
+  function weatherMetric(value, suffix = "") {
+    return typeof value === "number" && Number.isFinite(value) ? `${Math.round(value)}${suffix}` : "—";
+  }
+
+  function formatWeatherHour(value) {
+    const match = String(value || "").match(/T(\d{2}):/);
+    if (!match) return "";
+    const hour = Number(match[1]);
+    return `${hour % 12 || 12} ${hour < 12 ? "AM" : "PM"}`;
+  }
+
+  function compactWeather(weather) {
+    const wrap = el("div", `weather-brief risk-${weather?.risk || "unavailable"}`);
+    if (!weather) {
+      wrap.append(el("span", "weather-risk-pill", state.weather?.loading ? "Checking weather…" : "Forecast pending"));
+      return wrap;
+    }
+    wrap.append(el("span", "weather-risk-pill", riskLabel(weather.risk)));
+    const copy = el("span", "weather-brief-copy", weather.summary);
+    wrap.append(copy);
+    return wrap;
+  }
+
   function speedLabel(value) {
     const speed = number(value, 65);
     if (speed <= 45) return "Slow";
@@ -152,7 +185,7 @@
     qs("[data-command-shell]").hidden = false;
   }
 
-  function hasUnsavedChanges() { return state.menuDirty || state.plannerDirty; }
+  function hasUnsavedChanges() { return state.menuDirty || state.plannerDirty || state.weatherDirty; }
 
   function setActiveView(view, updateHistory = true) {
     if (!views[view]) view = "today";
@@ -209,6 +242,7 @@
       const copy = el("div");
       copy.append(el("h3", "", next.title));
       copy.append(el("p", "", `${formatCalendarTime(next)}${next.location ? ` · ${next.location}` : ""}`));
+      copy.append(compactWeather(weatherFor("calendar", next.id)));
       card.append(tile, copy);
       nextTarget.append(card);
     }
@@ -233,6 +267,7 @@
     connections.replaceChildren(
       connectionItem("Menu board", state.menu ? "Published and synced across displays" : "Menu data unavailable", state.menu ? "good" : "bad"),
       connectionItem("Google Calendar", state.calendar?.configured ? `${state.calendar.events.length} upcoming event${state.calendar.events.length === 1 ? "" : "s"} loaded` : "Calendar is not connected", state.calendar?.configured ? "good" : "bad"),
+      connectionItem("Weather alerts", state.weather?.notificationsConfigured ? "Forecast monitoring and phone delivery are ready" : "Forecasts are active; phone delivery needs Pushover keys", state.weather?.notificationsConfigured ? "good" : "warn"),
       connectionItem("Facebook", state.facebook?.message || "Status unavailable", ["failed", "not_configured"].includes(state.facebook?.state) ? "bad" : state.facebook?.state === "pending" ? "warn" : "good"),
     );
   }
@@ -632,6 +667,61 @@
     );
   }
 
+  function renderEventWeather(event) {
+    const target = qs("[data-event-weather]");
+    target.replaceChildren();
+    if (!event.location) {
+      target.className = "panel event-weather risk-unavailable";
+      target.append(el("p", "eyebrow", "Event weather"), el("h3", "Add the event location"), el("p", "Use a venue plus city or a full street address so the forecast can match the correct place."));
+      return;
+    }
+    const weather = weatherFor("planner", event.id);
+    if (!weather) {
+      target.className = "panel event-weather risk-unavailable";
+      target.append(el("p", "eyebrow", "Event weather"), el("h3", state.weather?.loading ? "Checking the service-window forecast…" : "Forecast pending"), el("p", "Weather will appear after the event plan is saved and refreshed."));
+      return;
+    }
+    target.className = `panel event-weather risk-${weather.risk}`;
+    const heading = el("div", "event-weather-heading");
+    const title = el("div");
+    title.append(el("p", "eyebrow", "Setup through teardown"), el("h3", "Event weather"), el("p", "weather-summary", weather.summary));
+    heading.append(title, el("span", "weather-risk-pill", riskLabel(weather.risk)));
+    target.append(heading);
+    if (weather.risk === "unavailable") {
+      const detail = weather.locationNeedsAttention
+        ? weather.recommendation
+        : weather.availableAt ? `A forecast should become available around ${formatDate(weather.availableAt, { year: true })}.` : weather.recommendation;
+      target.append(el("p", "weather-recommendation", detail));
+      return;
+    }
+    const metrics = el("div", "weather-metrics");
+    [
+      ["At setup", weatherMetric(weather.temperature, "°")],
+      ["Rain chance", weatherMetric(weather.precipitationProbability, "%")],
+      ["Wind", weatherMetric(weather.windSpeed, " mph")],
+      ["Peak gust", weatherMetric(weather.windGust, " mph")],
+    ].forEach(([label, value]) => {
+      const metric = el("div"); metric.append(el("small", "", label), el("strong", "", value)); metrics.append(metric);
+    });
+    target.append(metrics);
+    if (weather.reasons?.length) {
+      const reasons = el("ul", "weather-reasons");
+      weather.reasons.forEach((reason) => reasons.append(el("li", "", reason)));
+      target.append(reasons);
+    }
+    target.append(el("p", "weather-recommendation", weather.recommendation));
+    if (weather.hourly?.length) {
+      const strip = el("div", "weather-hours");
+      weather.hourly.forEach((hour) => {
+        const card = el("div", "weather-hour");
+        card.append(el("time", "", formatWeatherHour(hour.time)), el("strong", "", weatherMetric(hour.temperature, "°")), el("span", "", `${weatherMetric(hour.precipitationProbability, "%")} rain`), el("small", "", `Gust ${weatherMetric(hour.windGust ?? hour.windSpeed, " mph")}`));
+        strip.append(card);
+      });
+      target.append(strip);
+    }
+    target.append(el("small", "weather-source", `${weather.forecastSource || "Weather forecast"} · ${weather.confidence || "current"} confidence · updated ${formatDateTime(weather.updatedAt)}`));
+  }
+
   function renderMix(event) {
     const target = qs("[data-event-mix]");
     target.replaceChildren();
@@ -783,6 +873,7 @@
 
   function renderEventCalculations(event) {
     renderForecast(event);
+    renderEventWeather(event);
     renderMix(event);
     renderOven(event);
     renderTimeline(event);
@@ -804,6 +895,28 @@
     renderEventCalculations(event);
     qs("[data-save-events]").disabled = !state.plannerDirty;
     qs("[data-event-save-status]").textContent = state.plannerDirty ? "Unsaved event changes" : "Everything is saved.";
+  }
+
+  function renderWeatherSettings({ preserveInputs = false } = {}) {
+    const settings = state.weather?.settings;
+    const summary = qs("[data-weather-settings-summary]");
+    const delivery = qs("[data-weather-delivery-status]");
+    if (!settings) {
+      summary.textContent = state.weather?.loading ? "Loading forecast protection…" : "Weather settings unavailable";
+      delivery.textContent = "Forecast information will appear automatically when it is available.";
+      return;
+    }
+    summary.textContent = settings.alertsEnabled
+      ? (state.weather.notificationsConfigured ? "Automatic monitoring is on" : "Forecasts are on · phone delivery needs setup")
+      : "Phone alerts are paused";
+    delivery.textContent = state.weather.notificationsConfigured
+      ? "✓ Pushover is connected for automatic phone alerts."
+      : "Forecasts work now. Add the Pushover weather token and group key in Netlify to turn on phone delivery.";
+    delivery.classList.toggle("is-ready", state.weather.notificationsConfigured);
+    if (preserveInputs) return;
+    qs("[data-weather-alerts-enabled]").checked = Boolean(settings.alertsEnabled);
+    qsa("[data-weather-setting]").forEach((input) => { input.value = settings[input.dataset.weatherSetting] ?? ""; });
+    qs("[data-save-weather-settings]").disabled = !state.weatherDirty;
   }
 
   function renderMarketing() {
@@ -830,7 +943,7 @@
       const tile = el("div", "date-tile");
       const date = /^\d{4}-\d{2}-\d{2}$/.test(event.start) ? new Date(`${event.start}T12:00:00`) : new Date(event.start);
       tile.append(el("small", "", Number.isNaN(date.getTime()) ? "TBD" : new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", month: "short" }).format(date)), el("strong", "", Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", day: "numeric" }).format(date)));
-      const copy = el("div"); copy.append(el("h3", "", event.title), el("p", "", `${formatCalendarTime(event)}${event.location ? ` · ${event.location}` : ""}`));
+      const copy = el("div"); copy.append(el("h3", "", event.title), el("p", "", `${formatCalendarTime(event)}${event.location ? ` · ${event.location}` : ""}`), compactWeather(weatherFor("calendar", event.id)));
       row.append(tile, copy);
       if (event.detailsUrl) { const link = el("a", "", `${event.detailsLabel || "Details"} ↗`); link.href = event.detailsUrl; link.target = "_blank"; link.rel = "noreferrer noopener"; row.append(link); }
       calendarTarget.append(row);
@@ -883,6 +996,7 @@
     renderLocation();
     renderMenu();
     renderEvents();
+    renderWeatherSettings();
     renderMarketing();
     renderReports();
     qs("[data-refreshed]").textContent = `Updated ${formatDateTime(state.refreshedAt)}`;
@@ -904,17 +1018,42 @@
       state.planner = result.planner;
       state.calendar = result.calendar || { configured: false, events: [] };
       state.refreshedAt = result.refreshedAt || new Date().toISOString();
-      if (!state.activeEventId || !state.planner?.events?.some((event) => event.id === state.activeEventId)) state.activeEventId = state.planner?.events?.[0]?.id || null;
+      const requestedEvent = new URLSearchParams(location.search).get("event");
+      if (requestedEvent && state.planner?.events?.some((event) => event.id === requestedEvent)) state.activeEventId = requestedEvent;
+      else if (!state.activeEventId || !state.planner?.events?.some((event) => event.id === state.activeEventId)) state.activeEventId = state.planner?.events?.[0]?.id || null;
       state.menuDirty = false;
       state.plannerDirty = false;
+      state.weatherDirty = false;
+      state.weather = { ...state.weather, loading: true };
       hydrateLocationForm();
       showCommandCenter();
       renderAll();
+      void loadWeather();
       if (reviewMode) globalMessage("Review mode — try anything you like here. Publish and save actions stay inside this preview and will not change the live site.");
     } catch (error) {
       showLogin(error.message || "Could not connect to the Command Center.", "error");
     } finally {
       busy(refresh, false);
+    }
+  }
+
+  async function loadWeather() {
+    try {
+      const { response, result } = await api("/api/weather/events");
+      if (response.status === 401) return;
+      if (!response.ok) throw new Error(result.message || "Could not load event weather.");
+      state.weather = { ...(result.weather || {}), loading: false };
+      state.weatherDirty = false;
+      renderToday();
+      renderEvents();
+      renderWeatherSettings();
+      renderMarketing();
+    } catch (error) {
+      state.weather = { ...state.weather, loading: false };
+      renderToday();
+      renderEvents();
+      renderWeatherSettings();
+      console.warn(error);
     }
   }
 
@@ -1073,9 +1212,50 @@
       const { response, result } = await api("/api/event-planner/manage", { method: "POST", body: JSON.stringify({ action: "save", expectedRevision: state.planner.revision, planner: state.planner }) });
       if (response.status === 401) return showLogin("Your session expired. Sign in again.", "error");
       if (!response.ok) throw new Error(result.message || "Could not save the event plans.");
-      state.planner = result.planner; state.plannerDirty = false; state.refreshedAt = new Date().toISOString(); renderEvents(); renderReports(); globalMessage("Event plans saved. They are available on every device.");
+      state.planner = result.planner; state.plannerDirty = false; state.refreshedAt = new Date().toISOString(); renderEvents(); renderReports(); void loadWeather(); globalMessage("Event plans saved. They are available on every device.");
     } catch (error) { globalMessage(error.message || "Could not save the events.", "error"); }
     finally { busy(button, false); button.disabled = !state.plannerDirty; }
+  }
+
+  function weatherSettingsDraft() {
+    const draft = { ...(state.weather?.settings || {}) };
+    draft.alertsEnabled = qs("[data-weather-alerts-enabled]").checked;
+    qsa("[data-weather-setting]").forEach((input) => { draft[input.dataset.weatherSetting] = number(input.value); });
+    return draft;
+  }
+
+  async function saveWeatherSettings() {
+    const button = qs("[data-save-weather-settings]");
+    busy(button, true, "Saving…");
+    setMessage("[data-weather-settings-message]");
+    try {
+      const { response, result } = await api("/api/weather/events", { method: "POST", body: JSON.stringify({ action: "saveSettings", settings: weatherSettingsDraft() }) });
+      if (response.status === 401) return showLogin("Your session expired. Sign in again.", "error");
+      if (!response.ok) throw new Error(result.message || "Could not save weather settings.");
+      state.weather.settings = result.settings || result.weather?.settings || weatherSettingsDraft();
+      state.weatherDirty = false;
+      renderWeatherSettings();
+      setMessage("[data-weather-settings-message]", reviewMode ? "Preview settings saved for this screen only." : "Weather alert settings saved.", "success");
+      if (!reviewMode) void loadWeather();
+    } catch (error) {
+      setMessage("[data-weather-settings-message]", error.message || "Could not save weather settings.", "error");
+    } finally {
+      busy(button, false);
+      button.disabled = !state.weatherDirty;
+    }
+  }
+
+  async function testWeatherAlert() {
+    const button = qs("[data-test-weather-alert]");
+    busy(button, true, "Sending…");
+    setMessage("[data-weather-settings-message]");
+    try {
+      const { response, result } = await api("/api/weather/events", { method: "POST", body: JSON.stringify({ action: "testAlert" }) });
+      if (!response.ok) throw new Error(result.message || "Could not send the test alert.");
+      setMessage("[data-weather-settings-message]", reviewMode ? "Test alert simulated. No real phone was contacted." : "Test alert sent to the Pushover weather group.", "success");
+    } catch (error) {
+      setMessage("[data-weather-settings-message]", error.message || "Could not send the test alert.", "error");
+    } finally { busy(button, false); }
   }
 
   async function logout() {
@@ -1165,6 +1345,17 @@
       renderDrinksControl();
       markMenuDirty();
     });
+    qs("[data-weather-alerts-enabled]")?.addEventListener("change", () => {
+      state.weatherDirty = true;
+      qs("[data-save-weather-settings]").disabled = false;
+      renderWeatherSettings({ preserveInputs: true });
+    });
+    qsa("[data-weather-setting]").forEach((input) => input.addEventListener("input", () => {
+      state.weatherDirty = true;
+      qs("[data-save-weather-settings]").disabled = false;
+    }));
+    qs("[data-save-weather-settings]")?.addEventListener("click", saveWeatherSettings);
+    qs("[data-test-weather-alert]")?.addEventListener("click", testWeatherAlert);
     qs("[data-new-event]")?.addEventListener("click", () => requestEventTemplate("blank"));
     qs("[data-template-event]")?.addEventListener("click", () => requestEventTemplate("2590"));
     qs("[data-duplicate-event]")?.addEventListener("click", duplicateEvent);
