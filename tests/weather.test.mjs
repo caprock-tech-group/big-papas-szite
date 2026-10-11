@@ -15,6 +15,8 @@ const {
   calendarEventToWeatherInput,
   chicagoLocalDateTime,
   normalizeWeatherSettings,
+  normalizeWeatherVenues,
+  matchWeatherVenue,
   scoreWeatherWindow,
   weatherAlertDecision,
 } = await import("../netlify/lib/weather.mts");
@@ -54,6 +56,35 @@ test("weather settings keep safe ordering and bounds", () => {
     coldWatch: 30,
     coldHigh: 30,
   });
+});
+
+test("saved venues preload The Nesting Place with verified Bushland coordinates", () => {
+  const venues = normalizeWeatherVenues(null);
+  assert.equal(venues.length, 1);
+  assert.equal(venues[0].name, "The Nesting Place");
+  assert.equal(venues[0].address, "1900 S FM 2381, Bushland, TX 79012");
+  assert.equal(venues[0].latitude, 35.1928282);
+  assert.equal(venues[0].longitude, -102.0643532);
+});
+
+test("saved venues match calendar titles even when the calendar address is wrong", () => {
+  const venue = matchWeatherVenue({
+    title: "Bushland at The Nesting Place",
+    location: "1900 FM-2381 Amarillo, TX 79124 United States",
+  }, normalizeWeatherVenues(null));
+  assert.equal(venue?.id, "the-nesting-place");
+});
+
+test("saved venue aliases are normalized and can match familiar calendar names", () => {
+  const venues = normalizeWeatherVenues([{
+    name: "Skooterz",
+    address: "4100 Bushland Boulevard, Amarillo, TX 79106",
+    aliases: "Skooterz Bar, Scooter's",
+    latitude: 35.2,
+    longitude: -101.9,
+  }]);
+  assert.deepEqual(venues[0].aliases, ["Skooterz Bar", "Scooter's"]);
+  assert.equal(matchWeatherVenue({ title: "Dinner at Skooterz Bar", location: "Amarillo" }, venues)?.name, "Skooterz");
 });
 
 test("planner-style local event times preserve Central time across daylight saving", () => {

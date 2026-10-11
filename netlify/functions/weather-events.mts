@@ -6,7 +6,9 @@ import {
   collectWeatherEvents,
   getWeatherSnapshot,
   normalizeWeatherSettings,
+  normalizeWeatherVenues,
   saveWeatherSettings,
+  saveWeatherVenues,
   sendWeatherTestAlert,
   type WeatherSnapshot,
 } from "../lib/weather.mjs";
@@ -17,6 +19,7 @@ function reviewSnapshot(): WeatherSnapshot {
   start.setHours(17, 0, 0, 0);
   const end = new Date(start.getTime() + 5 * 3_600_000);
   const settings = normalizeWeatherSettings(null);
+  const venues = normalizeWeatherVenues(null);
   const demoHourly = Array.from({ length: 6 }, (_, index) => ({
     time: new Date(start.getTime() + index * 3_600_000).toLocaleString("sv-SE", { timeZone: "America/Chicago" }).slice(0, 13).replace(" ", "T") + ":00",
     temperature: 72 - index * 2,
@@ -33,6 +36,7 @@ function reviewSnapshot(): WeatherSnapshot {
     settings,
     notificationsConfigured: true,
     geocodingSource: "Google Places",
+    venues,
     events: [{
       id: "calendar:review-upcoming-stop",
       source: "calendar",
@@ -63,6 +67,7 @@ function reviewSnapshot(): WeatherSnapshot {
       updatedAt: now.toISOString(),
       availableAt: null,
       locationNeedsAttention: false,
+      matchedVenueName: null,
     }, {
       id: "planner:review-2590",
       source: "planner",
@@ -93,6 +98,7 @@ function reviewSnapshot(): WeatherSnapshot {
       updatedAt: now.toISOString(),
       availableAt: null,
       locationNeedsAttention: false,
+      matchedVenueName: null,
     }],
   };
 }
@@ -122,11 +128,14 @@ export default async function handler(request: Request) {
       if (body.action === "saveSettings") {
         return json({ saved: true, settings: await saveWeatherSettings(body.settings) });
       }
+      if (body.action === "saveVenues") {
+        return json({ saved: true, venues: await saveWeatherVenues(body.venues) });
+      }
       if (body.action === "testAlert") {
         await sendWeatherTestAlert();
         return json({ sent: true });
       }
-      return json({ message: "Choose save settings or test alert." }, 400);
+      return json({ message: "Choose save settings, save venues, or test alert." }, 400);
     } catch (error) {
       console.error("Could not update weather settings", error);
       return json({ message: error instanceof Error ? error.message : "Could not update weather settings." }, 503);

@@ -416,6 +416,29 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
 .weather-settings-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 14px; }
 .weather-settings-actions button { padding: 11px 13px; border: 1px solid var(--ink); background: transparent; color: var(--ink); font-weight: 900; }
 .weather-settings-actions [data-save-weather-settings] { border-color: var(--red); background: var(--red); color: #fff; }
+.weather-venues { margin: -7px 0 18px; overflow: hidden; }
+.weather-venues > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 17px 20px; cursor: pointer; }
+.weather-venues > summary::-webkit-details-marker { display: none; }
+.weather-venues > summary span { display: grid; gap: 3px; }
+.weather-venues > summary b { font: 1.1rem/1.2 Georgia, serif; }
+.weather-venues > summary small { color: var(--muted); font-size: .72rem; }
+.weather-venues > summary > strong { color: var(--red); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+.weather-venues[open] > summary { border-bottom: 1px solid var(--line); }
+.weather-venues-body { display: grid; grid-template-columns: minmax(240px,.65fr) minmax(440px,1.35fr); gap: 24px; padding: 22px; }
+.venue-help h3 { margin: 0; font-family: Georgia, serif; font-size: 1.4rem; }
+.venue-help > p:not(.eyebrow) { color: var(--muted); line-height: 1.5; }
+[data-weather-venue-list] { display: grid; gap: 10px; }
+.venue-card { display: grid; grid-template-columns: minmax(150px,.8fr) minmax(240px,1.2fr) auto; gap: 10px; align-items: start; padding: 13px; border: 1px solid var(--line); background: #fffdfa; }
+.venue-card label { display: grid; gap: 5px; color: var(--muted); font-size: .63rem; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+.venue-card label.venue-aliases { grid-column: 1 / 3; }
+.venue-card input { min-width: 0; width: 100%; padding: 10px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: inherit; }
+.venue-card details { grid-column: 1 / 3; }
+.venue-card details summary { color: var(--blue); cursor: pointer; font-size: .7rem; font-weight: 850; }
+.venue-coordinate-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 9px; }
+.venue-remove { border: 0; background: transparent; color: var(--red); padding: 10px 6px; font-size: .7rem; font-weight: 900; }
+.venue-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 12px; }
+.venue-actions button { padding: 11px 13px; border: 1px solid var(--ink); background: transparent; color: var(--ink); font-weight: 900; }
+.venue-actions [data-save-weather-venues] { border-color: var(--red); background: var(--red); color: #fff; }
 .event-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .event-actions [data-new-event] { border-color: var(--red); color: #fff; }
 .event-layout { display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 18px; align-items: start; }
@@ -447,6 +470,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
 .event-weather.risk-high, .event-weather.risk-severe { border-left-color: var(--red); }
 .event-weather-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
 .weather-summary { margin: 6px 0 0; color: var(--muted); font-weight: 750; }
+.weather-venue-match { display: inline-block; margin: 12px 0 0; padding: 7px 9px; background: #e1f3e5; color: #1f6b39; font-size: .68rem; font-weight: 900; }
 .weather-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 9px; margin-top: 17px; }
 .weather-metrics > div { padding: 12px; background: var(--ink); color: #fff; }
 .weather-metrics small, .weather-metrics strong { display: block; }
@@ -599,6 +623,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
   .menu-toolbar { top: 74px; }
   .event-layout { grid-template-columns: 1fr; }
   .weather-settings-body { grid-template-columns: 1fr; }
+  .weather-venues-body { grid-template-columns: 1fr; }
   .event-list-panel { position: static; }
   [data-command-event-list] { display: flex; max-height: none; overflow-x: auto; }
   [data-command-event-list] button { flex: 0 0 210px; }
@@ -640,6 +665,13 @@ input:focus, select:focus, textarea:focus, button:focus-visible, summary:focus-v
   .threshold-grid label { grid-template-columns: 1fr 72px auto; }
   .weather-settings-actions { flex-direction: column; }
   .weather-settings-actions button { width: 100%; }
+  .weather-venues-body { padding: 16px; }
+  .venue-card { grid-template-columns: 1fr auto; }
+  .venue-card label { grid-column: 1 / -1; }
+  .venue-card label.venue-aliases, .venue-card details { grid-column: 1 / -1; }
+  .venue-remove { grid-column: 1 / -1; grid-row: auto; justify-self: end; }
+  .venue-actions { flex-direction: column; }
+  .venue-actions button { width: 100%; }
   .event-weather-heading { align-items: stretch; flex-direction: column; }
   .event-weather-heading .weather-risk-pill { align-self: flex-start; }
   .mix-row { grid-template-columns: 1fr 88px 60px; }

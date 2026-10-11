@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#171310">
     <title>Big Papa's Command Center</title>
     <link rel="icon" href="/favicon.svg">
-    <link rel="stylesheet" href="/command/command.css?v=8">
+    <link rel="stylesheet" href="/command/command.css?v=9">
   </head>
   <body>
     <a class="skip-link" href="#workspace">Skip to command center</a>
@@ -177,6 +177,17 @@
               </div>
             </div>
           </details>
+          <details class="panel weather-venues" data-weather-venues>
+            <summary><span><b>Saved venues</b><small data-weather-venues-summary>Loading verified event locations…</small></span><strong>Manage</strong></summary>
+            <div class="weather-venues-body">
+              <div class="venue-help"><p class="eyebrow">Accurate forecasts</p><h3>Teach the calendar your regular stops.</h3><p>Saved venues take priority when a calendar address is incomplete or formatted incorrectly. Add the venue name, its correct address, and any other names you use for it.</p></div>
+              <div class="venue-manager">
+                <div data-weather-venue-list></div>
+                <div class="venue-actions"><button type="button" data-add-weather-venue>+ Add venue</button><button type="button" data-save-weather-venues disabled>Save venues</button></div>
+                <p class="form-message" data-weather-venues-message role="status"></p>
+              </div>
+            </div>
+          </details>
           <div class="event-layout">
             <aside class="panel event-list-panel"><h3>Saved events</h3><div data-command-event-list></div></aside>
             <div class="event-workspace" data-event-workspace>
@@ -209,6 +220,6 @@
         <button type="button" data-nav="today" aria-current="page"><span>⌂</span>Today</button><button type="button" data-nav="location"><span>⌖</span>Location</button><button type="button" data-nav="menu"><span>☷</span>Menu</button><button type="button" data-nav="events"><span>□</span>Events</button><button type="button" data-nav="marketing"><span>◉</span>More</button>
       </nav>
     </div>
-    <script src="/command/command.js?v=7" defer></script>
+    <script src="/command/command.js?v=8" defer></script>
   </body>
 </html>

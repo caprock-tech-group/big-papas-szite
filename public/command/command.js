@@ -30,7 +30,7 @@
     menu: null,
     planner: null,
     calendar: { configured: false, events: [] },
-    weather: { loading: true, events: [], settings: null, notificationsConfigured: false },
+    weather: { loading: true, events: [], settings: null, venues: [], notificationsConfigured: false },
     refreshedAt: null,
     activeView: views[new URLSearchParams(location.search).get("view")] ? new URLSearchParams(location.search).get("view") : "today",
     activeEventId: null,
@@ -38,6 +38,7 @@
     menuDirty: false,
     plannerDirty: false,
     weatherDirty: false,
+    venuesDirty: false,
     openProducts: new Set(),
   };
 
@@ -185,7 +186,7 @@
     qs("[data-command-shell]").hidden = false;
   }
 
-  function hasUnsavedChanges() { return state.menuDirty || state.plannerDirty || state.weatherDirty; }
+  function hasUnsavedChanges() { return state.menuDirty || state.plannerDirty || state.weatherDirty || state.venuesDirty; }
 
   function setActiveView(view, updateHistory = true) {
     if (!views[view]) view = "today";
@@ -687,6 +688,7 @@
     title.append(el("p", "eyebrow", "Setup through teardown"), el("h3", "Event weather"), el("p", "weather-summary", weather.summary));
     heading.append(title, el("span", "weather-risk-pill", riskLabel(weather.risk)));
     target.append(heading);
+    if (weather.matchedVenueName) target.append(el("p", "weather-venue-match", `✓ Verified venue: ${weather.matchedVenueName}`));
     if (weather.risk === "unavailable") {
       const detail = weather.locationNeedsAttention
         ? weather.recommendation
@@ -919,6 +921,73 @@
     qs("[data-save-weather-settings]").disabled = !state.weatherDirty;
   }
 
+  function venueDraftId() {
+    return `venue-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  function updateVenueField(id, field, value) {
+    const venue = state.weather?.venues?.find((item) => item.id === id);
+    if (!venue) return;
+    if (field === "aliases") venue.aliases = value.split(/[,\n]/).map((alias) => alias.trim()).filter(Boolean);
+    else if (field === "latitude" || field === "longitude") venue[field] = value.trim() === "" ? null : Number(value);
+    else venue[field] = value;
+    state.venuesDirty = true;
+    qs("[data-save-weather-venues]").disabled = false;
+  }
+
+  function venueInput(venue, field, label, value, options = {}) {
+    const wrap = el("label", options.className || "");
+    wrap.append(document.createTextNode(label));
+    const input = el("input");
+    input.type = options.type || "text";
+    input.value = value ?? "";
+    input.placeholder = options.placeholder || "";
+    if (options.inputMode) input.inputMode = options.inputMode;
+    if (options.step) input.step = options.step;
+    input.addEventListener("input", () => updateVenueField(venue.id, field, input.value));
+    wrap.append(input);
+    return wrap;
+  }
+
+  function renderWeatherVenues() {
+    const venues = state.weather?.venues || [];
+    const summary = qs("[data-weather-venues-summary]");
+    const target = qs("[data-weather-venue-list]");
+    summary.textContent = state.weather?.loading
+      ? "Loading verified event locations…"
+      : `${venues.length} verified ${venues.length === 1 ? "location" : "locations"}`;
+    target.replaceChildren();
+    if (!venues.length) target.append(el("p", "empty-state", "No saved venues yet. Add your regular stops so weather always uses the right location."));
+    venues.forEach((venue) => {
+      const card = el("article", "venue-card");
+      card.append(
+        venueInput(venue, "name", "Venue name", venue.name, { placeholder: "The Nesting Place" }),
+        venueInput(venue, "address", "Correct street address", venue.address, { placeholder: "Street, city, state, ZIP" }),
+      );
+      const remove = el("button", "venue-remove", "Remove");
+      remove.type = "button";
+      remove.addEventListener("click", () => {
+        if (!window.confirm(`Remove ${venue.name || "this venue"} from saved locations?`)) return;
+        state.weather.venues = venues.filter((item) => item.id !== venue.id);
+        state.venuesDirty = true;
+        renderWeatherVenues();
+      });
+      card.append(remove);
+      card.append(venueInput(venue, "aliases", "Calendar nicknames (separate with commas)", (venue.aliases || []).join(", "), { className: "venue-aliases", placeholder: "Bushland stop, Nesting Place event" }));
+      const advanced = el("details");
+      const advancedSummary = el("summary", "", "Advanced coordinates (filled automatically)");
+      const coordinates = el("div", "venue-coordinate-fields");
+      coordinates.append(
+        venueInput(venue, "latitude", "Latitude", venue.latitude, { type: "number", inputMode: "decimal", step: "any" }),
+        venueInput(venue, "longitude", "Longitude", venue.longitude, { type: "number", inputMode: "decimal", step: "any" }),
+      );
+      advanced.append(advancedSummary, coordinates);
+      card.append(advanced);
+      target.append(card);
+    });
+    qs("[data-save-weather-venues]").disabled = !state.venuesDirty;
+  }
+
   function renderMarketing() {
     const facebook = state.facebook || { state: "failed", message: "Facebook status unavailable." };
     const target = qs("[data-marketing-facebook]");
@@ -997,6 +1066,7 @@
     renderMenu();
     renderEvents();
     renderWeatherSettings();
+    renderWeatherVenues();
     renderMarketing();
     renderReports();
     qs("[data-refreshed]").textContent = `Updated ${formatDateTime(state.refreshedAt)}`;
@@ -1024,6 +1094,7 @@
       state.menuDirty = false;
       state.plannerDirty = false;
       state.weatherDirty = false;
+      state.venuesDirty = false;
       state.weather = { ...state.weather, loading: true };
       hydrateLocationForm();
       showCommandCenter();
@@ -1042,17 +1113,21 @@
       const { response, result } = await api("/api/weather/events");
       if (response.status === 401) return;
       if (!response.ok) throw new Error(result.message || "Could not load event weather.");
+      const venueDraft = state.venuesDirty ? state.weather?.venues : null;
       state.weather = { ...(result.weather || {}), loading: false };
+      if (venueDraft) state.weather.venues = venueDraft;
       state.weatherDirty = false;
       renderToday();
       renderEvents();
       renderWeatherSettings();
+      renderWeatherVenues();
       renderMarketing();
     } catch (error) {
       state.weather = { ...state.weather, loading: false };
       renderToday();
       renderEvents();
       renderWeatherSettings();
+      renderWeatherVenues();
       console.warn(error);
     }
   }
@@ -1245,6 +1320,28 @@
     }
   }
 
+  async function saveWeatherVenues() {
+    const button = qs("[data-save-weather-venues]");
+    busy(button, true, "Saving…");
+    setMessage("[data-weather-venues-message]");
+    const draft = deepClone(state.weather?.venues || []);
+    try {
+      const { response, result } = await api("/api/weather/events", { method: "POST", body: JSON.stringify({ action: "saveVenues", venues: draft }) });
+      if (response.status === 401) return showLogin("Your session expired. Sign in again.", "error");
+      if (!response.ok) throw new Error(result.message || "Could not save the venues.");
+      state.weather.venues = reviewMode ? draft : (result.venues || result.weather?.venues || draft);
+      state.venuesDirty = false;
+      renderWeatherVenues();
+      setMessage("[data-weather-venues-message]", reviewMode ? "Preview venues saved for this screen only." : "Saved venues updated. Event weather is refreshing now.", "success");
+      if (!reviewMode) void loadWeather();
+    } catch (error) {
+      setMessage("[data-weather-venues-message]", error.message || "Could not save the venues.", "error");
+    } finally {
+      busy(button, false);
+      button.disabled = !state.venuesDirty;
+    }
+  }
+
   async function testWeatherAlert() {
     const button = qs("[data-test-weather-alert]");
     busy(button, true, "Sending…");
@@ -1356,6 +1453,14 @@
     }));
     qs("[data-save-weather-settings]")?.addEventListener("click", saveWeatherSettings);
     qs("[data-test-weather-alert]")?.addEventListener("click", testWeatherAlert);
+    qs("[data-add-weather-venue]")?.addEventListener("click", () => {
+      state.weather.venues ||= [];
+      state.weather.venues.push({ id: venueDraftId(), name: "", address: "", aliases: [], latitude: null, longitude: null, updatedAt: new Date().toISOString() });
+      state.venuesDirty = true;
+      renderWeatherVenues();
+      qs("[data-weather-venue-list] .venue-card:last-child input")?.focus();
+    });
+    qs("[data-save-weather-venues]")?.addEventListener("click", saveWeatherVenues);
     qs("[data-new-event]")?.addEventListener("click", () => requestEventTemplate("blank"));
     qs("[data-template-event]")?.addEventListener("click", () => requestEventTemplate("2590"));
     qs("[data-duplicate-event]")?.addEventListener("click", duplicateEvent);
