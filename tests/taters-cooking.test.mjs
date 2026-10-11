@@ -19,6 +19,7 @@ test("between-batch notice survives reload and resumes without clearing individu
   stored.board.announcement = "Follow us on Facebook";
   stored.board.fontSizes.names = 150;
   stored.lunchPricing = { enabled: true, reduction: "$2.00" };
+  stored.friesEnabled = true;
   stored.drinksEnabled = false;
   const before = structuredClone(stored);
   const draft = structuredClone(stored);
@@ -30,7 +31,7 @@ test("between-batch notice survives reload and resumes without clearing individu
   assert.equal(paused.board.cookingMessage, draft.board.cookingMessage);
   const resumed = await saveMenuState({ ...paused, board: { ...paused.board, tatersCooking: false, cookingMessage: "" } }, paused.revision);
   assert.equal((await readMenuState()).board.tatersCooking, false);
-  for (const key of ["products", "drinks", "drinksEnabled", "addOns", "combo", "lunchPricing"]) {
+  for (const key of ["products", "drinks", "friesEnabled", "drinksEnabled", "addOns", "combo", "lunchPricing"]) {
     assert.deepEqual(paused[key], before[key]);
     assert.deepEqual(resumed[key], before[key]);
   }
@@ -45,6 +46,8 @@ test("older menus default to normal service and optional batch messages are boun
   const older = await readMenuState();
   assert.equal(older.board.tatersCooking, false);
   assert.equal(older.board.cookingMessage, "");
+  delete stored.friesEnabled;
+  assert.equal((await readMenuState()).friesEnabled, true);
   stored.board.tatersCooking = "true";
   stored.board.cookingMessage = "  Fresh\n\tbatch  ";
   const invalid = await readMenuState();

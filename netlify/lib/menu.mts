@@ -29,7 +29,7 @@ export type BoardSmallItem = {
 };
 
 export type MenuBoardState = {
-  version: 4;
+  version: 5;
   revision: number;
   updatedAt: string;
   board: {
@@ -49,6 +49,7 @@ export type MenuBoardState = {
     reduction: string;
   };
   addOns: BoardSmallItem[];
+  friesEnabled: boolean;
   drinksEnabled: boolean;
   drinks: BoardSmallItem[];
   combo: {
@@ -60,7 +61,7 @@ export type MenuBoardState = {
 };
 
 const defaultState: MenuBoardState = {
-  version: 4,
+  version: 5,
   revision: 1,
   updatedAt: "2026-08-08T22:00:00.000Z",
   board: {
@@ -169,6 +170,7 @@ const defaultState: MenuBoardState = {
     { id: "ranch", name: "Ranch", price: "$0.75", available: true, visible: true },
     { id: "green-onions", name: "Green onions", price: "$0.50", available: true, visible: true },
   ],
+  friesEnabled: true,
   drinksEnabled: true,
   drinks: [
     { id: "water", name: "Water", price: "$2.00", available: true, visible: true },
@@ -344,7 +346,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
   }
 
   return {
-    version: 4,
+    version: 5,
     revision,
     updatedAt,
     board: {
@@ -366,6 +368,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
       reduction: cleanReduction(lunchPricing.reduction, defaultState.lunchPricing.reduction),
     },
     addOns,
+    friesEnabled: booleanValue(record.friesEnabled, true),
     drinksEnabled: booleanValue(record.drinksEnabled, true),
     drinks: normalizeSmallItems(record.drinks, defaultState.drinks, "drink"),
     combo: {

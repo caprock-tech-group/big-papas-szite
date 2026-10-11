@@ -282,16 +282,17 @@ export default function Home() {
               <p className="eyebrow"><span /> Meet the heavy hitters</p>
               <h2 id="menu-title">Today&apos;s loaded lineup.</h2>
             </div>
-            <p>
+            <p data-public-base-copy>
               From slow-smoked brisket and pulled pork to chicken fried steak, breakfast, and
-              Italian-inspired flavor, every option starts with a hot, fluffy baked potato and ends loaded.
+              Italian-inspired flavor, choose every loaded favorite on a baked potato or French fries.
+              Same toppings. Same price.
             </p>
           </div>
 
           <div className="menu-cooking-notice" data-public-cooking-notice role="status" aria-live="polite" hidden>
-            <strong>Temporarily sold out — more taters are cooking!</strong>
+            <strong data-public-cooking-title>Temporarily sold out — more taters are cooking!</strong>
             <p data-public-cooking-message hidden />
-            <span>Thanks for your patience. Ask us about the next batch.</span>
+            <span data-public-cooking-detail>Thanks for your patience. Ask us about the next batch.</span>
           </div>
           <div className="menu-grid" data-public-menu-products aria-live="polite">
             {menuItems.map((item) => (

@@ -10,6 +10,7 @@ const example = () => ({
     { name: "Hidden special", price: "$12.99", visible: false },
   ],
   lunchPricing: { enabled: true, reduction: "$2.00" },
+  friesEnabled: true,
   drinksEnabled: true,
   drinks: [{ name: "Lemonade", price: "$3.00", available: false }, { name: "Hidden drink", price: "$2.00", visible: false }],
   addOns: [{ name: "Bacon", price: "$1.50", visible: true }],
@@ -40,7 +41,7 @@ test("drinks-off, temporary potato outage, and normal service preserve their mea
   const paused = printableMenu(menu);
   assert.deepEqual(paused.drinks, []);
   assert.equal(paused.combo, null);
-  assert.match(paused.products[0].status, /Taters cooking/);
+  assert.match(paused.products[0].status, /Fries only/);
   assert.equal(paused.products[1].status, "Sold out");
   assert.equal(paused.board.cookingMessage, "Next batch at 1 PM");
   menu.board.tatersCooking = false;
@@ -49,6 +50,9 @@ test("drinks-off, temporary potato outage, and normal service preserve their mea
   assert.equal(regular.products[0].status, "");
   assert.equal(regular.products[1].status, "Sold out");
   assert.deepEqual(regular.products.map((item) => item.printPrice), ["$18.99", "$14.99"]);
+  menu.board.tatersCooking = true;
+  menu.friesEnabled = false;
+  assert.match(printableMenu(menu).products[0].status, /temporarily sold out/);
 });
 
 test("print data rejects missing menus and does not produce negative lunch prices", () => {

@@ -33,7 +33,7 @@
     return `$${(cents / 100).toFixed(2)}`;
   }
 
-  function createProduct(item, lunchPricing, cooking) {
+  function createProduct(item, lunchPricing, cooking, friesEnabled) {
     const article = document.createElement("article");
     const accent = ["red", "blue", "gold"].includes(item.accent) ? item.accent : "red";
     article.className = `menu-card menu-card--${accent}${item.isNew ? " menu-card--new" : ""}${item.available === false ? " menu-card--sold-out" : ""}`;
@@ -75,7 +75,7 @@
     } else if (cooking) {
       const waiting = document.createElement("span");
       waiting.className = "cooking-tag";
-      waiting.textContent = "Temporarily sold out · Taters cooking";
+      waiting.textContent = friesEnabled ? "Fries only · Baked potatoes cooking" : "Temporarily sold out · Taters cooking";
       article.appendChild(waiting);
     } else if (item.id === "big-hoss" || item.name.trim().toLowerCase() === "the big hoss") {
       const signature = document.createElement("span");
@@ -100,9 +100,22 @@
 
   function renderMenu(menu) {
     const cooking = menu.board?.tatersCooking === true;
+    const friesEnabled = menu.friesEnabled !== false;
     const notice = document.querySelector("[data-public-cooking-notice]");
     const message = document.querySelector("[data-public-cooking-message]");
+    const cookingTitle = document.querySelector("[data-public-cooking-title]");
+    const cookingDetail = document.querySelector("[data-public-cooking-detail]");
+    const baseCopy = document.querySelector("[data-public-base-copy]");
     if (notice) notice.hidden = !cooking;
+    setText(cookingTitle, friesEnabled
+      ? "Baked potatoes are cooking — loaded fries are still available!"
+      : "Temporarily sold out — more taters are cooking!");
+    setText(cookingDetail, friesEnabled
+      ? "Choose fries with any loaded favorite. Same toppings. Same price."
+      : "Thanks for your patience. Ask us about the next batch.");
+    setText(baseCopy, friesEnabled
+      ? "Choose every loaded favorite on a baked potato or French fries. Same toppings. Same price."
+      : "Every loaded favorite starts with a hot, fluffy baked potato and ends loaded.");
     if (message) {
       message.textContent = menu.board?.cookingMessage || "";
       message.hidden = !menu.board?.cookingMessage;
@@ -110,7 +123,7 @@
     const visibleProducts = Array.isArray(menu.products)
       ? menu.products.filter((item) => validItem(item) && item.visible !== false)
       : [];
-    products.replaceChildren(...visibleProducts.map((item) => createProduct(item, menu.lunchPricing, cooking)));
+    products.replaceChildren(...visibleProducts.map((item) => createProduct(item, menu.lunchPricing, cooking, friesEnabled)));
 
     const visibleAddOns = Array.isArray(menu.addOns)
       ? menu.addOns.filter((item) => validItem(item) && item.visible !== false)

@@ -188,14 +188,27 @@
     renderAnnouncement(menu.board?.announcement);
 
     const cooking = menu.board?.tatersCooking === true;
+    const friesEnabled = menu.friesEnabled !== false;
+    board.dataset.friesEnabled = String(friesEnabled);
+    text(document.querySelector("[data-products-title]"), friesEnabled ? "Potatoes or Fries" : "Signature Potatoes");
     const cookingNotice = document.querySelector("[data-cooking-notice]");
     const cookingMessage = document.querySelector("[data-cooking-notice-message]");
+    const cookingEyebrow = document.querySelector("[data-cooking-eyebrow]");
+    const cookingTitle = document.querySelector("[data-cooking-title]");
+    const cookingDetail = document.querySelector("[data-cooking-detail]");
+    const cookingThanks = document.querySelector("[data-cooking-thanks]");
     if (cookingNotice) cookingNotice.hidden = !cooking;
+    if (cookingNotice) cookingNotice.classList.toggle("cooking-notice--fries", cooking && friesEnabled);
+    board.dataset.cookingMode = cooking ? (friesEnabled ? "fries" : "sold-out") : "normal";
+    text(cookingEyebrow, friesEnabled ? "Baked potatoes are cooking" : "Fresh batch on the way");
+    if (cookingTitle) cookingTitle.innerHTML = friesEnabled ? "Loaded fries <span>still available</span>" : "<span>Temporarily</span> sold out";
+    text(cookingDetail, friesEnabled ? "Choose fries with any loaded favorite." : "More taters are cooking!");
+    text(cookingThanks, friesEnabled ? "Same toppings. Same price." : "Thanks for your patience, y’all.");
     if (cookingMessage) {
       text(cookingMessage, menu.board?.cookingMessage || "");
       cookingMessage.hidden = !menu.board?.cookingMessage;
     }
-    products.hidden = cooking;
+    products.hidden = cooking && !friesEnabled;
 
     const visibleProducts = Array.isArray(menu.products)
       ? menu.products.filter((item) => item && item.visible !== false)

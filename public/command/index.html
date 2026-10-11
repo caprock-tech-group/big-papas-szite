@@ -98,9 +98,9 @@
         </section>
 
         <section class="view" data-view="menu" hidden>
-          <div class="section-intro"><div><p class="eyebrow">Menu & display control</p><h2>Change it once. Update it everywhere.</h2><p>Availability changes are prominent. Product details stay tucked away until you need them.</p></div><div class="menu-output-actions"><a class="outline-link print-menu-link" href="/command/print-menu.html?autoprint=1&amp;v=2">Print menu · 8½ × 11</a><a class="outline-link" href="/menu-board/?orientation=portrait" target="_blank" rel="noreferrer noopener">Open menu board ↗</a><small>Prints the published menu. On iPhone, tap Print menu again after it opens. Publish edits first.</small></div></div>
+          <div class="section-intro"><div><p class="eyebrow">Menu & display control</p><h2>Change it once. Update it everywhere.</h2><p>Availability changes are prominent. Product details stay tucked away until you need them.</p></div><div class="menu-output-actions"><a class="outline-link print-menu-link" href="/command/print-menu.html?autoprint=1&amp;v=3">Print menu · 8½ × 11</a><a class="outline-link" href="/menu-board/?orientation=portrait" target="_blank" rel="noreferrer noopener">Open menu board ↗</a><small>Prints the published menu. On iPhone, tap Print menu again after it opens. Publish edits first.</small></div></div>
           <article class="panel cooking-control" data-cooking-control>
-            <div><p class="eyebrow">Between batches</p><h3>Taters cooking</h3><p>Temporarily out of potatoes? Show a large “Temporarily sold out — more taters are cooking” notice on the board and online menu.</p></div>
+            <div><p class="eyebrow">Between batches</p><h3>Taters cooking</h3><p>Temporarily out of baked potatoes? If fries are on, customers can still order every loaded favorite on fries while the next batch cooks.</p></div>
             <label class="drinks-switch" for="taters-cooking">
               <input id="taters-cooking" data-taters-cooking type="checkbox" role="switch" aria-label="Taters cooking" aria-describedby="cooking-help">
               <span class="drinks-switch-track" aria-hidden="true"><i></i></span><strong data-cooking-status>Normal menu</strong>
@@ -133,10 +133,18 @@
               </div>
             </div>
           </details>
+          <article class="panel drinks-stop-control">
+            <div><p class="eyebrow">Entrée choice</p><h3>Offer loaded fries?</h3><p>When this is on, every loaded favorite can be ordered on a baked potato or French fries with the same toppings and price.</p></div>
+            <label class="drinks-switch" for="fries-enabled">
+              <input id="fries-enabled" data-fries-enabled type="checkbox" role="switch" checked>
+              <span class="drinks-switch-track" aria-hidden="true"><i></i></span>
+              <strong data-fries-status>Potato or fries</strong>
+            </label>
+          </article>
           <article class="panel lunch-pricing-control">
-            <div><p class="eyebrow">Potato pricing</p><h3>Lunch prices</h3><p>Use smaller potatoes and portions for lunch. This discount applies only to potatoes—never drinks, add-ons, or the combo.</p></div>
+            <div><p class="eyebrow">Entrée pricing</p><h3>Lunch prices</h3><p>Use smaller potatoes and portions for lunch. This discount applies to loaded potatoes and loaded fries—never drinks, add-ons, or the combo.</p></div>
             <div class="lunch-pricing-actions">
-              <label class="lunch-reduction-field" for="lunch-reduction">Reduce every potato by <span><b>$</b><input id="lunch-reduction" data-lunch-reduction type="number" min="0" max="100" step="0.25" inputmode="decimal" value="0.00"></span></label>
+              <label class="lunch-reduction-field" for="lunch-reduction">Reduce every entrée by <span><b>$</b><input id="lunch-reduction" data-lunch-reduction type="number" min="0" max="100" step="0.25" inputmode="decimal" value="0.00"></span></label>
               <label class="drinks-switch lunch-switch" for="lunch-enabled">
                 <input id="lunch-enabled" data-lunch-enabled type="checkbox" role="switch">
                 <span class="drinks-switch-track" aria-hidden="true"><i></i></span>
@@ -220,6 +228,6 @@
         <button type="button" data-nav="today" aria-current="page"><span>⌂</span>Today</button><button type="button" data-nav="location"><span>⌖</span>Location</button><button type="button" data-nav="menu"><span>☷</span>Menu</button><button type="button" data-nav="events"><span>□</span>Events</button><button type="button" data-nav="marketing"><span>◉</span>More</button>
       </nav>
     </div>
-    <script src="/command/command.js?v=8" defer></script>
+    <script src="/command/command.js?v=9" defer></script>
   </body>
 </html>

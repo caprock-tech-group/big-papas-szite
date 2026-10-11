@@ -11,16 +11,22 @@ export function printableMenu(menu) {
   if (!menu || !Array.isArray(menu.products) || !menu.board) throw new Error("The published menu could not be loaded.");
   const lunch = menu.lunchPricing?.enabled === true;
   const cooking = menu.board.tatersCooking === true;
+  const friesEnabled = menu.friesEnabled !== false;
   const products = visible(menu.products).map((item) => ({
     ...item,
     printPrice: lunch ? `$${(Math.max(0, cents(item.price) - cents(menu.lunchPricing.reduction)) / 100).toFixed(2)}` : item.price,
-    status: item.available === false ? "Sold out" : cooking ? "Taters cooking · temporarily sold out" : "",
+    status: item.available === false
+      ? "Sold out"
+      : cooking
+        ? (friesEnabled ? "Fries only · baked potatoes cooking" : "Taters cooking · temporarily sold out")
+        : "",
   }));
   return {
     board: { ...menu.board },
     products,
     lunch,
     cooking,
+    friesEnabled,
     addOns: visible(menu.addOns),
     drinks: menu.drinksEnabled === false ? [] : visible(menu.drinks),
     combo: menu.drinksEnabled !== false && menu.combo?.enabled !== false ? menu.combo : null,

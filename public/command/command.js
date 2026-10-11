@@ -526,6 +526,16 @@
     status.classList.toggle("is-hidden", !enabled);
   }
 
+  function renderFriesControl() {
+    const input = qs("[data-fries-enabled]");
+    const status = qs("[data-fries-status]");
+    if (!input || !status || !state.menu) return;
+    const enabled = state.menu.friesEnabled !== false;
+    input.checked = enabled;
+    status.textContent = enabled ? "Potato or fries" : "Potato only";
+    status.classList.toggle("is-hidden", !enabled);
+  }
+
   function renderLunchPricingControl(options = {}) {
     const enabledInput = qs("[data-lunch-enabled]");
     const reductionInput = qs("[data-lunch-reduction]");
@@ -548,6 +558,7 @@
     qs("[data-menu-updated]").textContent = state.menuDirty ? "Publish when you are ready." : `Last updated ${formatDateTime(state.menu.updatedAt)}`;
     qs("[data-save-menu]").disabled = !state.menuDirty;
     renderLunchPricingControl();
+    renderFriesControl();
     renderDrinksControl();
     renderCookingControl();
     renderMenuProducts();
@@ -564,7 +575,10 @@
     if (!state.menu) return;
     const cooking = state.menu.board.tatersCooking === true;
     qs("[data-taters-cooking]").checked = cooking;
-    qs("[data-cooking-status]").textContent = cooking ? "Temporarily sold out" : "Normal menu";
+    const friesEnabled = state.menu.friesEnabled !== false;
+    qs("[data-cooking-status]").textContent = cooking
+      ? (friesEnabled ? "Fries only · taters cooking" : "Temporarily sold out")
+      : "Normal menu";
     qs("[data-cooking-control]").classList.toggle("is-cooking", cooking);
     qs("[data-cooking-message-field]").hidden = !cooking;
     qs("[data-cooking-message]").value = state.menu.board.cookingMessage || "";
@@ -1410,6 +1424,13 @@
       state.menu.board.tatersCooking = event.target.checked;
       // Each batch gets a fresh estimate; never reuse an old ready time.
       if (!event.target.checked) state.menu.board.cookingMessage = "";
+      renderCookingControl();
+      markMenuDirty();
+    });
+    qs("[data-fries-enabled]")?.addEventListener("change", (event) => {
+      if (!state.menu) return;
+      state.menu.friesEnabled = event.target.checked;
+      renderFriesControl();
       renderCookingControl();
       markMenuDirty();
     });

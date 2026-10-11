@@ -18,6 +18,7 @@ test("font settings survive saving and reloading without changing menu content",
   edited.board.fontSizes = { names: 150, prices: 175, descriptions: 125, sides: 140, announcement: 120 };
   edited.products[0].description += ", shredded cheese";
   edited.lunchPricing = { enabled: true, reduction: "$2.00" };
+  edited.friesEnabled = false;
   edited.drinksEnabled = false;
   const saved = await saveMenuState(edited, stored.revision);
   const reloaded = await readMenuState();
@@ -26,6 +27,7 @@ test("font settings survive saving and reloading without changing menu content",
   assert.deepEqual(reloaded.products, edited.products);
   assert.deepEqual(reloaded.lunchPricing, edited.lunchPricing);
   assert.deepEqual(reloaded.drinks, edited.drinks);
+  assert.equal(reloaded.friesEnabled, false);
   assert.equal(reloaded.drinksEnabled, false);
   await assert.rejects(saveMenuState(edited, 1), /MENU_CHANGED/);
 });
