@@ -244,7 +244,7 @@
 
   function collectMenu() {
     return {
-      version: currentMenu?.version || 4,
+      version: currentMenu?.version || 5,
       revision: currentMenu?.revision || 1,
       updatedAt: currentMenu?.updatedAt || new Date().toISOString(),
       board: {
@@ -259,6 +259,7 @@
       products: collectProducts(),
       lunchPricing: currentMenu?.lunchPricing || { enabled: false, reduction: "$0.00" },
       addOns: collectSmallItems("addOns"),
+      friesEnabled: currentMenu?.friesEnabled !== false,
       drinksEnabled: currentMenu?.drinksEnabled !== false,
       drinks: collectSmallItems("drinks"),
       combo: {

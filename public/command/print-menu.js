@@ -1,4 +1,4 @@
-import { printableMenu } from "/command/print-menu-model.js?v=1";
+import { printableMenu } from "/command/print-menu-model.js?v=2";
 
 const qs = (selector) => document.querySelector(selector);
 const sheet = qs("[data-sheet]");
@@ -37,9 +37,15 @@ function render(menu) {
   text("[data-announcement]", model.board.announcement);
   qs("[data-announcement]").hidden = !model.board.announcement;
   qs("[data-cooking]").hidden = !model.cooking;
+  text("[data-cooking-title]", model.friesEnabled
+    ? "Baked potatoes are cooking — loaded fries are still available!"
+    : "Temporarily sold out — more taters are cooking!");
   text("[data-cooking-message]", model.board.cookingMessage);
-  text("[data-potatoes-title]", model.lunch ? "Lunch potatoes" : "Loaded potatoes");
-  text("[data-pricing-note]", model.lunch ? "Smaller taters & portions · Lunch prices" : "Big Papa’s favorites");
+  text("[data-potatoes-title]", model.friesEnabled
+    ? (model.lunch ? "Lunch potatoes or fries" : "Loaded potatoes or fries")
+    : (model.lunch ? "Lunch potatoes" : "Loaded potatoes"));
+  text("[data-pricing-note]", model.lunch ? "Smaller portions · Lunch prices" : "Big Papa’s favorites");
+  qs("[data-base-choice]").hidden = !model.friesEnabled;
   qs("[data-products]").replaceChildren(...model.products.map((item) => {
     const article = node("article", "", "potato");
     const title = node("div", "", "potato-title");

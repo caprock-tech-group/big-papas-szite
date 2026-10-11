@@ -20,7 +20,7 @@ test("existing menus gain the new meat add-ons once without disturbing staff cha
   stored.addOns.at(-1).visible = false;
 
   const migrated = await readMenuState();
-  assert.equal(migrated.version, 4);
+  assert.equal(migrated.version, 5);
   assert.equal(migrated.addOns.find(({ id }) => id === "add-brisket").price, "$7.00");
   assert.equal(migrated.addOns.find(({ id }) => id === "add-pulled-pork").price, "$5.00");
   assert.equal(migrated.addOns.find(({ id }) => id === "extra-meat").price, "$3.25");

@@ -319,6 +319,10 @@ button {
   border-right: clamp(1px, 0.14vmin, 3px) solid rgba(90, 40, 22, 0.52);
 }
 
+.board[data-cooking-mode="fries"] .products {
+  grid-template-rows: 5.3dvh auto minmax(0, 1fr);
+}
+
 .cooking-notice {
   display: flex;
   flex-direction: column;
@@ -342,6 +346,21 @@ button {
 .cooking-notice__detail { font-size: clamp(18px, 3.8vmin, 46px); font-weight: 800; line-height: 1.2; }
 .cooking-notice__message { width: 100%; padding: 1dvh 1vw; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); font-size: clamp(15px, 3vmin, 36px); font-weight: 700; line-height: 1.25; }
 .cooking-notice__thanks { font-size: clamp(12px, 2.3vmin, 28px); line-height: 1.3; }
+.cooking-notice--fries {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .8vw;
+  margin: .55dvh 0;
+  padding: .55dvh .8vw;
+  text-align: left;
+}
+.cooking-notice--fries .cooking-notice__eyebrow,
+.cooking-notice--fries .cooking-notice__thanks { font-size: clamp(8px, 1.25vmin, 16px); }
+.cooking-notice--fries h3 { font-size: clamp(13px, 2.2vmin, 28px); text-align: center; }
+.cooking-notice--fries h3 span { display: inline; margin: 0 0 0 .25em; font-size: .72em; }
+.cooking-notice--fries .cooking-notice__detail { font-size: clamp(9px, 1.45vmin, 18px); }
+.cooking-notice--fries .cooking-notice__message { grid-column: 1 / -1; padding: .35dvh .5vw; font-size: clamp(9px, 1.45vmin, 18px); text-align: center; }
 
 .section-title,
 .mini-heading {
@@ -978,6 +997,20 @@ button {
   grid-template-rows: 4.2dvh minmax(0, 1fr);
   padding-right: 1.6vw;
 }
+
+.board[data-orientation="portrait"][data-cooking-mode="fries"] .products {
+  grid-template-rows: 4.2dvh auto minmax(0, 1fr);
+}
+
+.board[data-orientation="portrait"] .cooking-notice--fries {
+  grid-template-columns: 1fr;
+  gap: .25dvh;
+  padding: .4dvh .7vw;
+  text-align: center;
+}
+
+.board[data-orientation="portrait"] .cooking-notice--fries .cooking-notice__eyebrow,
+.board[data-orientation="portrait"] .cooking-notice--fries .cooking-notice__thanks { display: none; }
 
 .board[data-orientation="portrait"] .section-title,
 .board[data-orientation="portrait"] .mini-heading {
