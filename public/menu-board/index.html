@@ -9,7 +9,7 @@
     <link rel="icon" href="/favicon.svg">
     <link rel="apple-touch-icon" href="/images/menu-board-icon-192.webp">
     <link rel="manifest" href="/menu-board/manifest.webmanifest">
-    <link rel="stylesheet" href="/menu-board/board.css?v=19">
+    <link rel="stylesheet" href="/menu-board/board.css?v=20">
   </head>
   <body>
     <div class="board" data-board data-orientation="portrait" data-show-descriptions="true">
@@ -39,10 +39,19 @@
 
       <main class="board-main">
         <section class="products" aria-labelledby="products-title">
-          <div class="section-title">
-            <span aria-hidden="true">★</span>
-            <h2 id="products-title" data-products-title>Potatoes or Fries</h2>
-            <span aria-hidden="true">★</span>
+          <div class="base-choice" data-base-choice>
+            <h2 id="products-title" class="base-choice__heading" data-products-title>CHOOSE YOUR BASE!</h2>
+            <div class="base-choice__options">
+              <div class="base-choice__option base-choice__option--potato" data-potato-option>
+                <strong>BAKED POTATO</strong>
+                <small data-potato-status hidden>COOKING</small>
+              </div>
+              <span class="base-choice__or" data-base-choice-or>OR</span>
+              <div class="base-choice__option base-choice__option--fries" data-fries-option>
+                <strong>LOADED FRIES</strong>
+              </div>
+            </div>
+            <p class="base-choice__note" data-base-choice-note>SAME TOPPINGS. SAME PRICE. PICK ANY FAVORITE BELOW.</p>
           </div>
           <div class="cooking-notice" data-cooking-notice role="status" aria-live="polite" hidden>
             <p class="cooking-notice__eyebrow" data-cooking-eyebrow>Fresh batch on the way</p>
@@ -140,6 +149,6 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
     </button>
 
-    <script src="/menu-board/board.js?v=19" defer></script>
+    <script src="/menu-board/board.js?v=20" defer></script>
   </body>
 </html>
