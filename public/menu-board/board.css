@@ -314,13 +314,131 @@ button {
 
 .products {
   display: grid;
-  grid-template-rows: 5.3dvh minmax(0, 1fr);
+  grid-template-rows: 10.4dvh minmax(0, 1fr);
   padding-right: 1.5vw;
   border-right: clamp(1px, 0.14vmin, 3px) solid rgba(90, 40, 22, 0.52);
 }
 
 .board[data-cooking-mode="fries"] .products {
-  grid-template-rows: 5.3dvh auto minmax(0, 1fr);
+  grid-template-rows: 10.4dvh auto minmax(0, 1fr);
+}
+
+
+/* Keep the base decision unmistakable without duplicating the entrée list. */
+.base-choice {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 0.28dvh;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0.45dvh 0.55vw;
+  border: clamp(2px, 0.23vmin, 4px) solid var(--gold);
+  background: linear-gradient(110deg, rgba(140, 38, 25, 0.14), transparent 42% 58%, rgba(140, 38, 25, 0.14)), var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(255, 248, 232, 0.25);
+}
+.base-choice__heading {
+  margin: 0;
+  color: #ffd789;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: clamp(15px, min(2vw, 2.7dvh), 36px);
+  font-weight: 900;
+  letter-spacing: 0.085em;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.base-choice__options {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0.42vw;
+  min-width: 0;
+  min-height: 0;
+}
+.base-choice__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0.2dvh 0.3vw;
+  border: 1px solid #ffd789;
+  background: linear-gradient(180deg, #c72f25, #941710);
+  color: var(--paper-light);
+  text-align: center;
+}
+.base-choice__option strong {
+  max-width: 100%;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: clamp(14px, min(1.45vw, 3dvh), 35px);
+  font-weight: 900;
+  letter-spacing: 0.025em;
+  line-height: 1.05;
+  text-shadow: 0.06em 0.08em rgba(42, 4, 1, 0.4);
+  white-space: nowrap;
+}
+.base-choice__option small {
+  color: var(--paper-light);
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: clamp(9px, min(0.9vw, 1.5dvh), 18px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.base-choice__or {
+  align-self: center;
+  color: #ffd789;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: clamp(14px, min(1.4vw, 2.2dvh), 29px);
+  font-weight: 900;
+}
+.base-choice__note {
+  margin: 0;
+  color: var(--paper-light);
+  font-size: clamp(9px, min(0.78vw, 1.45dvh), 18px);
+  font-weight: 900;
+  letter-spacing: 0.025em;
+  line-height: 1.08;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.board[data-fries-enabled="false"] .base-choice__options {
+  grid-template-columns: minmax(0, 1fr);
+}
+.board[data-cooking-mode="fries"] .base-choice__option--potato {
+  border-color: #86745d;
+  background: #443b34;
+  color: #c4b6a1;
+}
+.board[data-cooking-mode="fries"] .base-choice__option--potato strong {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.08em;
+}
+.board[data-cooking-mode="fries"] .base-choice__option--fries {
+  border-color: #fff4be;
+  box-shadow: inset 0 0 0 1px #fff4be;
+}
+.board[data-orientation="portrait"] .base-choice {
+  gap: 0.3dvh;
+  padding: 0.4dvh 0.55vw;
+}
+.board[data-orientation="portrait"] .base-choice__heading {
+  font-size: clamp(12px, min(2.6vw, 2.15dvh), 31px);
+}
+.board[data-orientation="portrait"] .base-choice__option strong {
+  font-size: clamp(12px, min(2.7vw, 2.2dvh), 29px);
+}
+.board[data-orientation="portrait"] .base-choice__or {
+  font-size: clamp(12px, 2.1vw, 26px);
+}
+.board[data-orientation="portrait"] .base-choice__note {
+  font-size: clamp(8px, min(1.5vw, 1.35dvh), 17px);
+  letter-spacing: 0;
 }
 
 .cooking-notice {
@@ -994,12 +1112,12 @@ button {
 }
 
 .board[data-orientation="portrait"] .products {
-  grid-template-rows: 4.2dvh minmax(0, 1fr);
+  grid-template-rows: 9.4dvh minmax(0, 1fr);
   padding-right: 1.6vw;
 }
 
 .board[data-orientation="portrait"][data-cooking-mode="fries"] .products {
-  grid-template-rows: 4.2dvh auto minmax(0, 1fr);
+  grid-template-rows: 9.4dvh auto minmax(0, 1fr);
 }
 
 .board[data-orientation="portrait"] .cooking-notice--fries {
