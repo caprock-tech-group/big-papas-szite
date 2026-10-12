@@ -3,6 +3,10 @@
 
   const board = document.querySelector("[data-board]");
   const products = document.querySelector("[data-products]");
+  const potatoOption = document.querySelector("[data-potato-option]");
+  const friesOption = document.querySelector("[data-fries-option]");
+  const baseChoiceOr = document.querySelector("[data-base-choice-or]");
+  const potatoStatus = document.querySelector("[data-potato-status]");
   const addOns = document.querySelector("[data-add-ons]");
   const drinks = document.querySelector("[data-drinks]");
   const drinksSection = document.querySelector("[data-drinks-section]");
@@ -37,7 +41,7 @@
     if (!isPreview) return;
     cancelAnimationFrame(fitFrame);
     fitFrame = requestAnimationFrame(() => {
-      const elements = board.querySelectorAll(".product, .product h3, .product > div, .product > div > span, .product > strong, .mini-list p, .mini-list p > span, .mini-list p > strong, .combo, .cooking-notice, .cooking-notice > *");
+      const elements = board.querySelectorAll(".product, .product h3, .product > div, .product > div > span, .product > strong, .mini-list p, .mini-list p > span, .mini-list p > strong, .combo, .cooking-notice, .cooking-notice > *, .base-choice__heading, .base-choice__option strong, .base-choice__note");
       const overflow = [...elements].some((node) => {
         if (!node.getClientRects().length) return false;
         const bounds = node.getBoundingClientRect();
@@ -190,7 +194,18 @@
     const cooking = menu.board?.tatersCooking === true;
     const friesEnabled = menu.friesEnabled !== false;
     board.dataset.friesEnabled = String(friesEnabled);
-    text(document.querySelector("[data-products-title]"), friesEnabled ? "Potatoes or Fries" : "Signature Potatoes");
+    const potatoCooking = cooking && friesEnabled;
+    if (friesOption) friesOption.hidden = !friesEnabled;
+    if (baseChoiceOr) baseChoiceOr.hidden = !friesEnabled;
+    if (potatoStatus) potatoStatus.hidden = !potatoCooking;
+    potatoOption?.classList.toggle("is-cooking", potatoCooking);
+    text(document.querySelector("[data-products-title]"), potatoCooking
+      ? "FRIES AVAILABLE NOW!"
+      : friesEnabled ? "CHOOSE YOUR BASE!" : "LOADED BAKED POTATOES");
+    text(document.querySelector("[data-base-choice-note]"), potatoCooking
+      ? "POTATOES COOKING. ANY FAVORITE ON FRIES."
+      : friesEnabled ? "SAME TOPPINGS. SAME PRICE. PICK ANY FAVORITE BELOW."
+        : "PICK YOUR LOADED FAVORITE BELOW.");
     const cookingNotice = document.querySelector("[data-cooking-notice]");
     const cookingMessage = document.querySelector("[data-cooking-notice-message]");
     const cookingEyebrow = document.querySelector("[data-cooking-eyebrow]");
