@@ -424,8 +424,19 @@ export async function saveMenuState(input: unknown, expectedRevision: unknown) {
     throw new Error("MENU_CHANGED");
   }
 
+  // Validate submitted prices before normalization can substitute a fallback price.
+  const inputProducts = input && typeof input === "object" && Array.isArray((input as Partial<MenuBoardState>).products)
+    ? (input as Partial<MenuBoardState>).products!
+    : [];
+  if (inputProducts.some((item) => {
+    if (!item || item.visible === false) return false;
+    const raw = typeof item.price === "string" ? item.price.trim() : "";
+    return !/^\$?[0-9]{1,4}(?:\.[0-9]{1,2})?$/.test(raw) || Number(raw.replace(/^\$/, "")) <= 0;
+  })) throw new Error("VISIBLE_PRODUCT_NEEDS_PRICE");
+
   const normalized = normalizeMenuState(input);
-  if (normalized.products.some(({ visible, price }) => visible && Number(price.replace(/^\$/, "")) <= 0)) {
+  if (normalized.products.some(({ visible, price }) =>
+    visible && (!Number.isFinite(Number(price.replace(/^\$/, ""))) || Number(price.replace(/^\$/, "")) <= 0))) {
     throw new Error("VISIBLE_PRODUCT_NEEDS_PRICE");
   }
   const saved: MenuBoardState = {
