@@ -29,7 +29,7 @@ export type BoardSmallItem = {
 };
 
 export type MenuBoardState = {
-  version: 5;
+  version: 6;
   revision: number;
   updatedAt: string;
   board: {
@@ -61,7 +61,7 @@ export type MenuBoardState = {
 };
 
 const defaultState: MenuBoardState = {
-  version: 5,
+  version: 6,
   revision: 1,
   updatedAt: "2026-08-08T22:00:00.000Z",
   board: {
@@ -153,6 +153,17 @@ const defaultState: MenuBoardState = {
       available: true,
       visible: true,
     },
+    {
+      id: "frito-bandito",
+      name: "Frito Bandito",
+      eyebrow: "Tex-Mex crunch",
+      price: "$0.00",
+      description: "Chili, shredded cheddar jack cheese, diced onions, jalapeños, and crushed Fritos.",
+      accent: "gold",
+      isNew: true,
+      available: true,
+      visible: false, // Draft until staff sets the selling price.
+    },
   ],
   lunchPricing: {
     enabled: false,
@@ -169,6 +180,8 @@ const defaultState: MenuBoardState = {
     { id: "bbq-sauce", name: "BBQ sauce", price: "$0.75", available: true, visible: true },
     { id: "ranch", name: "Ranch", price: "$0.75", available: true, visible: true },
     { id: "green-onions", name: "Green onions", price: "$0.50", available: true, visible: true },
+    { id: "chili", name: "Chili", price: "$2.00", available: true, visible: true },
+    { id: "fritos", name: "Fritos", price: "$1.00", available: true, visible: true },
   ],
   friesEnabled: true,
   drinksEnabled: true,
@@ -345,8 +358,24 @@ function normalizeMenuState(value: unknown): MenuBoardState {
     }
   }
 
+  const products = normalizeProducts(record.products, defaultState.products);
+  // A one-time, non-destructive upgrade for saved menus in Netlify Blobs.
+  // After staff publishes v6, deliberately removed items stay removed.
+  if (Number(record.version) < 6) {
+    const frito = defaultState.products.find(({ id }) => id === "frito-bandito")!;
+    const existingFrito = products.some(({ id, name }) =>
+      id === frito.id || name.trim().toLowerCase() === frito.name.toLowerCase());
+    if (!existingFrito && products.length < MAX_PRODUCTS) products.push(structuredClone(frito));
+
+    for (const item of defaultState.addOns.filter(({ id }) => id === "chili" || id === "fritos")) {
+      const alreadyPresent = addOns.some(({ id, name }) =>
+        id === item.id || name.trim().toLowerCase() === item.name.toLowerCase());
+      if (!alreadyPresent && addOns.length < MAX_SMALL_ITEMS) addOns.push(structuredClone(item));
+    }
+  }
+
   return {
-    version: 5,
+    version: 6,
     revision,
     updatedAt,
     board: {
@@ -362,7 +391,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
       showDescriptions: booleanValue(board.showDescriptions, true),
       fontSizes,
     },
-    products: normalizeProducts(record.products, defaultState.products),
+    products,
     lunchPricing: {
       enabled: booleanValue(lunchPricing.enabled, false),
       reduction: cleanReduction(lunchPricing.reduction, defaultState.lunchPricing.reduction),
@@ -396,6 +425,9 @@ export async function saveMenuState(input: unknown, expectedRevision: unknown) {
   }
 
   const normalized = normalizeMenuState(input);
+  if (normalized.products.some(({ visible, price }) => visible && Number(price.replace(/^\$/, "")) <= 0)) {
+    throw new Error("VISIBLE_PRODUCT_NEEDS_PRICE");
+  }
   const saved: MenuBoardState = {
     ...normalized,
     revision: current.revision + 1,
