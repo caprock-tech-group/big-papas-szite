@@ -441,10 +441,49 @@
         accent.addEventListener("change", () => { product.accent = accent.value; markMenuDirty(); renderMenuProducts(); });
         accentLabel.append(document.createTextNode("Accent"), accent);
         editor.append(accentLabel, createCheck("Show on menu", product.visible, (value) => { product.visible = value; markMenuDirty(); renderMenuProducts(); }), createCheck("Show NEW badge", product.isNew, (value) => { product.isNew = value; markMenuDirty(); }));
+        const remove = el("button", "product-remove", "Remove potato");
+        remove.type = "button";
+        remove.addEventListener("click", () => {
+          if (!window.confirm(`Remove “${product.name}” from the menu? Publish to apply this change.`)) return;
+          state.menu.products = state.menu.products.filter(({ id }) => id !== product.id);
+          state.openProducts.delete(product.id);
+          markMenuDirty();
+          renderMenuProducts();
+          renderToday();
+        });
+        editor.append(remove);
         card.append(editor);
       }
       target.append(card);
     }
+  }
+
+  function addNewPotato() {
+    if (!Array.isArray(state.menu?.products)) return;
+    if (state.menu.products.length >= 24) {
+      globalMessage("The menu is full (24 items). Remove an old potato before adding another.", "error");
+      return;
+    }
+    const product = {
+      id: `potato-${Date.now().toString(36)}-${(state.menu.products.length + 1).toString(36)}`,
+      name: "New loaded potato",
+      eyebrow: "Loaded favorite",
+      price: "$0.00",
+      description: "",
+      accent: "red",
+      isNew: true,
+      available: true,
+      visible: false, // Keep drafts off customer-facing menus until priced.
+    };
+    state.menu.products.push(product);
+    state.openProducts.add(product.id);
+    markMenuDirty();
+    renderMenuProducts();
+    requestAnimationFrame(() => {
+      const card = qs("[data-command-products]")?.lastElementChild;
+      card?.scrollIntoView({ behavior: "smooth", block: "center" });
+      card?.querySelector(".product-editor input")?.focus({ preventScroll: true });
+    });
   }
 
   function addSmallMenuItem(category) {
@@ -1250,6 +1289,10 @@
 
   async function saveMenu() {
     if (!state.menuDirty) return;
+    if (state.menu.products.some((product) => product.visible !== false && priceInCents(product.price) <= 0)) {
+      globalMessage("Every visible potato needs a price above $0.00. Set the price or uncheck Show on menu.", "error");
+      return;
+    }
     const button = qs("[data-save-menu]"); busy(button, true, "Publishing…");
     if (reviewMode) {
       state.menuDirty = false; state.menu.updatedAt = new Date().toISOString();
@@ -1419,6 +1462,7 @@
     qs("[data-close-location]")?.addEventListener("click", closeLocation);
     qs("[data-facebook-retry]")?.addEventListener("click", retryFacebook);
     qs("[data-save-menu]")?.addEventListener("click", saveMenu);
+    qs("[data-add-potato]")?.addEventListener("click", addNewPotato);
     qs("[data-taters-cooking]")?.addEventListener("change", (event) => {
       if (!state.menu) return;
       state.menu.board.tatersCooking = event.target.checked;
