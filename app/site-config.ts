@@ -84,6 +84,8 @@ export const menuAddOns = [
   { name: "BBQ sauce", price: "$0.75" },
   { name: "Ranch", price: "$0.75" },
   { name: "Green onions", price: "$0.50" },
+  { name: "Chili", price: "$2.00" },
+  { name: "Fritos", price: "$1.00" },
 ] as const;
 
 export const drinks = [

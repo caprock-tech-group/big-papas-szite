@@ -349,6 +349,10 @@
 
   document.querySelector("[data-add-product]")?.addEventListener("click", () => {
     const draft = collectMenu();
+    if (draft.products.length >= 24) {
+      setMessage(saveMessage, "The menu has reached its 24-product limit. Remove an item before adding another.", "error");
+      return;
+    }
     draft.products.push({
       id: newId("product"),
       name: "New loaded potato",
@@ -358,7 +362,7 @@
       accent: "red",
       isNew: true,
       available: true,
-      visible: true,
+      visible: false,
     });
     renderProducts(draft.products);
     markDirty();

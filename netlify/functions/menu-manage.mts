@@ -50,6 +50,9 @@ export default async function handler(request: Request) {
       const menu = await saveMenuState(body.menu, body.expectedRevision);
       return json({ saved: true, menu });
     } catch (error) {
+      if (error instanceof Error && error.message === "VISIBLE_PRODUCT_NEEDS_PRICE") {
+        return json({ message: "Set a price above $0.00 before showing a new potato on the menu." }, 422);
+      }
       if (error instanceof Error && error.message === "MENU_CHANGED") {
         return json(
           { message: "The menu changed on another device. Refresh before saving again." },
