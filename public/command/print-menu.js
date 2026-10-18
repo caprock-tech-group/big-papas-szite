@@ -56,6 +56,7 @@ function render(menu) {
     return article;
   }));
   renderSmallItems("[data-add-ons]", "[data-add-ons-section]", model.addOns);
+  qs("[data-extras]").style.setProperty("--addons-rows", String(Math.max(1, Math.ceil(model.addOns.length / 2))));
   renderSmallItems("[data-drinks]", "[data-drinks-section]", model.drinks);
   renderSmallItems("[data-desserts]", "[data-desserts-section]", model.desserts);
   qs("[data-combo]").hidden = !model.combo;
