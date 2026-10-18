@@ -1126,7 +1126,9 @@ p {
   line-height: 1;
 }
 
-.menu-panel-desserts { margin-top: 28px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.25); }
+.menu-panel-stack { min-width: 0; display: grid; gap: 18px; align-content: start; }
+.menu-panel--desserts { background: rgba(255,253,248,.82); }
+.menu-panel--desserts .price-list li strong { color: var(--red); }
 .menu-panel-desserts h3 { margin-bottom: 12px; font-size: clamp(1.4rem, 2vw, 2.2rem); }
 .combo-callout--cobbler { margin-top: 12px; background: #862b20; }
 .menu-panel--drinks [data-public-menu-desserts-section][hidden] { display: none; }
