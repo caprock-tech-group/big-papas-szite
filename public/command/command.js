@@ -489,11 +489,11 @@
   function addSmallMenuItem(category) {
     const items = state.menu?.[category];
     if (!Array.isArray(items)) return;
-    if (items.length >= 24) return globalMessage(`The ${category === "addOns" ? "add-ons" : "drinks"} list is full. Remove an item before adding another.`, "error");
-    const prefix = category === "addOns" ? "add-on" : "drink";
+    if (items.length >= 24) return globalMessage("That menu section is full (24 items). Remove an item first.", "error");
+    const prefix = category === "addOns" ? "add-on" : category === "desserts" ? "dessert" : "drink";
     items.push({
       id: `${prefix}-${Date.now().toString(36)}`,
-      name: category === "addOns" ? "New add-on" : "New drink",
+      name: category === "addOns" ? "New add-on" : category === "desserts" ? "New dessert" : "New drink",
       price: "$0.00",
       available: true,
       visible: true,
@@ -510,7 +510,7 @@
     const section = el("section", "small-menu-section");
     section.dataset.smallMenuSection = category;
     const heading = el("div", "small-menu-heading");
-    const addButton = el("button", "small-menu-add", `+ Add ${category === "addOns" ? "add-on" : "drink"}`);
+    const addButton = el("button", "small-menu-add", `+ Add ${category === "addOns" ? "add-on" : category === "desserts" ? "dessert" : "drink"}`);
     addButton.type = "button";
     addButton.addEventListener("click", () => addSmallMenuItem(category));
     heading.append(el("h3", "", title), addButton);
@@ -542,7 +542,11 @@
     const target = qs("[data-small-menu-editor]");
     target.replaceChildren();
     if (!state.menu) return;
-    target.append(smallMenuSection("Add-ons", state.menu.addOns, "addOns"), smallMenuSection("Drinks", state.menu.drinks, "drinks"));
+    target.append(
+      smallMenuSection("Add-ons", state.menu.addOns, "addOns"),
+      smallMenuSection("Drinks", state.menu.drinks, "drinks"),
+      smallMenuSection("Desserts", state.menu.desserts || [], "desserts"),
+    );
     const combo = el("section", "small-menu-section");
     combo.append(el("h3", "", "Combo"));
     const row = el("div", "small-editor-row");
@@ -553,6 +557,19 @@
     );
     combo.append(row, createInputField("Description", state.menu.combo.description, (value) => { state.menu.combo.description = value; markMenuDirty(); }, { className: "full" }));
     target.append(combo);
+
+    const cobbler = state.menu.cobblerCombo || { enabled: true, label: "Cobbler combo", price: "$5.00", description: "Any drink + choice of cobbler" };
+    const cobblerSection = el("section", "small-menu-section");
+    cobblerSection.append(el("h3", "", "Drink + cobbler combo"));
+    const cobblerRow = el("div", "small-editor-row");
+    cobblerRow.append(
+      createInputField("Label", cobbler.label, (value) => { cobbler.label = value; markMenuDirty(); }),
+      createInputField("Price", cobbler.price, (value) => { cobbler.price = value; markMenuDirty(); }),
+      createCheck("Enabled", cobbler.enabled, (value) => { cobbler.enabled = value; markMenuDirty(); }),
+    );
+    cobblerSection.append(cobblerRow, createInputField("Description", cobbler.description, (value) => { cobbler.description = value; markMenuDirty(); }, { className: "full" }));
+    state.menu.cobblerCombo = cobbler;
+    target.append(cobblerSection);
   }
 
   function renderDrinksControl() {
