@@ -1,4 +1,4 @@
-import { printableMenu } from "/command/print-menu-model.js?v=2";
+import { printableMenu } from "/command/print-menu-model.js?v=3";
 
 const qs = (selector) => document.querySelector(selector);
 const sheet = qs("[data-sheet]");
@@ -57,13 +57,21 @@ function render(menu) {
   }));
   renderSmallItems("[data-add-ons]", "[data-add-ons-section]", model.addOns);
   renderSmallItems("[data-drinks]", "[data-drinks-section]", model.drinks);
+  renderSmallItems("[data-desserts]", "[data-desserts-section]", model.desserts);
   qs("[data-combo]").hidden = !model.combo;
   if (model.combo) {
     text("[data-combo-label]", model.combo.label);
     text("[data-combo-description]", model.combo.description);
     text("[data-combo-price]", model.combo.price);
   }
-  qs("[data-extras]").hidden = !model.addOns.length && !model.drinks.length && !model.combo;
+  qs("[data-cobbler-combo]").hidden = !model.cobblerCombo;
+  if (model.cobblerCombo) {
+    text("[data-cobbler-combo-label]", model.cobblerCombo.label);
+    text("[data-cobbler-combo-description]", model.cobblerCombo.description);
+    text("[data-cobbler-combo-price]", model.cobblerCombo.price);
+  }
+  qs("[data-combos-section]").hidden = !model.combo && !model.cobblerCombo;
+  qs("[data-extras]").hidden = !model.addOns.length && !model.drinks.length && !model.desserts.length && !model.combo && !model.cobblerCombo;
   const formatter = new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
   text("[data-printed-at]", `Printed ${formatter.format(new Date())} CT`);
   sheet.hidden = false;
@@ -77,7 +85,7 @@ function sizePreview() {
 function fitSheet() {
   sheet.classList.remove("is-long");
   let fits = false;
-  for (const density of ["normal", "compact", "dense"]) {
+  for (const density of ["normal", "compact", "dense", "extra-compact"]) {
     sheet.dataset.density = density;
     fits = sheet.scrollHeight <= sheet.clientHeight + 1;
     if (fits) break;
