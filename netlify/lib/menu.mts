@@ -29,7 +29,7 @@ export type BoardSmallItem = {
 };
 
 export type MenuBoardState = {
-  version: 6;
+  version: 7;
   revision: number;
   updatedAt: string;
   board: {
@@ -49,6 +49,13 @@ export type MenuBoardState = {
     reduction: string;
   };
   addOns: BoardSmallItem[];
+  desserts: BoardSmallItem[];
+  cobblerCombo: {
+    enabled: boolean;
+    label: string;
+    description: string;
+    price: string;
+  };
   friesEnabled: boolean;
   drinksEnabled: boolean;
   drinks: BoardSmallItem[];
@@ -61,7 +68,7 @@ export type MenuBoardState = {
 };
 
 const defaultState: MenuBoardState = {
-  version: 6,
+  version: 7,
   revision: 1,
   updatedAt: "2026-08-08T22:00:00.000Z",
   board: {
@@ -183,6 +190,17 @@ const defaultState: MenuBoardState = {
     { id: "chili", name: "Chili", price: "$2.00", available: true, visible: true },
     { id: "fritos", name: "Fritos", price: "$1.00", available: true, visible: true },
   ],
+  desserts: [
+    { id: "cherry-cobbler", name: "Cherry Cobbler", price: "$3.00", available: true, visible: true },
+    { id: "peach-cobbler", name: "Peach Cobbler", price: "$3.00", available: true, visible: true },
+    { id: "apple-cobbler", name: "Apple Cobbler", price: "$3.00", available: true, visible: true },
+  ],
+  cobblerCombo: {
+    enabled: true,
+    label: "Cobbler combo",
+    description: "Any drink + choice of cobbler",
+    price: "$5.00",
+  },
   friesEnabled: true,
   drinksEnabled: true,
   drinks: [
@@ -333,6 +351,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
   const board = record.board && typeof record.board === "object" ? record.board : {};
   const lunchPricing = record.lunchPricing && typeof record.lunchPricing === "object" ? record.lunchPricing : {};
   const combo = record.combo && typeof record.combo === "object" ? record.combo : {};
+  const cobblerCombo = record.cobblerCombo && typeof record.cobblerCombo === "object" ? record.cobblerCombo : {};
   const orientation = board.orientation === "landscape" || board.orientation === "portrait" || board.orientation === "auto"
     ? board.orientation
     : defaultState.board.orientation;
@@ -351,6 +370,7 @@ function normalizeMenuState(value: unknown): MenuBoardState {
   })) as MenuBoardState["board"]["fontSizes"];
 
   const addOns = normalizeSmallItems(record.addOns, defaultState.addOns, "add-on");
+  const desserts = normalizeSmallItems(record.desserts, defaultState.desserts, "dessert");
   if (Number(record.version) < 4) {
     for (const item of defaultState.addOns.filter(({ id }) => id === "add-brisket" || id === "add-pulled-pork")) {
       const alreadyPresent = addOns.some((candidate) => candidate.id === item.id || candidate.name.toLowerCase() === item.name.toLowerCase());
@@ -374,8 +394,19 @@ function normalizeMenuState(value: unknown): MenuBoardState {
     }
   }
 
+  // Existing v6 menus are stored in site-wide Netlify Blobs. Upgrade without
+  // replacing user-edited Frito Bandito prices, add-ons or legacy cookie combo.
+  // Once saved as v7, intentionally removed cobblers stay removed.
+  if (Number(record.version) < 7) {
+    for (const item of defaultState.desserts) {
+      const exists = desserts.some(({ id, name }) =>
+        id === item.id || name.trim().toLowerCase() === item.name.toLowerCase());
+      if (!exists && desserts.length < MAX_SMALL_ITEMS) desserts.push(structuredClone(item));
+    }
+  }
+
   return {
-    version: 6,
+    version: 7,
     revision,
     updatedAt,
     board: {
@@ -397,6 +428,13 @@ function normalizeMenuState(value: unknown): MenuBoardState {
       reduction: cleanReduction(lunchPricing.reduction, defaultState.lunchPricing.reduction),
     },
     addOns,
+    desserts,
+    cobblerCombo: {
+      enabled: booleanValue(cobblerCombo.enabled, defaultState.cobblerCombo.enabled),
+      label: cleanText(cobblerCombo.label, 48, defaultState.cobblerCombo.label),
+      description: cleanText(cobblerCombo.description, 90, defaultState.cobblerCombo.description),
+      price: cleanPrice(cobblerCombo.price, defaultState.cobblerCombo.price),
+    },
     friesEnabled: booleanValue(record.friesEnabled, true),
     drinksEnabled: booleanValue(record.drinksEnabled, true),
     drinks: normalizeSmallItems(record.drinks, defaultState.drinks, "drink"),
