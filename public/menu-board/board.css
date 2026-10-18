@@ -697,18 +697,23 @@ button {
   overflow: hidden;
 }
 
-.side-promos:has(.combo[hidden]) {
+.side-promos:has(.combo-stack[hidden]) {
   grid-template-columns: minmax(0, 1fr);
 }
 
 .side-columns {
   display: grid;
-  grid-template-rows: minmax(0, 1.45fr) minmax(0, 0.8fr);
-  gap: 1dvh;
+  grid-template-rows: minmax(0, 1.65fr) minmax(0, 0.7fr) minmax(0, 0.75fr);
+  gap: 0.65dvh;
   overflow: hidden;
 }
-
 .board[data-drinks-enabled="false"] .side-columns {
+  grid-template-rows: minmax(0, 1.65fr) minmax(0, 0.75fr);
+}
+.side-columns:has([data-desserts-section][hidden]) {
+  grid-template-rows: minmax(0, 1.5fr) minmax(0, .8fr);
+}
+.board[data-drinks-enabled="false"] .side-columns:has([data-desserts-section][hidden]) {
   grid-template-rows: minmax(0, 1fr);
 }
 
@@ -726,7 +731,7 @@ button {
     var(--red);
 }
 
-.mini-menu:last-child .mini-heading {
+.mini-menu[data-drinks-section] .mini-heading {
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent 18% 82%, rgba(255, 255, 255, 0.05)),
     var(--ink);
@@ -823,6 +828,38 @@ button {
   white-space: nowrap;
 }
 
+.combo-stack {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 0.55dvh;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.combo-stack:has(.combo[hidden]) {
+  grid-template-rows: minmax(0, 1fr);
+}
+.combo-stack .combo {
+  padding: .35dvh .45vw;
+}
+.combo-stack .combo p {
+  width: 92%;
+  margin-bottom: .16dvh;
+  padding-bottom: .16dvh;
+  font-size: calc(clamp(10px, min(1.25vw, 1.9dvh), 24px) * var(--font-sides, 1));
+}
+.combo-stack .combo > span {
+  font-size: calc(clamp(8px, min(.8vw, 1.45dvh), 19px) * var(--font-sides, 1));
+  line-height: 1.08;
+}
+.combo-stack .combo > strong {
+  margin-top: .12dvh;
+  font-size: calc(clamp(24px, min(2.65vw, 4.2dvh), 52px) * var(--font-sides, 1));
+}
+.combo-stack .combo::before, .combo-stack .combo::after { font-size: clamp(9px, 1vw, 20px); }
+.combo--cobbler {
+  background: linear-gradient(135deg, #7d160e, #bc3c20 50%, #8a1c13) !important;
+}
 .combo {
   position: relative;
   min-width: 0;
@@ -1218,7 +1255,7 @@ button {
 }
 
 .board[data-orientation="portrait"] .mini-menu {
-  grid-template-rows: 3.9dvh minmax(0, 1fr);
+  grid-template-rows: 3.45dvh minmax(0, 1fr);
 }
 
 .board[data-orientation="portrait"] .mini-heading h2 {
@@ -1241,6 +1278,21 @@ button {
 
 .board[data-orientation="portrait"] .combo {
   padding-inline: 0.7vw;
+}
+.board[data-orientation="portrait"] .combo-stack .combo {
+  padding: .1dvh .25vw;
+}
+.board[data-orientation="portrait"] .combo-stack .combo p {
+  font-size: calc(clamp(8px, 1.7vw, 17px) * var(--font-sides, 1));
+  padding-bottom: .06dvh;
+  margin-bottom: .06dvh;
+}
+.board[data-orientation="portrait"] .combo-stack .combo > span {
+  font-size: calc(clamp(7px, 1.2vw, 13px) * var(--font-sides, 1));
+}
+.board[data-orientation="portrait"] .combo-stack .combo > strong {
+  margin-top: .02dvh;
+  font-size: calc(clamp(18px, 4vw, 41px) * var(--font-sides, 1));
 }
 
 .board[data-orientation="portrait"] .combo p {

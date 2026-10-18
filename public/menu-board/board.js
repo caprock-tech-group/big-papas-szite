@@ -9,6 +9,10 @@
   const potatoStatus = document.querySelector("[data-potato-status]");
   const addOns = document.querySelector("[data-add-ons]");
   const drinks = document.querySelector("[data-drinks]");
+  const desserts = document.querySelector("[data-desserts]");
+  const dessertsSection = document.querySelector("[data-desserts-section]");
+  const cobblerCombo = document.querySelector("[data-cobbler-combo]");
+  const comboStack = document.querySelector("[data-combo-stack]");
   const drinksSection = document.querySelector("[data-drinks-section]");
   const combo = document.querySelector("[data-combo]");
   const announcement = document.querySelector("[data-announcement]");
@@ -41,7 +45,7 @@
     if (!isPreview) return;
     cancelAnimationFrame(fitFrame);
     fitFrame = requestAnimationFrame(() => {
-      const elements = board.querySelectorAll(".product, .product h3, .product > div, .product > div > span, .product > strong, .mini-list p, .mini-list p > span, .mini-list p > strong, .combo, .cooking-notice, .cooking-notice > *, .base-choice__heading, .base-choice__option strong, .base-choice__note");
+      const elements = board.querySelectorAll(".product, .product h3, .product > div, .product > div > span, .product > strong, .mini-list p, .mini-list p > span, .mini-list p > strong, .combo, .combo-stack, .cooking-notice, .cooking-notice > *, .base-choice__heading, .base-choice__option strong, .base-choice__note");
       const overflow = [...elements].some((node) => {
         if (!node.getClientRects().length) return false;
         const bounds = node.getBoundingClientRect();
@@ -232,6 +236,9 @@
     products.replaceChildren(...visibleProducts.map(createProduct));
     renderSmallList(addOns, Array.isArray(menu.addOns) ? menu.addOns : []);
     renderSmallList(drinks, Array.isArray(menu.drinks) ? menu.drinks : []);
+    const visibleDesserts = Array.isArray(menu.desserts) ? menu.desserts.filter((item) => item?.visible !== false) : [];
+    if (desserts) renderSmallList(desserts, visibleDesserts);
+    if (dessertsSection) dessertsSection.hidden = visibleDesserts.length === 0;
 
     const drinksEnabled = menu.drinksEnabled !== false;
     board.dataset.drinksEnabled = String(drinksEnabled);
@@ -243,6 +250,13 @@
       text(combo.querySelector("[data-combo-description]"), menu.combo?.description || "Add any drink + cookie");
       text(combo.querySelector("[data-combo-price]"), menu.combo?.price || "$4.00");
     }
+    if (cobblerCombo) {
+      cobblerCombo.hidden = !drinksEnabled || menu.cobblerCombo?.enabled === false || visibleDesserts.every((item) => item.available === false);
+      text(cobblerCombo.querySelector("[data-cobbler-combo-label]"), menu.cobblerCombo?.label || "Cobbler combo");
+      text(cobblerCombo.querySelector("[data-cobbler-combo-description]"), menu.cobblerCombo?.description || "Any drink + choice of cobbler");
+      text(cobblerCombo.querySelector("[data-cobbler-combo-price]"), menu.cobblerCombo?.price || "$5.00");
+    }
+    if (comboStack) comboStack.hidden = (combo?.hidden !== false && cobblerCombo?.hidden !== false);
     reportPreviewFit();
   }
 

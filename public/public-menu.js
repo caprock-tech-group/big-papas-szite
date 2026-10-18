@@ -5,6 +5,9 @@
   const addOns = document.querySelector("[data-public-menu-add-ons]");
   const drinks = document.querySelector("[data-public-menu-drinks]");
   const combo = document.querySelector("[data-public-menu-combo]");
+  const desserts = document.querySelector("[data-public-menu-desserts]");
+  const dessertsSection = document.querySelector("[data-public-menu-desserts-section]");
+  const cobblerCombo = document.querySelector("[data-public-menu-cobbler-combo]");
   const status = document.querySelector("[data-public-menu-status]");
   if (!products || !addOns || !drinks) return;
 
@@ -135,6 +138,12 @@
       : [];
     drinks.replaceChildren(...visibleDrinks.map(createSmallItem));
 
+    const visibleDesserts = Array.isArray(menu.desserts)
+      ? menu.desserts.filter((item) => validItem(item) && item.visible !== false)
+      : [];
+    if (desserts) desserts.replaceChildren(...visibleDesserts.map(createSmallItem));
+    if (dessertsSection) dessertsSection.hidden = visibleDesserts.length === 0;
+
     const drinksEnabled = menu.drinksEnabled !== false;
     const drinksSection = drinks.closest(".menu-panel--drinks");
     if (drinksSection) drinksSection.hidden = !drinksEnabled;
@@ -144,6 +153,12 @@
       setText(combo.querySelector("[data-public-menu-combo-label]"), menu.combo?.label || "Add a combo");
       setText(combo.querySelector("[data-public-menu-combo-description]"), menu.combo?.description || "Add any drink + cookie");
       setText(combo.querySelector("[data-public-menu-combo-price]"), menu.combo?.price || "$4.00");
+    }
+    if (cobblerCombo) {
+      cobblerCombo.hidden = !drinksEnabled || menu.cobblerCombo?.enabled === false || visibleDesserts.every((item) => item.available === false);
+      setText(cobblerCombo.querySelector("[data-public-menu-cobbler-combo-label]"), menu.cobblerCombo?.label || "Cobbler combo");
+      setText(cobblerCombo.querySelector("[data-public-menu-cobbler-combo-description]"), menu.cobblerCombo?.description || "Any drink + choice of cobbler");
+      setText(cobblerCombo.querySelector("[data-public-menu-cobbler-combo-price]"), menu.cobblerCombo?.price || "$5.00");
     }
 
     currentRevision = Number(menu.revision) || JSON.stringify(menu);

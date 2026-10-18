@@ -6,8 +6,8 @@
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Big Papa's · Print menu</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/command/print-menu.css?v=3">
-    <script type="module" src="/command/print-menu.js?v=3"></script>
+    <link rel="stylesheet" href="/command/print-menu.css?v=4">
+    <script type="module" src="/command/print-menu.js?v=4"></script>
   </head>
   <body>
     <header class="print-tools">
@@ -39,9 +39,15 @@
         <p class="base-choice" data-base-choice>Choose a loaded baked potato or loaded French fries. Same toppings. Same price.</p>
         <section class="potato-grid" data-products aria-label="Loaded potatoes"></section>
         <div class="menu-extras" data-extras>
-          <section class="extras-section" data-add-ons-section><h3>Add-ons</h3><ul data-add-ons></ul></section>
-          <section class="extras-section" data-drinks-section><h3>Drinks</h3><ul data-drinks></ul></section>
-          <section class="combo-section" data-combo><h3 data-combo-label></h3><p data-combo-description></p><strong data-combo-price></strong></section>
+          <section class="extras-section extras-section--addons" data-add-ons-section><h3>Add-ons</h3><ul data-add-ons></ul></section>
+          <div class="menu-extras__middle">
+            <section class="extras-section" data-drinks-section><h3>Drinks</h3><ul data-drinks></ul></section>
+            <section class="extras-section" data-desserts-section><h3>Desserts</h3><ul data-desserts></ul></section>
+          </div>
+          <div class="menu-extras__combos" data-combos-section>
+            <section class="combo-section" data-combo><h3 data-combo-label></h3><p data-combo-description></p><strong data-combo-price></strong></section>
+            <section class="combo-section" data-cobbler-combo><h3 data-cobbler-combo-label>Cobbler combo</h3><p data-cobbler-combo-description>Any drink + choice of cobbler</p><strong data-cobbler-combo-price>$5.00</strong></section>
+          </div>
         </div>
         <footer class="menu-footer"><strong>bigpapastaters.com</strong><span data-printed-at></span><small>Prices and availability can change. Check our website for the latest menu.</small></footer>
       </main>
