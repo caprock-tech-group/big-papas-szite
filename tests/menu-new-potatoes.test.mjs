@@ -25,7 +25,7 @@ test("existing v5 menu gains Frito Bandito draft and priced chili and Fritos wit
   stored.board.fontSizes.names = 165;
   const next = await readMenuState();
 
-  assert.equal(next.version, 6);
+  assert.equal(next.version, 7);
   assert.equal(next.products[0].price, "$19.75");
   assert.equal(next.products[0].visible, false);
   assert.equal(next.board.fontSizes.names, 165);
@@ -39,7 +39,7 @@ test("existing v5 menu gains Frito Bandito draft and priced chili and Fritos wit
   assert.equal(next.addOns.find(({ id }) => id === "fritos")?.price, "$1.00");
 
   const saved = await saveMenuState(next, next.revision);
-  assert.equal(saved.version, 6);
+  assert.equal(saved.version, 7);
   assert.equal((await readMenuState()).products.filter(({ id }) => id === "frito-bandito").length, 1);
   const edited = structuredClone(saved);
   edited.addOns = edited.addOns.filter(({ id }) => id !== "fritos");
@@ -47,7 +47,7 @@ test("existing v5 menu gains Frito Bandito draft and priced chili and Fritos wit
   const removed = await saveMenuState(edited, saved.revision);
   assert.equal((await readMenuState()).addOns.some(({ id }) => id === "fritos"), false);
   assert.equal((await readMenuState()).products.some(({ id }) => id === "frito-bandito"), false);
-  assert.equal(removed.version, 6);
+  assert.equal(removed.version, 7);
 });
 
 test("migration does not duplicate manually created potato or extras", async () => {
