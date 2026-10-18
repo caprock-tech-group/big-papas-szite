@@ -344,6 +344,7 @@ export default function Home() {
               </ul>
             </section>
 
+            <div className="menu-panel-stack">
             <section className="menu-panel menu-panel--drinks" aria-labelledby="drinks-title">
               <p className="eyebrow"><span /> Ice cold</p>
               <h3 id="drinks-title">Drinks</h3>
@@ -352,14 +353,6 @@ export default function Home() {
                   <li key={item.name}><span>{item.name}</span><strong>{item.price}</strong></li>
                 ))}
               </ul>
-              <div className="menu-panel-desserts" data-public-menu-desserts-section>
-                <h3>Desserts</h3>
-                <ul className="price-list" data-public-menu-desserts>
-                  <li><span>Cherry Cobbler</span><strong>$3.00</strong></li>
-                  <li><span>Peach Cobbler</span><strong>$3.00</strong></li>
-                  <li><span>Apple Cobbler</span><strong>$3.00</strong></li>
-                </ul>
-              </div>
               <div className="combo-callout" data-public-menu-combo>
                 <div><small data-public-menu-combo-label>Add a combo</small><strong data-public-menu-combo-description>Add any drink + cookie</strong></div>
                 <span data-public-menu-combo-price>$4.00</span>
@@ -369,6 +362,16 @@ export default function Home() {
                 <span data-public-menu-cobbler-combo-price>$5.00</span>
               </div>
             </section>
+            <section className="menu-panel menu-panel--desserts" data-public-menu-desserts-section aria-labelledby="desserts-title">
+              <p className="eyebrow"><span /> Something sweet</p>
+              <h3 id="desserts-title">Desserts</h3>
+              <ul className="price-list" data-public-menu-desserts>
+                <li><span>Cherry Cobbler</span><strong>$3.00</strong></li>
+                <li><span>Peach Cobbler</span><strong>$3.00</strong></li>
+                <li><span>Apple Cobbler</span><strong>$3.00</strong></li>
+              </ul>
+            </section>
+            </div>
           </div>
 
           <figure className="lineup-photo">
@@ -381,7 +384,7 @@ export default function Home() {
             />
             <figcaption>
               <p>Make it a meal</p>
-              <strong>Add a cookie + drink for $4.00</strong>
+              <strong>Drink + cookie $4 · Drink + cobbler $5</strong>
               <span>Drinks $3 • Water $2</span>
             </figcaption>
           </figure>
