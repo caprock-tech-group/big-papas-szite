@@ -29,7 +29,13 @@ export function printableMenu(menu) {
     friesEnabled,
     addOns: visible(menu.addOns),
     drinks: menu.drinksEnabled === false ? [] : visible(menu.drinks),
+    desserts: visible(menu.desserts),
     combo: menu.drinksEnabled !== false && menu.combo?.enabled !== false ? menu.combo : null,
+    cobblerCombo: menu.drinksEnabled !== false
+      && menu.cobblerCombo?.enabled !== false
+      && visible(menu.desserts).some((item) => item.available !== false)
+      ? menu.cobblerCombo || { label: "Cobbler combo", description: "Any drink + choice of cobbler", price: "$5.00" }
+      : null,
     updatedAt: menu.updatedAt,
   };
 }
