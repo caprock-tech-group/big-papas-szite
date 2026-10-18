@@ -163,6 +163,15 @@
           </section>
         </div>
 
+        <section class="panel small-items-panel" aria-labelledby="desserts-title">
+          <div class="panel-heading panel-heading--action">
+            <span class="step-number">05</span>
+            <div><p>Something sweet</p><h2 id="desserts-title">Desserts</h2></div>
+            <button type="button" class="add-button" data-add-small="desserts">+ Add</button>
+          </div>
+          <div class="small-item-editors" data-small-editors="desserts"></div>
+        </section>
+
         <section class="panel combo-panel" aria-labelledby="combo-title">
           <div class="panel-heading">
             <span class="step-number">05</span>
@@ -177,6 +186,22 @@
             <label class="field" for="combo-label"><span>Heading</span><input id="combo-label" data-combo-label maxlength="48"></label>
             <label class="field" for="combo-description"><span>Description</span><input id="combo-description" data-combo-description maxlength="90"></label>
             <label class="field" for="combo-price"><span>Price</span><input id="combo-price" data-combo-price inputmode="decimal" maxlength="16"></label>
+          </div>
+        </section>
+
+        <section class="panel combo-panel" aria-labelledby="cobbler-combo-title">
+          <div class="panel-heading">
+            <span class="step-number">06</span>
+            <div><p>Sweet upsell</p><h2 id="cobbler-combo-title">Drink + cobbler combo</h2></div>
+          </div>
+          <div class="combo-fields">
+            <label class="toggle-field" for="cobbler-combo-enabled">
+              <span><strong>Show cobbler combo</strong><small>Shows only when drinks are enabled.</small></span>
+              <input id="cobbler-combo-enabled" data-cobbler-combo-enabled type="checkbox" checked><i aria-hidden="true"></i>
+            </label>
+            <label class="field" for="cobbler-combo-label"><span>Heading</span><input id="cobbler-combo-label" data-cobbler-combo-label maxlength="48"></label>
+            <label class="field" for="cobbler-combo-description"><span>Description</span><input id="cobbler-combo-description" data-cobbler-combo-description maxlength="90"></label>
+            <label class="field" for="cobbler-combo-price"><span>Price</span><input id="cobbler-combo-price" data-cobbler-combo-price inputmode="decimal" maxlength="16"></label>
           </div>
         </section>
 
@@ -200,6 +225,6 @@
     </main>
 
     <footer><p>Big Papa's menu board studio · Changes affect the board, not SkyTab ordering.</p></footer>
-    <script src="/menu-admin/admin.js?v=5" defer></script>
+    <script src="/menu-admin/admin.js?v=6" defer></script>
   </body>
 </html>
