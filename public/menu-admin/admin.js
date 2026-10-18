@@ -209,9 +209,14 @@
     document.querySelector("[data-combo-label]").value = menu.combo?.label || "";
     document.querySelector("[data-combo-description]").value = menu.combo?.description || "";
     document.querySelector("[data-combo-price]").value = menu.combo?.price || "";
+    document.querySelector("[data-cobbler-combo-enabled]").checked = menu.cobblerCombo?.enabled !== false;
+    document.querySelector("[data-cobbler-combo-label]").value = menu.cobblerCombo?.label || "Cobbler combo";
+    document.querySelector("[data-cobbler-combo-description]").value = menu.cobblerCombo?.description || "Any drink + choice of cobbler";
+    document.querySelector("[data-cobbler-combo-price]").value = menu.cobblerCombo?.price || "$5.00";
     renderProducts(Array.isArray(menu.products) ? menu.products : []);
     renderSmallItems("addOns", Array.isArray(menu.addOns) ? menu.addOns : []);
     renderSmallItems("drinks", Array.isArray(menu.drinks) ? menu.drinks : []);
+    renderSmallItems("desserts", Array.isArray(menu.desserts) ? menu.desserts : []);
     setCleanState(menu);
     queuePreview();
   }
@@ -244,7 +249,7 @@
 
   function collectMenu() {
     return {
-      version: currentMenu?.version || 5,
+      version: currentMenu?.version || 7,
       revision: currentMenu?.revision || 1,
       updatedAt: currentMenu?.updatedAt || new Date().toISOString(),
       board: {
@@ -259,6 +264,13 @@
       products: collectProducts(),
       lunchPricing: currentMenu?.lunchPricing || { enabled: false, reduction: "$0.00" },
       addOns: collectSmallItems("addOns"),
+      desserts: collectSmallItems("desserts"),
+      cobblerCombo: {
+        enabled: document.querySelector("[data-cobbler-combo-enabled]").checked,
+        label: document.querySelector("[data-cobbler-combo-label]").value,
+        description: document.querySelector("[data-cobbler-combo-description]").value,
+        price: document.querySelector("[data-cobbler-combo-price]").value,
+      },
       friesEnabled: currentMenu?.friesEnabled !== false,
       drinksEnabled: currentMenu?.drinksEnabled !== false,
       drinks: collectSmallItems("drinks"),
@@ -289,6 +301,7 @@
     renderProducts(draft.products);
     renderSmallItems("addOns", draft.addOns);
     renderSmallItems("drinks", draft.drinks);
+    renderSmallItems("desserts", draft.desserts);
     markDirty();
   }
 
