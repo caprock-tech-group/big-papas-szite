@@ -352,9 +352,21 @@ export default function Home() {
                   <li key={item.name}><span>{item.name}</span><strong>{item.price}</strong></li>
                 ))}
               </ul>
+              <div className="menu-panel-desserts" data-public-menu-desserts-section>
+                <h3>Desserts</h3>
+                <ul className="price-list" data-public-menu-desserts>
+                  <li><span>Cherry Cobbler</span><strong>$3.00</strong></li>
+                  <li><span>Peach Cobbler</span><strong>$3.00</strong></li>
+                  <li><span>Apple Cobbler</span><strong>$3.00</strong></li>
+                </ul>
+              </div>
               <div className="combo-callout" data-public-menu-combo>
                 <div><small data-public-menu-combo-label>Add a combo</small><strong data-public-menu-combo-description>Add any drink + cookie</strong></div>
                 <span data-public-menu-combo-price>$4.00</span>
+              </div>
+              <div className="combo-callout combo-callout--cobbler" data-public-menu-cobbler-combo>
+                <div><small data-public-menu-cobbler-combo-label>Cobbler combo</small><strong data-public-menu-cobbler-combo-description>Any drink + choice of cobbler</strong></div>
+                <span data-public-menu-cobbler-combo-price>$5.00</span>
               </div>
             </section>
           </div>
